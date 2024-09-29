@@ -11,6 +11,7 @@ import PersonalityQuiz from './screens/PersonalityQuiz';
 import QuizResults from './screens/QuizResults';
 import PhoneNumber from './screens/PhoneNumber';
 import EmailPassword from './screens/EmailPassword';
+import MainPage from './screens/MainPage';
 
 
 const Stack = createStackNavigator();
@@ -38,6 +39,7 @@ function App() {
           <Stack.Screen name="QuizResultsScreen" component={QuizResults} />
           <Stack.Screen name="PhoneNumberScreen" component={PhoneNumber} />
           <Stack.Screen name="EmailPasswordScreen" component={EmailPassword} />
+          <Stack.Screen name="MainScreen" component={MainPage} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
