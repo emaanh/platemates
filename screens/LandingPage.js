@@ -20,7 +20,7 @@ function LandingPage({navigation}) {
           <Text style={styles.getStartedText}>Get Started</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.outlineButton} onPress={() => navigation.navigate('OtherPage')}>
+        <TouchableOpacity style={styles.outlineButton} onPress={() => navigation.navigate('RegistrationScreen')}>
           <Text style={styles.outlineButtonText}>I already have an account</Text>
         </TouchableOpacity>
       </View>

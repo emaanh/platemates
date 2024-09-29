@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Animated, Easing } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 function PersonalityQuizScreen({ navigation, route }) {
   const { school } = route.params;
-  
+
   const questions = [
     { type: 'multiple', question: "What's your favorite color?", options: ['Red', 'Blue', 'Green'] },
     { type: 'multiple', question: "What is your favorite season?", options: ['Winter', 'Spring', 'Summer', 'Fall'] },
@@ -21,37 +21,81 @@ function PersonalityQuizScreen({ navigation, route }) {
   const [progress, setProgress] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [selectedOption, setSelectedOption] = useState(null); // For multiple choice buttons
-  const [buttonBorderColors, setButtonBorderColors] = useState({}); // Store border colors
-
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [buttonBorderColors, setButtonBorderColors] = useState({});
   const totalQuestions = questions.length;
+
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    fadeIn(); // Start with the first question visible
+  }, []);
+
+  const fadeOut = (callback) => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+      easing: Easing.out(Easing.ease),
+    }).start(() => {
+      if (callback) callback(); // Call callback when fade out is complete
+    });
+  };
+
+  const fadeIn = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 100,
+      useNativeDriver: true,
+      easing: Easing.in(Easing.ease),
+    }).start();
+  };
 
   const handleAnswer = (answer) => {
     const newAnswers = { ...answers, [currentQuestionIndex]: answer };
     setAnswers(newAnswers);
 
     if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setProgress((currentQuestionIndex + 1) / totalQuestions);
+      fadeOut(() => {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setProgress((currentQuestionIndex + 1) / totalQuestions);
+        fadeIn();
+      });
     } else {
       console.log('Quiz completed!', newAnswers);
       navigation.navigate('QuizResultsScreen', { answers: newAnswers, school });
     }
   };
 
-  const handleOptionPress = (index) => {
-    setSelectedOption(index);
-    setButtonBorderColors({ ...buttonBorderColors, [index]: 'red' }); // Set border color to red
-    setTimeout(() => {
-      setButtonBorderColors({ ...buttonBorderColors, [index]: 'white' }); // Revert back to white
-      handleAnswer(questions[currentQuestionIndex].options[index]);
-    }, 300); // Wait 300ms before reverting and processing the answer
+  const handleOptionPress = (index, type = 'multiple') => {
+    const currentQuestion = questions[currentQuestionIndex];
+
+    if (type === 'multiple') {
+      const answer = currentQuestion.options[index];
+      setAnswers({ ...answers, [currentQuestionIndex]: answer });
+      setButtonBorderColors({ ...buttonBorderColors, [currentQuestionIndex]: index });
+      setTimeout(() => {
+        setButtonBorderColors({ ...buttonBorderColors, [currentQuestionIndex]: index });
+        handleAnswer(answer);
+      }, 300);
+    } else if (type === 'rating') {
+      const answer = index + 1;
+      setAnswers({ ...answers, [currentQuestionIndex]: answer });
+      setButtonBorderColors({ ...buttonBorderColors, [currentQuestionIndex]: index });
+      setTimeout(() => {
+        setButtonBorderColors({ ...buttonBorderColors, [currentQuestionIndex]: index });
+        handleAnswer(answer);
+      }, 300);
+    }
   };
 
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-      setProgress((currentQuestionIndex - 1) / totalQuestions);
+      fadeOut(() => {
+        setCurrentQuestionIndex(currentQuestionIndex - 1);
+        setProgress((currentQuestionIndex - 1) / totalQuestions);
+        fadeIn();
+      });
     } else {
       navigation.goBack();
     }
@@ -59,6 +103,7 @@ function PersonalityQuizScreen({ navigation, route }) {
 
   const renderQuestion = () => {
     const currentQuestion = questions[currentQuestionIndex];
+    const selectedAnswer = answers[currentQuestionIndex];
 
     switch (currentQuestion.type) {
       case 'multiple':
@@ -70,9 +115,10 @@ function PersonalityQuizScreen({ navigation, route }) {
                 key={index}
                 style={[
                   styles.answerButton,
-                  { borderColor: buttonBorderColors[index] || 'white' } // Apply dynamic border color
+                  { borderColor: buttonBorderColors[currentQuestionIndex] === index ? 'red' : 'white' }
                 ]}
-                onPress={() => handleOptionPress(index)}
+                onPress={() => handleOptionPress(index, 'multiple')}
+                activeOpacity={1}
               >
                 <Text style={styles.answerButtonText}>{option}</Text>
               </TouchableOpacity>
@@ -84,32 +130,24 @@ function PersonalityQuizScreen({ navigation, route }) {
           <View style={styles.quizQuestion}>
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
             <View style={styles.ratingContainer}>
-              <Text style={{fontFamily: 'Poppins_400Regular', color: 'white', fontSize: 15, marginTop: 20}}>Strongly Disagree</Text>
+              <Text style={{ fontFamily: 'Poppins_400Regular', color: 'white', fontSize: 15, marginTop: 20 }}>Strongly Disagree</Text>
               <View style={styles.buttonGrid}>
                 {[...Array(10)].map((_, index) => (
                   <TouchableOpacity
                     key={index}
-                    style={styles.ratingButton}
-                    onPress={() => handleAnswer(index + 1)}
+                    style={[
+                      styles.ratingButton,
+                      { borderColor: buttonBorderColors[currentQuestionIndex] === index ? 'red' : 'white' }
+                    ]}
+                    onPress={() => handleOptionPress(index, 'rating')}
+                    activeOpacity={1}
                   >
                     <Text style={styles.ratingButtonText}>{index + 1}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
-              <Text style={{fontFamily: 'Poppins_400Regular', color: 'white', fontSize: 15, marginTop: -10, textAlign: 'right'}}>Strongly Agree</Text>
+              <Text style={{ fontFamily: 'Poppins_400Regular', color: 'white', fontSize: 15, marginTop: -10, textAlign: 'right' }}>Strongly Agree</Text>
             </View>
-          </View>
-        );
-      case 'input':
-        return (
-          <View style={styles.quizQuestion}>
-            <Text style={styles.questionText}>{currentQuestion.question}</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Type your answer here..."
-              placeholderTextColor="#666666"
-              onSubmitEditing={(event) => handleAnswer(event.nativeEvent.text)}
-            />
           </View>
         );
       default:
@@ -132,7 +170,10 @@ function PersonalityQuizScreen({ navigation, route }) {
           </View>
         </View>
 
-        {renderQuestion()}
+        {/* Wrap the question content inside Animated.View for fade animation */}
+        <Animated.View style={{ opacity: fadeAnim }}>
+          {renderQuestion()}
+        </Animated.View>
       </ScrollView>
     </View>
   );

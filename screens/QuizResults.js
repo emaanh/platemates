@@ -5,10 +5,14 @@ import Svg, { Circle } from 'react-native-svg';
 
 function QuizResults({ navigation, route }) {
   const [isMatching, setIsMatching] = useState(true);
-  const { school, results } = route.params;
+  const [compatibleStudents, setCompatibleStudents] = useState(0); // Store the random number
+  const { school, answers } = route.params;
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    const randomStudents = Math.floor(Math.random() * 46) + 5;
+    setCompatibleStudents(randomStudents);
+
     const timer = setTimeout(() => {
       setIsMatching(false);
     }, 3000);
@@ -58,13 +62,13 @@ function QuizResults({ navigation, route }) {
         <>
           <Feather name="check-circle" size={100} color="white" />
           <Text style={styles.resultsText}>
-            We have found 21 compatible students at {school}
+            We have found {compatibleStudents} compatible students at {school}
           </Text>
           <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('MainPage')}>
             <FontAwesome name="google" size={24} color="#333333" style={styles.googleIcon} /> 
             <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.emailButton} onPress={() => navigation.navigate('MainPage')}>
+          <TouchableOpacity style={styles.emailButton} onPress={() => navigation.navigate('PhoneNumberScreen', { school, answers })}>
             <Text style={styles.emailButtonText}>Sign up with email</Text>
           </TouchableOpacity>
         </>
@@ -142,6 +146,3 @@ const styles = StyleSheet.create({
 });
 
 export default QuizResults;
-
-
-//quick channge

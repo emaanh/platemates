@@ -9,6 +9,8 @@ import SelectSchool from './screens/SelectSchool';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import PersonalityQuiz from './screens/PersonalityQuiz';
 import QuizResults from './screens/QuizResults';
+import PhoneNumber from './screens/PhoneNumber';
+import EmailPassword from './screens/EmailPassword';
 
 
 const Stack = createStackNavigator();
@@ -34,6 +36,8 @@ function App() {
           <Stack.Screen name="SelectSchoolScreen" component={SelectSchool} />
           <Stack.Screen name="PersonalityQuizScreen" component={PersonalityQuiz} />
           <Stack.Screen name="QuizResultsScreen" component={QuizResults} />
+          <Stack.Screen name="PhoneNumberScreen" component={PhoneNumber} />
+          <Stack.Screen name="EmailPasswordScreen" component={EmailPassword} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
