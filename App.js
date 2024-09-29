@@ -8,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import SelectSchool from './screens/SelectSchool';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import PersonalityQuiz from './screens/PersonalityQuiz';
+import QuizResults from './screens/QuizResults';
 
 
 const Stack = createStackNavigator();
@@ -32,6 +33,7 @@ function App() {
           <Stack.Screen name="LandingScreen" component={LandingPage} />
           <Stack.Screen name="SelectSchoolScreen" component={SelectSchool} />
           <Stack.Screen name="PersonalityQuizScreen" component={PersonalityQuiz} />
+          <Stack.Screen name="QuizResultsScreen" component={QuizResults} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

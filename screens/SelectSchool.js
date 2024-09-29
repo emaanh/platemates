@@ -36,11 +36,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000', // Black background
     paddingHorizontal: 20,
-    paddingTop: 75,
+    paddingTop: 90,
   },
   backButton: {
     position: 'absolute',
-    top: 40, // Adjust based on the status bar height
+    top: 55, // Adjust based on the status bar height
     left: 20,
     zIndex: 1, // Ensure the button stays on top
   },
