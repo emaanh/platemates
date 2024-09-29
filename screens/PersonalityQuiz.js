@@ -45,7 +45,7 @@ function PersonalityQuizScreen({ navigation, route }) {
   const fadeIn = () => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 100,
+      duration: 10,
       useNativeDriver: true,
       easing: Easing.in(Easing.ease),
     }).start();
