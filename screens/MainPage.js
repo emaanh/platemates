@@ -3,32 +3,12 @@ import { Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather'; // Updated import
+import { TouchableOpacity } from 'react-native';
+import HomeScreen from './MainTabs/HomeScreen';
+import ProfileScreen from './MainTabs/ProfileScreen';
+import NotificationsScreen from './MainTabs/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
-
-function HomeScreen() {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenText}>Home Screen</Text>
-    </View>
-  );
-}
-
-function ProfileScreen() {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenText}>Profile Screen</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenText}>Settings Screen</Text>
-    </View>
-  );
-}
 
 function MainPage() {
   return (
@@ -47,8 +27,8 @@ function MainPage() {
             case 'Profile':
               iconName = 'user';
               break;
-            case 'Settings':
-              iconName = 'settings';
+            case 'Notifications':
+              iconName = 'bell';
               break;
             default:
               iconName = 'circle';
@@ -66,13 +46,12 @@ function MainPage() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
 
-// Styles for Screens
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1, // Ensure the screen takes up the full space
@@ -85,6 +64,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
+  button: {
+    backgroundColor: 'transparent',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginVertical: 10,
+    alignItems: 'left',
+    borderWidth: 1,
+    borderColor: 'white', // Default color, can be dynamically changed
+    width: '90%',
+    alignSelf: 'center',
+  }
 });
 
 export default MainPage;
+
