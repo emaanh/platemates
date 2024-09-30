@@ -1,16 +1,19 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather'; // Updated import
 import { TouchableOpacity } from 'react-native';
 import HomeScreen from './MainTabs/HomeScreen';
+import EventHomeScreen from './MainTabs/EventHomeScreen';
 import ProfileScreen from './MainTabs/ProfileScreen';
 import NotificationsScreen from './MainTabs/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
 
 function MainPage() {
+  const [isUserInEvent, setIsUserInEvent] = useState(true);
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -45,7 +48,10 @@ function MainPage() {
         tabBarShowLabel: false, // Hide labels
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen
+        name="Home"
+        component={isUserInEvent ? EventHomeScreen : HomeScreen}
+      />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>

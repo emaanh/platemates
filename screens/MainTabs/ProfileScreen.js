@@ -1,8 +1,11 @@
-import React from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import EditProfile from './ProfileScreens/EditProfile';
+import Help from './ProfileScreens/Help';
+import Bookings from './ProfileScreens/Bookings';
+import Settings from './ProfileScreens/Settings';
 
 const Stack = createStackNavigator();
 
@@ -86,54 +89,6 @@ function ProfilePage({navigation}) {
   );
 }
 
-function Bookings({navigation}) {
-
-  return (
-    <View style={styles.screenContainer}>
-      <TouchableOpacity style={{position: 'absolute',top: 55,left: 20,zIndex: 1,}} onPress={() => navigation.goBack()}>
-        <Feather name="arrow-left" size={30} color="#E83F10" />
-      </TouchableOpacity>
-
-    </View>
-  );
-}
-
-function Settings({navigation}) {
-
-  return (
-    <View style={styles.screenContainer}>
-      <TouchableOpacity style={{position: 'absolute',top: 55,left: 20,zIndex: 1,}} onPress={() => navigation.goBack()}>
-        <Feather name="arrow-left" size={30} color="#E83F10" />
-      </TouchableOpacity>
-
-    </View>
-  );
-}
-
-function Help({navigation}) {
-
-  return (
-    <View style={styles.screenContainer}>
-      <TouchableOpacity style={{position: 'absolute',top: 55,left: 20,zIndex: 1,}} onPress={() => navigation.goBack()}>
-        <Feather name="arrow-left" size={30} color="#E83F10" />
-      </TouchableOpacity>
-
-    </View>
-  );
-}
-
-function EditProfile({navigation}) {
-
-  return (
-    <View style={styles.screenContainer}>
-      <TouchableOpacity style={{position: 'absolute',top: 55,left: 20,zIndex: 1,}} onPress={() => navigation.goBack()}>
-        <Feather name="arrow-left" size={30} color="#E83F10" />
-      </TouchableOpacity>
-
-    </View>
-  );
-}
-
 
 const styles = StyleSheet.create({
   screenContainer: {
@@ -153,9 +108,10 @@ const styles = StyleSheet.create({
   },
   profileName: {
     color: 'white',
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
+    fontFamily: 'Poppins_700Bold'
   },
   buttonsContainer: {
     width: '100%',

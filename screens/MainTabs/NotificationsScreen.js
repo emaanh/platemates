@@ -4,18 +4,12 @@ import { TouchableOpacity } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 
 function NotificationsScreen() {
-  // State to hold notifications; initially empty
-  const [notifications, setNotifications] = useState([]);
 
-  // Sample notifications data (optional)
-  // Uncomment the following lines to see notifications in action
-  /*
   const [notifications, setNotifications] = useState([
-    { id: '1', title: 'Your order has been shipped!' },
-    { id: '2', title: 'New message from John Doe' },
-    { id: '3', title: 'Your password was changed successfully' },
+    // { id: '1', title: 'Your order has been shipped!' },
+    // { id: '2', title: 'New message from John Doe' },
+    // { id: '3', title: 'Your password was changed successfully' },
   ]);
-  */
 
   // Render each notification item
   const renderItem = ({ item }) => (
