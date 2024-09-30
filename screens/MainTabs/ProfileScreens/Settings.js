@@ -28,7 +28,7 @@ function Settings({ navigation }) {
           text: 'Cancel',
           style: 'cancel',
         },
-        { text: 'Logout', onPress: () => performLogout() },
+        { text: 'Logout', onPress: () => navigation.navigate('LandingScreen') },
       ],
       { cancelable: false }
     );

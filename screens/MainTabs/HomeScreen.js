@@ -7,7 +7,7 @@ import { colors } from '../../stylevars';
 import PriceModal from './PriceModal'; 
 
 
-function HomeScreen() {
+function HomeScreen({ setUserInEvent }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [school, setSchool] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(true);
@@ -74,6 +74,7 @@ function HomeScreen() {
       <PriceModal 
         isVisible={isModalVisible} 
         closeModal={closeModal} 
+        setUserInEvent={setUserInEvent}
         onClose={closeModal} 
         selectedOption={selectedOption} 
         setSelectedOption={setSelectedOption} 

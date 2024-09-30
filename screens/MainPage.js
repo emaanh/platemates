@@ -49,10 +49,15 @@ function MainPage() {
         tabBarShowLabel: false, // Hide labels
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={isUserInEvent ? EventHomeScreen : HomeScreen}
-      />
+      <Tab.Screen name="Home">
+        {(props) =>
+          isUserInEvent ? (
+            <EventHomeScreen {...props} setUserInEvent={setIsUserInEvent} />
+          ) : (
+            <HomeScreen {...props} setUserInEvent={setIsUserInEvent} />
+          )
+        }
+      </Tab.Screen>
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>

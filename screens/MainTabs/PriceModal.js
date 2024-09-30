@@ -3,7 +3,7 @@ import { Modal, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors } from '../../stylevars'; // Import colors from stylevars.js
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const PriceModal = ({ closeModal, isVisible, onClose }) => {
+const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
   const [selectedOption, setSelectedOption] = useState('1 Month'); // Default to "1 Month"
 
   // Update the buy button text based on the selected option
@@ -94,6 +94,7 @@ const PriceModal = ({ closeModal, isVisible, onClose }) => {
           ]}
           onPress={() => {
             if (selectedOption) {
+              setUserInEvent(true);
               console.log(getBuyButtonText());
             }
           }}
