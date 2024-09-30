@@ -1,11 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Modal, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
+import { colors } from '../../stylevars';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+import PriceModal from './PriceModal'; 
+
 
 function HomeScreen() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [school, setSchool] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(true);
+
+
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
   let uid = 'o7k7K3yfJFVlxKxyedNZIdc4mcG2';
 
   useEffect(() => {
@@ -48,14 +63,21 @@ function HomeScreen() {
         ))}
       </View>
 
-      {/* Red Button */}
       <TouchableOpacity
         style={[styles.bottomButton, !selectedOption && styles.disabledButton]}
-        onPress={() => console.log('Red button pressed')}
+        onPress={() => openModal()}
         disabled={!selectedOption}
       >
         <Text style={styles.bottomButtonText}>Book my seat</Text>
       </TouchableOpacity>
+
+      <PriceModal 
+        isVisible={isModalVisible} 
+        closeModal={closeModal} 
+        onClose={closeModal} 
+        selectedOption={selectedOption} 
+        setSelectedOption={setSelectedOption} 
+      />
     </View>
   );
 }
@@ -65,18 +87,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
   },
   title: {
     fontWeight: 'bold',
     fontSize: 24, // Adjust this size as needed
-    color: 'white',
+    color: colors.white,
     marginBottom: 10,
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold'
   },
   description: {
-    color: 'grey',
+    color: colors.grey,
     fontSize: 16,
     marginBottom: 20,
     textAlign: 'left',
@@ -88,13 +110,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    top: 160,
+    top: 140,
     backgroundColor: 'transparent',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: colors.white,
     width: '90%',
     alignSelf: 'center',
     marginVertical: 10,
@@ -113,7 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   selectedRadial: {
-    backgroundColor: 'red',
+    backgroundColor: colors.primary,
   },
   textContainer: {
     flexDirection: 'column',
@@ -129,8 +151,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   bottomButton: {
-    top: 150,
-    backgroundColor: 'red',
+    top: 120,
+    backgroundColor: colors.primary,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -145,6 +167,41 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+
+  modalContainer: {
+    flex: 1,
+    backgroundColor: colors.black,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 55, // Adjust based on SafeAreaView
+    right: 20,
+    zIndex: 1,
+    padding: 10,
+  },
+  closeButtonText: {
+    color: colors.white,
+    fontSize: 30,
+  },
+  modalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalTitle: {
+    color: colors.white,
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    fontFamily: 'Poppins_700Bold',
+  },
+  modalDescription: {
+    color: colors.grey,
+    fontSize: 16,
+    textAlign: 'center',
+    fontFamily: 'Poppins_400Regular',
   },
 });
 

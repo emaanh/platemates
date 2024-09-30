@@ -1,6 +1,8 @@
 import React, { useLayoutEffect, useEffect, useContext, useState, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { colors } from '../stylevars';
+
 
 function SelectSchool({ navigation }) {
   const schools = [
@@ -11,7 +13,7 @@ function SelectSchool({ navigation }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Feather name="arrow-left" size={30} color="white" />
+        <Feather name="arrow-left" size={30} color={colors.white} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Where would you like to have your dinners?</Text>
@@ -34,7 +36,7 @@ function SelectSchool({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000', // Black background
+    backgroundColor: colors.black, // Black background
     paddingHorizontal: 20,
     paddingTop: 90,
   },
@@ -45,7 +47,7 @@ const styles = StyleSheet.create({
     zIndex: 1, // Ensure the button stays on top
   },
   title: {
-    color: '#FFFFFF', // White text for the title
+    color: colors.white, // White text for the title
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   schoolButton: {
-    backgroundColor: '#333333', // Dark grey buttons
+    backgroundColor: colors.dark_grey, // Dark grey buttons
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -66,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   schoolButtonText: {
-    color: '#FFFFFF', // White text on the buttons
+    color: colors.white, // White text on the buttons
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

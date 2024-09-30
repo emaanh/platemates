@@ -6,6 +6,8 @@ import EditProfile from './ProfileScreens/EditProfile';
 import Help from './ProfileScreens/Help';
 import Bookings from './ProfileScreens/Bookings';
 import Settings from './ProfileScreens/Settings';
+import { colors } from '../../stylevars';
+
 
 const Stack = createStackNavigator();
 
@@ -64,24 +66,24 @@ function ProfilePage({navigation}) {
 
       {/* Profile Name */}
       <Text style={styles.profileName}>John Doe</Text>
-      <TouchableOpacity style={{marginTop: -15,padding: 10, backgroundColor: 'lightgray', borderRadius: 5}} onPress={handleEditProfile}>
+      <TouchableOpacity style={{marginTop: -15,padding: 10, backgroundColor: colors.light_grey, borderRadius: 5}} onPress={handleEditProfile}>
         <Text style={{fontFamily: 'Poppins_400Regular', color: 'black', fontSize: 18}}>Edit Profile</Text>
       </TouchableOpacity>
 
       {/* Buttons */}
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleFindBookings}>
-          <Feather name="book" size={20} color="white" style={styles.buttonIcon} />
+          <Feather name="book" size={20} color={colors.white} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Find My Latest Bookings</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handleSettings}>
-          <Feather name="settings" size={20} color="white" style={styles.buttonIcon} />
+          <Feather name="settings" size={20} color={colors.white} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Settings</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.button]} onPress={handleLogout}>
-          <Feather name="user" size={20} color="white" style={styles.buttonIcon} />
+          <Feather name="user" size={20} color={colors.white} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Help Center</Text>
         </TouchableOpacity>
       </View>
@@ -93,7 +95,7 @@ function ProfilePage({navigation}) {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
     alignItems: 'center',
     paddingTop: 50, // Adjust as needed
   },
@@ -102,12 +104,12 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60, // Makes the image circular
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: colors.white,
     marginBottom: 20,
     marginTop: 100
   },
   profileName: {
-    color: 'white',
+    color: colors.white,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
@@ -127,18 +129,18 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center', // Vertically center the content
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: colors.white,
     width: '90%',
   },
   buttonIcon: {
     marginRight: 10, // Space between icon and text
   },
   buttonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 18,
   },
   logoutButton: {
-    borderColor: '#FF3B30', // Red color for logout
+    borderColor: colors.red, // Red color for logout
   },
 });
 

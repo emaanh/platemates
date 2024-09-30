@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, FlatList } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import { colors } from '../../stylevars';
 
 function NotificationsScreen() {
 
@@ -21,7 +22,7 @@ function NotificationsScreen() {
   // Render when the FlatList is empty
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Feather name="bell" size={50} color="white" />
+      <Feather name="bell" size={50} color={colors.white} />
       <Text style={styles.emptyText}>No Notifications</Text>
     </View>
   );
@@ -51,23 +52,23 @@ function NotificationsScreen() {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: '#000000', // Black background
+    backgroundColor: colors.black, // Black background
   },
   header: {
     paddingTop: 70, // Adjust for status bar height
     paddingBottom: 10,
     alignItems: 'center',
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
   },
   headerTitle: {
-    color: 'white',
+    color: colors.white,
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold'
   },
   divider: {
     height: 1, // Thin line
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     marginHorizontal: 20,
   },
   button: {
@@ -78,12 +79,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'flex-start', // Align text to the left
     borderWidth: 1,
-    borderColor: 'white', // White border
+    borderColor: colors.white, // White border
     width: '90%',
     alignSelf: 'center',
   },
   notificationText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 18,
   },
   emptyContainer: {
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     paddingTop: 50, // Space from the top
   },
   emptyText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 20,
     marginTop: 10,
   },

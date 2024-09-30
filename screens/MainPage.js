@@ -8,11 +8,12 @@ import HomeScreen from './MainTabs/HomeScreen';
 import EventHomeScreen from './MainTabs/EventHomeScreen';
 import ProfileScreen from './MainTabs/ProfileScreen';
 import NotificationsScreen from './MainTabs/NotificationsScreen';
+import { colors } from '../stylevars';
 
 const Tab = createBottomTabNavigator();
 
 function MainPage() {
-  const [isUserInEvent, setIsUserInEvent] = useState(true);
+  const [isUserInEvent, setIsUserInEvent] = useState(false);
 
   return (
     <Tab.Navigator
@@ -21,7 +22,7 @@ function MainPage() {
         headerShown: false, // Remove the header
         tabBarIcon: ({ focused }) => {
           let iconName;
-          const color = focused ? '#E83F10' : 'white';
+          const icon_color = focused ? colors.primary : colors.white;
 
           switch (route.name) {
             case 'Home':
@@ -37,14 +38,14 @@ function MainPage() {
               iconName = 'circle';
           }
 
-          return <Feather name={iconName} size={30} color={color} />;
+          return <Feather name={iconName} size={30} color={icon_color} />;
         },
         tabBarStyle: {
-          backgroundColor: '#000000', // Set tab bar background to black
+          backgroundColor: colors.black, // Set tab bar background to black
           borderTopWidth: 0,
         },
-        tabBarActiveTintColor: '#E83F10',
-        tabBarInactiveTintColor: '#AAAAAA',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.grey,
         tabBarShowLabel: false, // Hide labels
       })}
     >
@@ -63,10 +64,10 @@ const styles = StyleSheet.create({
     flex: 1, // Ensure the screen takes up the full space
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000000', // Set screen background to black
+    backgroundColor: colors.black, // Set screen background to black
   },
   screenText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 24,
     fontWeight: 'bold',
   },
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'left',
     borderWidth: 1,
-    borderColor: 'white', // Default color, can be dynamically changed
+    borderColor: colors.white, // Default color, can be dynamically changed
     width: '90%',
     alignSelf: 'center',
   }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, TouchableOpacity, Text, View, Animated, Easing } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons'; // Import FontAwesome for Google icon
 import Svg, { Circle } from 'react-native-svg';
+import { colors } from '../stylevars';
 
 function QuizResults({ navigation, route }) {
   const [isMatching, setIsMatching] = useState(true);
@@ -48,7 +49,7 @@ function QuizResults({ navigation, route }) {
                 cx="50"
                 cy="50"
                 r="40"
-                stroke="#FFFFFF"
+                stroke={colors.white}
                 strokeWidth="5"
                 fill="none"
                 strokeDasharray="251.2"
@@ -60,12 +61,12 @@ function QuizResults({ navigation, route }) {
         </>
       ) : (
         <>
-          <Feather name="check-circle" size={100} color="white" />
+          <Feather name="check-circle" size={100} color={colors.white} />
           <Text style={styles.resultsText}>
             We have found {compatibleStudents} compatible students at {school}
           </Text>
           <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('MainPage')}>
-            <FontAwesome name="google" size={24} color="#333333" style={styles.googleIcon} /> 
+            <FontAwesome name="google" size={24} color={colors.dark_grey} style={styles.googleIcon} /> 
             <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.emailButton} onPress={() => navigation.navigate('PhoneNumberScreen', { school, answers })}>
@@ -80,13 +81,13 @@ function QuizResults({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3BF5B', // Yellow background
+    backgroundColor: colors.yellow, // Yellow background
     justifyContent: 'center',
     alignItems: 'center',
   },
   matchingText: {
     marginTop: 20,
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
   },
   resultsText: {
     marginTop: 20,
-    color: 'black',
+    color: colors.black,
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   },
   emailButton: {
     position: 'absolute',
-    backgroundColor: '#333333', // Dark grey buttons
+    backgroundColor: colors.dark_grey, // Dark grey buttons
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -114,14 +115,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emailButtonText: {
-    color: '#FFFFFF', // White text on the buttons
+    color: colors.white, // White text on the buttons
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   googleButton: {
     position: 'absolute',
-    backgroundColor: '#ffffff', // Dark grey buttons
+    backgroundColor: colors.white, // Dark grey buttons
     flexDirection: 'row', // To align the icon with the text
     justifyContent: 'center',
     alignItems: 'center',
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   googleButtonText: {
-    color: '#333333', // Dark grey text on the buttons
+    color: colors.dark_grey, // Dark grey text on the buttons
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

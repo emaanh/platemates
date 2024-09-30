@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Animated, Easing } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { colors } from '../stylevars';
 
 function PersonalityQuizScreen({ navigation, route }) {
   const { school } = route.params;
@@ -115,7 +116,7 @@ function PersonalityQuizScreen({ navigation, route }) {
                 key={index}
                 style={[
                   styles.answerButton,
-                  { borderColor: buttonBorderColors[currentQuestionIndex] === index ? 'red' : 'white' }
+                  { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.white }
                 ]}
                 onPress={() => handleOptionPress(index, 'multiple')}
                 activeOpacity={1}
@@ -130,14 +131,14 @@ function PersonalityQuizScreen({ navigation, route }) {
           <View style={styles.quizQuestion}>
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
             <View style={styles.ratingContainer}>
-              <Text style={{ fontFamily: 'Poppins_400Regular', color: 'white', fontSize: 15, marginTop: 20 }}>Strongly Disagree</Text>
+              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.white, fontSize: 15, marginTop: 20 }}>Strongly Disagree</Text>
               <View style={styles.buttonGrid}>
                 {[...Array(10)].map((_, index) => (
                   <TouchableOpacity
                     key={index}
                     style={[
                       styles.ratingButton,
-                      { borderColor: buttonBorderColors[currentQuestionIndex] === index ? 'red' : 'white' }
+                      { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.white }
                     ]}
                     onPress={() => handleOptionPress(index, 'rating')}
                     activeOpacity={1}
@@ -146,7 +147,7 @@ function PersonalityQuizScreen({ navigation, route }) {
                   </TouchableOpacity>
                 ))}
               </View>
-              <Text style={{ fontFamily: 'Poppins_400Regular', color: 'white', fontSize: 15, marginTop: -10, textAlign: 'right' }}>Strongly Agree</Text>
+              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.white, fontSize: 15, marginTop: -10, textAlign: 'right' }}>Strongly Agree</Text>
             </View>
           </View>
         );
@@ -158,7 +159,7 @@ function PersonalityQuizScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Feather name="arrow-left" size={30} color="#E83F10" />
+        <Feather name="arrow-left" size={30} color={colors.primary} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Personality</Text>
@@ -182,7 +183,7 @@ function PersonalityQuizScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
     paddingHorizontal: 20,
     paddingTop: 55,
   },
@@ -200,15 +201,15 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#333333',
+    backgroundColor: colors.dark_grey,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#a37b73',
+    backgroundColor: colors.progress_bar,
   },
   title: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   questionText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 24,
     marginBottom: 10,
     fontFamily: 'Poppins_400Regular',
@@ -239,12 +240,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'white', // Default color, can be dynamically changed
+    borderColor: colors.white, // Default color, can be dynamically changed
     width: '90%',
     alignSelf: 'center',
   },
   answerButtonText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
@@ -265,26 +266,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: 'white',
+    borderColor: colors.white,
     borderWidth: 1,
     marginBottom: 10,
     borderRadius: 8,
   },
   ratingButtonText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   ratingLabel: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 16,
     fontFamily: 'Poppins_400Regular',
     marginVertical: 5,
   },
   textInput: {
-    backgroundColor: '#333333',
-    color: '#FFFFFF',
+    backgroundColor: colors.dark_grey,
+    color: colors.white,
     padding: 15,
     borderRadius: 8,
     marginVertical: 10,

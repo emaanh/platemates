@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, Animated, Easing, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { colors } from '../stylevars';
 
 function PhoneNumber({ navigation, route }) {
   const { school, answers } = route.params;
@@ -45,7 +46,7 @@ function PhoneNumber({ navigation, route }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Feather name="arrow-left" size={30} color="#E83F10" />
+        <Feather name="arrow-left" size={30} color={colors.primary} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Phone Number</Text>
@@ -60,7 +61,7 @@ function PhoneNumber({ navigation, route }) {
         <TextInput
           style={styles.textInput}
           placeholder="Enter your phone number"
-          placeholderTextColor="#AAAAAA"
+          placeholderTextColor={colors.grey}
           keyboardType="phone-pad"
           value={phoneNumber}
           onChangeText={handlePhoneNumberChange}
@@ -78,7 +79,7 @@ function PhoneNumber({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
     paddingHorizontal: 20,
     paddingTop: 55,
   },
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   title: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -104,16 +105,16 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#333333',
+    backgroundColor: colors.dark_grey,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#a37b73',
+    backgroundColor: colors.progress_bar,
   },
   textInput: {
-    backgroundColor: '#333333',
-    color: '#FFFFFF',
+    backgroundColor: colors.dark_grey,
+    color: colors.white,
     padding: 15,
     borderRadius: 8,
     marginVertical: 10,
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   nextButton: {
-    backgroundColor: '#E83F10',
+    backgroundColor: colors.primary,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   nextButtonText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

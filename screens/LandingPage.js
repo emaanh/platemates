@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto'
-
+import { colors } from '../stylevars';
 
 function LandingPage({navigation}) {
   let [fontsLoaded] = useFonts({
@@ -32,12 +32,12 @@ function LandingPage({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 40,
     fontWeight: 'bold',
     fontFamily: 'Poppins_400Regular',
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     bottom: 150
   },
   getStartedButton: {
-    backgroundColor: '#FF0000',
+    backgroundColor: colors.primary,
     width: '90%',
     paddingVertical: 15,
     borderRadius: 8,
@@ -60,13 +60,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   getStartedText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   outlineButton: {
-    borderColor: '#FFFFFF',
+    borderColor: colors.white,
     borderWidth: 2,
     width: '90%',
     paddingVertical: 15,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   outlineButtonText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

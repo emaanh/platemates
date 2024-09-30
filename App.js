@@ -12,6 +12,8 @@ import QuizResults from './screens/QuizResults';
 import PhoneNumber from './screens/PhoneNumber';
 import EmailPassword from './screens/EmailPassword';
 import MainPage from './screens/MainPage';
+import { colors } from './stylevars';
+import QuotePage from './screens/QuotePage';
 
 
 const Stack = createStackNavigator();
@@ -25,7 +27,7 @@ function App() {
 
   if (!fontsLoaded) {
     return (
-      <ActivityIndicator size="large" color="black" />
+      <ActivityIndicator size="large" color={colors.black} />
     );
   }
 
@@ -40,6 +42,7 @@ function App() {
           <Stack.Screen name="PhoneNumberScreen" component={PhoneNumber} />
           <Stack.Screen name="EmailPasswordScreen" component={EmailPassword} />
           <Stack.Screen name="MainScreen" component={MainPage} />
+          <Stack.Screen name="QuoteScreen" component={QuotePage} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
