@@ -16,7 +16,7 @@ const Stack = createStackNavigator();
 
 function EventHub(){
   return (
-    <Stack.Navigator screenOptions={{ swipeEnabled: false, headerShown: false  }}>
+    <Stack.Navigator screenOptions={{ gestureEnabled: false, swipeEnabled: false, headerShown: false  }}>
       <Stack.Screen
         name="EventHome"
         component={EventHomeScreen}

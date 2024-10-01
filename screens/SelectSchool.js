@@ -6,8 +6,8 @@ import { colors } from '../stylevars';
 
 function SelectSchool({ navigation }) {
   const schools = [
-    "University of Southern, California",
-    "University of California, Berkeley",
+    ["University of Southern California",'USC'],
+    ["University of California, Berkeley", 'UC Berkeley'],
   ];
 
   return (
@@ -25,7 +25,7 @@ function SelectSchool({ navigation }) {
             style={styles.schoolButton}
             onPress={() => navigation.navigate('PersonalityQuizScreen', { school })}
           >
-            <Text style={styles.schoolButtonText}>{school}</Text>
+            <Text style={styles.schoolButtonText}>{school[0]}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

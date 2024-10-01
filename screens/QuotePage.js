@@ -7,8 +7,10 @@ import {
   Animated 
 } from 'react-native';
 import { colors } from '../stylevars'; // Ensure this contains the necessary color definitions
+import { AuthContext } from '../AuthProvider';
 
 function QuotePage({ navigation }) {
+
   const messages = [
     'Hello Emaan Heidari',
     '“The best way to predict the future is to create it.” – Peter Drucker',
@@ -17,8 +19,8 @@ function QuotePage({ navigation }) {
   ];
 
   const [currentStep, setCurrentStep] = useState(0);
+
   
-  // Animated values for message and button opacity
   const fadeAnim = useRef(new Animated.Value(0)).current; // Message starts invisible
   const buttonFadeAnim = useRef(new Animated.Value(0)).current; // Button starts invisible
 

@@ -20,6 +20,7 @@ function EmailPassword({ navigation, route }) {
     if (email && password && confirmPassword && password === confirmPassword) {
       setLoading(true); // Show loading indicator
       try {
+        console.log(school);
         const answersMap = new Map(Object.entries(answers));
         const answersObject = Object.fromEntries(answersMap);
 
@@ -31,6 +32,8 @@ function EmailPassword({ navigation, route }) {
           phone: phoneNumber,
           school: school,
           answers: answersObject,
+          shortSchool: school[1],
+          longSchool: school[0]
         });
 
         navigation.navigate('QuoteScreen');

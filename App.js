@@ -34,7 +34,7 @@ function App() {
   return (
     <AuthProvider>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ swipeEnabled: false, headerShown: false  }}>
+        <Stack.Navigator screenOptions={{ gestureEnabled: false, swipeEnabled: false, headerShown: false  }}>
           <Stack.Screen name="LandingScreen" component={LandingPage} />
           <Stack.Screen name="SelectSchoolScreen" component={SelectSchool} />
           <Stack.Screen name="PersonalityQuizScreen" component={PersonalityQuiz} />

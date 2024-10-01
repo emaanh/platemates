@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Modal, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
 import { colors } from '../../stylevars';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import PriceModal from './PriceModal'; 
+import { AuthContext } from '../../AuthProvider';
 
 
 function HomeScreen({ setUserInEvent }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [school, setSchool] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(true);
+
+  const { user, userData } = useContext(AuthContext);
+  console.log(userData);
 
 
   const openModal = () => {
@@ -21,21 +25,10 @@ function HomeScreen({ setUserInEvent }) {
     setIsModalVisible(false);
   };
 
-  let uid = 'o7k7K3yfJFVlxKxyedNZIdc4mcG2';
-
-  useEffect(() => {
-    (async () => {
-      const userSnap = await getDoc(doc(db, 'users', uid));
-      const userData = userSnap.data();
-      const schoolSnap = userData.shortSchool;
-      setSchool(schoolSnap);
-    })();
-  }, [uid]);
-
   return (
     <View style={styles.screenContainer}>
       {/* Description */}
-      <Text style={styles.title}>{school}</Text>
+      <Text style={styles.title}>UC Berkeley</Text>
       <Text style={styles.description}>Select the date for a dinner with 3 students selected by our algorithm</Text>
 
       {/* Date Buttons */}

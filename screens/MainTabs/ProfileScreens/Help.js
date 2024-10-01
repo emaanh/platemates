@@ -34,7 +34,7 @@ function Help({ navigation }) {
   };
 
   const openPhone = () => {
-    Linking.openURL('tel:+1234567890');
+    Linking.openURL('tel:+16504506083');
   };
 
   return (
@@ -71,7 +71,7 @@ function Help({ navigation }) {
         <View style={styles.contactItem}>
           <Feather name="phone" size={24} color="#E83F10" />
           <TouchableOpacity onPress={openPhone}>
-            <Text style={styles.contactText}>650-282-0663</Text>
+            <Text style={styles.contactText}>650-450-6083</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -7,6 +7,7 @@ import Help from './ProfileScreens/Help';
 import Bookings from './ProfileScreens/Bookings';
 import Settings from './ProfileScreens/Settings';
 import { colors } from '../../stylevars';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 const Stack = createStackNavigator();
@@ -59,13 +60,13 @@ function ProfilePage({navigation}) {
   return (
     <View style={styles.screenContainer}>
       {/* Profile Picture */}
-      <Image
-        source={{ uri: 'https://via.placeholder.com/150' }} // Replace with actual profile picture URL or local asset
-        style={styles.profileImage}
-      />
+      <View style={styles.profileIconContainer}>
+        <Icon name="user-circle" size={150} color="#ccc" />
+      </View>
+
 
       {/* Profile Name */}
-      <Text style={styles.profileName}>John Doe</Text>
+      <Text style={styles.profileName}>Emaan Heidari</Text>
       <TouchableOpacity style={{marginTop: -15,padding: 10, backgroundColor: colors.light_grey, borderRadius: 5}} onPress={handleEditProfile}>
         <Text style={{fontFamily: 'Poppins_400Regular', color: 'black', fontSize: 18}}>Edit Profile</Text>
       </TouchableOpacity>
@@ -97,7 +98,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.black,
     alignItems: 'center',
-    paddingTop: 50, // Adjust as needed
+    paddingTop: 0, // Adjust as needed
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileIconContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 75, // Makes the container a circle
+    backgroundColor: '#f0f0f0', // Background color for the circle
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    marginBottom: 15
   },
   profileImage: {
     width: 120,
@@ -120,7 +133,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    top: 150,
+    top: 110,
     flexDirection: 'row', // Align icon and text horizontally
     backgroundColor: 'transparent',
     paddingVertical: 25,
