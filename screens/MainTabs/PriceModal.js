@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 30,
-    color: colors.white,
+    color: colors.black,
     textAlign: 'center',
     fontWeight: 'bold',
     marginVertical: 20,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   descriptionTitle: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   singleTicketTitle: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   pricePerMonth: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'right',
@@ -235,13 +235,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.disabled,
   },
   buyButtonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   cancelText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 12,
     marginTop: 5,
     fontFamily: 'Poppins_400Regular',
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   closeButtonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 30,
   },
 });

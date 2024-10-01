@@ -32,12 +32,12 @@ function LandingPage({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 40,
     fontWeight: 'bold',
     fontFamily: 'Poppins_400Regular',
@@ -60,13 +60,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   getStartedText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   outlineButton: {
-    borderColor: colors.white,
+    borderColor: colors.black,
     borderWidth: 2,
     width: '90%',
     paddingVertical: 15,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   outlineButtonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

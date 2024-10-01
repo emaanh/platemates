@@ -27,7 +27,7 @@ function App() {
 
   if (!fontsLoaded) {
     return (
-      <ActivityIndicator size="large" color={colors.black} />
+      <ActivityIndicator size="large" color={colors.background} />
     );
   }
 

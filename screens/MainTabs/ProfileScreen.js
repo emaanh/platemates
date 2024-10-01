@@ -67,24 +67,24 @@ function ProfilePage({navigation}) {
 
       {/* Profile Name */}
       <Text style={styles.profileName}>Emaan Heidari</Text>
-      <TouchableOpacity style={{marginTop: -15,padding: 10, backgroundColor: colors.light_grey, borderRadius: 5}} onPress={handleEditProfile}>
-        <Text style={{fontFamily: 'Poppins_400Regular', color: 'black', fontSize: 18}}>Edit Profile</Text>
+      <TouchableOpacity style={{marginTop: -15,padding: 10, backgroundColor: colors.dark_grey, borderRadius: 5}} onPress={handleEditProfile}>
+        <Text style={{fontFamily: 'Poppins_400Regular', color: colors.white, fontSize: 18}}>Edit Profile</Text>
       </TouchableOpacity>
 
       {/* Buttons */}
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleFindBookings}>
-          <Feather name="book" size={20} color={colors.white} style={styles.buttonIcon} />
+          <Feather name="book" size={20} color={colors.black} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Find My Latest Bookings</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handleSettings}>
-          <Feather name="settings" size={20} color={colors.white} style={styles.buttonIcon} />
+          <Feather name="settings" size={20} color={colors.black} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Settings</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.button]} onPress={handleLogout}>
-          <Feather name="user" size={20} color={colors.white} style={styles.buttonIcon} />
+          <Feather name="user" size={20} color={colors.black} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Help Center</Text>
         </TouchableOpacity>
       </View>
@@ -96,7 +96,7 @@ function ProfilePage({navigation}) {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
     alignItems: 'center',
     paddingTop: 0, // Adjust as needed
     alignItems: 'center',
@@ -117,12 +117,12 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60, // Makes the image circular
     borderWidth: 2,
-    borderColor: colors.white,
+    borderColor: colors.black,
     marginBottom: 20,
     marginTop: 100
   },
   profileName: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
@@ -142,14 +142,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center', // Vertically center the content
     borderWidth: 1,
-    borderColor: colors.white,
+    borderColor: colors.black,
     width: '90%',
   },
   buttonIcon: {
     marginRight: 10, // Space between icon and text
   },
   buttonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 18,
   },
   logoutButton: {

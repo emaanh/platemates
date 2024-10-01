@@ -46,7 +46,7 @@ function PersonalityQuizScreen({ navigation, route }) {
   const fadeIn = () => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 10,
+      duration: 300,
       useNativeDriver: true,
       easing: Easing.in(Easing.ease),
     }).start();
@@ -116,7 +116,7 @@ function PersonalityQuizScreen({ navigation, route }) {
                 key={index}
                 style={[
                   styles.answerButton,
-                  { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.white }
+                  { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.black }
                 ]}
                 onPress={() => handleOptionPress(index, 'multiple')}
                 activeOpacity={1}
@@ -131,14 +131,14 @@ function PersonalityQuizScreen({ navigation, route }) {
           <View style={styles.quizQuestion}>
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
             <View style={styles.ratingContainer}>
-              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.white, fontSize: 15, marginTop: 20 }}>Strongly Disagree</Text>
+              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.black, fontSize: 15, marginTop: 20 }}>Not At All</Text>
               <View style={styles.buttonGrid}>
                 {[...Array(10)].map((_, index) => (
                   <TouchableOpacity
                     key={index}
                     style={[
                       styles.ratingButton,
-                      { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.white }
+                      { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.black }
                     ]}
                     onPress={() => handleOptionPress(index, 'rating')}
                     activeOpacity={1}
@@ -147,7 +147,7 @@ function PersonalityQuizScreen({ navigation, route }) {
                   </TouchableOpacity>
                 ))}
               </View>
-              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.white, fontSize: 15, marginTop: -10, textAlign: 'right' }}>Strongly Agree</Text>
+              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.black, fontSize: 15, marginTop: -10, textAlign: 'right' }}>Very Much</Text>
             </View>
           </View>
         );
@@ -183,7 +183,7 @@ function PersonalityQuizScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
     paddingTop: 55,
   },
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.progress_bar,
   },
   title: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   questionText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 24,
     marginBottom: 10,
     fontFamily: 'Poppins_400Regular',
@@ -240,12 +240,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.white, // Default color, can be dynamically changed
+    borderColor: colors.black, // Default color, can be dynamically changed
     width: '90%',
     alignSelf: 'center',
   },
   answerButtonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
@@ -266,26 +266,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: colors.white,
+    borderColor: colors.black,
     borderWidth: 1,
     marginBottom: 10,
     borderRadius: 8,
   },
   ratingButtonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   ratingLabel: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 16,
     fontFamily: 'Poppins_400Regular',
     marginVertical: 5,
   },
   textInput: {
     backgroundColor: colors.dark_grey,
-    color: colors.white,
+    color: colors.black,
     padding: 15,
     borderRadius: 8,
     marginVertical: 10,

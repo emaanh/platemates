@@ -29,7 +29,7 @@ function IcebreakerScreen({ navigation }) {
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Feather name="arrow-left" size={30} color={colors.white} />
+        <Feather name="arrow-left" size={30} color={colors.black} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Icebreaker</Text>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   title: {
     position: 'absolute',
     alignSelf: 'center',
-    color: colors.white,
+    color: colors.black,
     fontSize: 24, // Changed from string to number
     fontFamily: 'Poppins_700Bold',
     top: 55,
@@ -127,14 +127,14 @@ const styles = StyleSheet.create({
     flex: 0.75,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: colors.white,
+    borderColor: colors.black,
     backgroundColor: colors.ice,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   cardText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 35,
     textAlign: 'center',
     fontFamily: 'Poppins_400Regular',

@@ -41,47 +41,55 @@ function EventHomeScreen({navigation}) {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Icebreaker Game as a Pressable Button */}
-        <TouchableOpacity style={[styles.bubble, {backgroundColor: colors.ice, borderColor: colors.white,}]} onPress={handleIcebreakerPress}>
+        <TouchableOpacity style={[styles.bubble, {backgroundColor: colors.ice, borderColor: colors.black,}]} onPress={handleIcebreakerPress}>
           <View style={styles.titleContainer}>
             <Text style={styles.titleText}>Icebreaker Game</Text>
-            <Icon name="arrow-forward" size={24} color={colors.white} style={styles.arrowIcon} />
+            <Icon name="arrow-forward" size={24} color={colors.black} style={styles.arrowIcon} />
           </View>
         </TouchableOpacity>
 
         {/* Existing Content */}
         <View style={[styles.bubble, { backgroundColor: colors.primary, borderWidth: 0 }]}>
-          <Text style={[styles.bubbleText, { color: colors.black }]}>Your seat is confirmed</Text>
+          <Text style={[styles.bubbleText, { color: colors.background }]}>Your seat is confirmed</Text>
 
           <View style={styles.dateTimeContainer}>
-            <Icon name="calendar-today" size={20} color={colors.black} style={styles.icon} />
-            <Text style={[styles.dateTimeText, { color: colors.black }]}>
+            <Icon name="calendar-today" size={20} color={colors.background} style={styles.icon} />
+            <Text style={[styles.dateTimeText, { color: colors.background }]}>
               Wednesday, October 9, 7:00 PM
             </Text>
           </View>
 
-          <View style={[styles.separator, { backgroundColor: colors.black }]} />
+          <View style={[styles.separator, { backgroundColor: colors.background }]} />
 
           <View style={styles.locationContainer}>
-            <Icon name="location-on" size={20} color={colors.black} style={styles.icon} />
-            <Text style={[styles.locationText, { color: colors.black }]}>UC Berkeley</Text>
+            <Icon name="location-on" size={20} color={colors.background} style={styles.icon} />
+            <Text style={[styles.locationText, { color: colors.background }]}>UC Berkeley</Text>
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={[styles.button, { borderColor: colors.black, borderWidth: 1 }]}>
-              <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.black  }]}>
-                I will be late
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, { borderColor: colors.black, borderWidth: 1 }]}>
-              <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.black}]}>
-                Reschedule
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, { borderColor: colors.black, borderWidth: 1 }]}>
-              <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.black }]}>
-                Cancel
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.shadowContainer}>
+              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary, borderColor: colors.background, borderWidth: 1 }]}>
+                <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.background  }]}>
+                  I will be late
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.shadowContainer}>
+              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary, borderColor: colors.background, borderWidth: 1 }]}>
+                <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.background}]}>
+                  Reschedule
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.shadowContainer}>
+              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary, borderColor: colors.background, borderWidth: 1 }]}>
+                <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.background }]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -139,12 +147,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
   },
   header: {
     fontSize: 28,
     fontWeight: '700',
-    color: colors.white,
+    color: colors.black,
     marginVertical: 10,
     alignSelf: 'center',
     fontFamily: 'Poppins_700Bold',
@@ -154,7 +162,7 @@ const styles = StyleSheet.create({
   },
   bubble: {
     borderWidth: 2,
-    borderColor: colors.white,
+    borderColor: colors.black,
     borderRadius: 15,
     paddingVertical: 20,
     paddingHorizontal: 15,
@@ -163,7 +171,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   bubbleText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 10,
@@ -176,7 +184,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   dateTimeText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 16,
     marginLeft: 5,
     fontFamily: 'Poppins_400Regular',
@@ -187,7 +195,7 @@ const styles = StyleSheet.create({
   separator: {
     width: '99%',
     height: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.black,
     marginVertical: 15,
     alignSelf: 'center',
   },
@@ -198,7 +206,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   locationText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 18,
     marginLeft: 5,
     fontFamily: 'Poppins_400Regular',
@@ -213,17 +221,28 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 5,
     borderWidth: 2,
-    borderColor: colors.white,
+    borderColor: colors.black,
     alignItems: 'center',
   },
   buttonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 16,
     fontWeight: '600',
     fontFamily: 'Poppins_400Regular',
   },
+  shadowContainer: {
+    borderRadius: 10,
+    padding: 2,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.10,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
   bubbleHeader: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 16,
     fontWeight: '600',
     marginTop: 10,
@@ -238,7 +257,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', // Ensure space between title and arrow
   },
   titleText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 22,
     marginLeft: 5,
     fontFamily: 'Poppins_700Bold',

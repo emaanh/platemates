@@ -13,20 +13,22 @@ function SelectSchool({ navigation }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Feather name="arrow-left" size={30} color={colors.white} />
+        <Feather name="arrow-left" size={30} color={colors.black} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Where would you like to have your dinners?</Text>
 
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {schools.map((school, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.schoolButton}
-            onPress={() => navigation.navigate('PersonalityQuizScreen', { school })}
-          >
-            <Text style={styles.schoolButtonText}>{school[0]}</Text>
-          </TouchableOpacity>
+          <View style={styles.shadowContainer}>
+            <TouchableOpacity
+              key={index}
+              style={styles.schoolButton}
+              onPress={() => navigation.navigate('PersonalityQuizScreen', { school })}
+            >
+              <Text style={styles.schoolButtonText}>{school[0]}</Text>
+            </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
     </View>
@@ -36,7 +38,7 @@ function SelectSchool({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black, // Black background
+    backgroundColor: colors.background, // Black background
     paddingHorizontal: 20,
     paddingTop: 90,
   },
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
     zIndex: 1, // Ensure the button stays on top
   },
   title: {
-    color: colors.white, // White text for the title
+    color: colors.black, // White text for the title
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -60,15 +62,28 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   schoolButton: {
-    backgroundColor: colors.dark_grey, // Dark grey buttons
+    backgroundColor: colors.background, // Dark grey buttons
+    borderColor: colors.dark_grey,
+    borderWidth: 1,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
     marginVertical: 10, // Space between buttons
     alignItems: 'center',
   },
+  shadowContainer: {
+    borderRadius: 8,
+    padding: 2,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 15},
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+
+    elevation: 5,
+  },
   schoolButtonText: {
-    color: colors.white, // White text on the buttons
+    color: colors.black, // White text on the buttons
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

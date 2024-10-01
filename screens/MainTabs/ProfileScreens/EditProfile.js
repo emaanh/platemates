@@ -4,6 +4,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
+
 function EditProfile({ navigation }) {
   // State hooks for handling input values (optional)
   const [fullName, setFullName] = useState('');
@@ -180,11 +181,11 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#1c1c1c',
-    color: 'white',
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 5,
     fontSize: 16,
+    color: 'white',
   },
   textArea: {
     height: 100,

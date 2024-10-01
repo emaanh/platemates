@@ -22,7 +22,7 @@ function NotificationsScreen() {
   // Render when the FlatList is empty
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Feather name="bell" size={50} color={colors.white} />
+      <Feather name="bell" size={50} color={colors.black} />
       <Text style={styles.emptyText}>No Notifications</Text>
     </View>
   );
@@ -52,23 +52,23 @@ function NotificationsScreen() {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: colors.black, // Black background
+    backgroundColor: colors.background, // Black background
   },
   header: {
     paddingTop: 70, // Adjust for status bar height
     paddingBottom: 10,
     alignItems: 'center',
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
   },
   headerTitle: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold'
   },
   divider: {
     height: 1, // Thin line
-    backgroundColor: colors.white,
+    backgroundColor: colors.black,
     marginHorizontal: 20,
   },
   button: {
@@ -79,12 +79,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'flex-start', // Align text to the left
     borderWidth: 1,
-    borderColor: colors.white, // White border
+    borderColor: colors.black, // White border
     width: '90%',
     alignSelf: 'center',
   },
   notificationText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 18,
   },
   emptyContainer: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingTop: 50, // Space from the top
   },
   emptyText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
     marginTop: 10,
   },

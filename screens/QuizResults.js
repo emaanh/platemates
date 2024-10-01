@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, Animated, Easing } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View, Animated, Easing, Image } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons'; // Import FontAwesome for Google icon
 import Svg, { Circle } from 'react-native-svg';
 import { colors } from '../stylevars';
@@ -49,7 +49,7 @@ function QuizResults({ navigation, route }) {
                 cx="50"
                 cy="50"
                 r="40"
-                stroke={colors.white}
+                stroke={colors.black}
                 strokeWidth="5"
                 fill="none"
                 strokeDasharray="251.2"
@@ -61,12 +61,12 @@ function QuizResults({ navigation, route }) {
         </>
       ) : (
         <>
-          <Feather name="check-circle" size={100} color={colors.white} />
+          <Feather name="check-circle" size={100} color={colors.black} />
           <Text style={styles.resultsText}>
-            We have found {compatibleStudents} compatible students at {school}
+            We have found {compatibleStudents} compatible students at the {school}
           </Text>
-          <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('MainPage')}>
-            <FontAwesome name="google" size={24} color={colors.dark_grey} style={styles.googleIcon} /> 
+          <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('MainPage')}> 
+            <Image source={require('../assets/Images/Google.png')} style={styles.googleIcon} />
             <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.emailButton} onPress={() => navigation.navigate('PhoneNumberScreen', { school, answers })}>
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   matchingText: {
     marginTop: 20,
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   resultsText: {
     marginTop: 20,
-    color: colors.black,
+    color: colors.background,
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   googleButton: {
     position: 'absolute',
-    backgroundColor: colors.white, // Dark grey buttons
+    backgroundColor: colors.black, // Dark grey buttons
     flexDirection: 'row', // To align the icon with the text
     justifyContent: 'center',
     alignItems: 'center',
@@ -135,13 +135,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   googleButtonText: {
-    color: colors.dark_grey, // Dark grey text on the buttons
+    color: colors.white,
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
     marginLeft: 10, // Add some space between the icon and the text
   },
   googleIcon: {
+    height: 20,
+    width: 20,
     marginRight: 2.5, // Add space between icon and text
   },
 });

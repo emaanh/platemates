@@ -22,7 +22,7 @@ function MainPage() {
         headerShown: false, // Remove the header
         tabBarIcon: ({ focused }) => {
           let iconName;
-          const icon_color = focused ? colors.primary : colors.white;
+          const icon_color = focused ? colors.primary : colors.black;
 
           switch (route.name) {
             case 'Home':
@@ -41,7 +41,7 @@ function MainPage() {
           return <Feather name={iconName} size={30} color={icon_color} />;
         },
         tabBarStyle: {
-          backgroundColor: colors.black, // Set tab bar background to black
+          backgroundColor: colors.background, // Set tab bar background to black
           borderTopWidth: 0,
         },
         tabBarActiveTintColor: colors.primary,
@@ -69,10 +69,10 @@ const styles = StyleSheet.create({
     flex: 1, // Ensure the screen takes up the full space
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.black, // Set screen background to black
+    backgroundColor: colors.background, // Set screen background to black
   },
   screenText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
   },
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'left',
     borderWidth: 1,
-    borderColor: colors.white, // Default color, can be dynamically changed
+    borderColor: colors.black, // Default color, can be dynamically changed
     width: '90%',
     alignSelf: 'center',
   }

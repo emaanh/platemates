@@ -43,7 +43,7 @@ function QuotePage({ navigation }) {
         duration: 500, // Duration of the fade-in
         useNativeDriver: true,
       }).start();
-    }, 3000); // 3-second delay
+    }, 1000); // 1-second delay
 
     // Cleanup the timer when the component unmounts or before the next effect runs
     return () => clearTimeout(timer);
@@ -98,7 +98,7 @@ function QuotePage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black, // Background color
+    backgroundColor: colors.background, // Background color
     paddingHorizontal: 20,
     paddingTop: 55,
     justifyContent: 'center', // Center content vertically
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   messageText: {
-    color: colors.white, // Text color
+    color: colors.black, // Text color
     fontSize: 24,
     textAlign: 'center',
     paddingHorizontal: 10,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Center the text horizontally
   },
   buttonText: {
-    color: colors.black, // Text color
+    color: colors.background, // Text color
     fontSize: 20,
     fontWeight: 'bold',
   },

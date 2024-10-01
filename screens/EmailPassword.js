@@ -94,7 +94,7 @@ function EmailPassword({ navigation, route }) {
 
       <TouchableOpacity style={styles.nextButton} onPress={handleSubmit} disabled={loading}>
         {loading ? (
-          <ActivityIndicator size="large" color={colors.white} />
+          <ActivityIndicator size="large" color={colors.black} />
         ) : (
           <Text style={styles.nextButtonText}>Submit</Text>
         )}
@@ -106,7 +106,7 @@ function EmailPassword({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
     paddingTop: 55,
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   title: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   nextButtonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

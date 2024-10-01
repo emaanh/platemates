@@ -81,12 +81,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
   },
   title: {
     fontWeight: 'bold',
     fontSize: 24, // Adjust this size as needed
-    color: colors.white,
+    color: colors.black,
     marginBottom: 10,
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold'
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.white,
+    borderColor: colors.black,
     width: '90%',
     alignSelf: 'center',
     marginVertical: 10,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
 
   modalContainer: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
   },
   closeButton: {
     position: 'absolute',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   closeButtonText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 30,
   },
   modalContent: {
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalTitle: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
