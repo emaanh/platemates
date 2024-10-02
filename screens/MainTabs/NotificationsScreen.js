@@ -64,11 +64,13 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 20,
     fontWeight: 'bold',
-    fontFamily: 'Poppins_700Bold'
+    fontFamily: 'LibreBaskerville_700Bold',
   },
   divider: {
-    height: 1, // Thin line
-    backgroundColor: colors.black,
+    height: 0.5, // Thin line
+    width: '110%',
+    alignSelf: 'center',
+    backgroundColor: colors.grey,
     marginHorizontal: 20,
   },
   button: {

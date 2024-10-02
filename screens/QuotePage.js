@@ -113,7 +113,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     paddingHorizontal: 10,
-    marginBottom: 90
+    marginBottom: 90,
+    fontFamily: 'LibreBaskerville_400Regular',
   },
   nextButtonContainer: {
     position: 'absolute',
@@ -123,17 +124,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   nextButton: {
-    backgroundColor: colors.primary, // Button background color (orange)
+    //backgroundColor: colors.primary, // Button background color (orange)
     paddingVertical: 12.5,
     paddingHorizontal: 30,
     borderRadius: 15,
+    borderWidth: 2,
+    borderColor: colors.black,
     width: '100%', // Make the button take the full width of the container
     alignItems: 'center', // Center the text horizontally
   },
   buttonText: {
-    color: colors.background, // Text color
+    color: colors.black, // Text color
     fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'LibreBaskerville_700Bold',
   },
 });
 

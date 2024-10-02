@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: colors.black,
     fontSize: 24, // Changed from string to number
-    fontFamily: 'Poppins_700Bold',
+    fontFamily: 'LibreBaskerville_700Bold',
     top: 55,
   },
   swiperContainer: {
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 35,
     textAlign: 'center',
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: "LibreBaskerville_400Regular",
   },
 });
 

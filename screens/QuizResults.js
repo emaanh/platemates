@@ -61,7 +61,7 @@ function QuizResults({ navigation, route }) {
         </>
       ) : (
         <>
-          <Feather name="check-circle" size={100} color={colors.black} />
+          <Feather name="check-circle" size={100} color={colors.background} />
           <Text style={styles.resultsText}>
             We have found {compatibleStudents} compatible students at the {school}
           </Text>
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
-    fontFamily: 'Poppins_700Bold',
+    fontFamily: 'Poppins_700Bold',//'LibreBaskerville_700Bold',
     width: '90%',
   },
   emailButton: {

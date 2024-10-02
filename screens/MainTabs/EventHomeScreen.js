@@ -39,6 +39,8 @@ function EventHomeScreen({navigation}) {
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Dinner Scheduled</Text>
 
+      <View style={styles.divider} />
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Icebreaker Game as a Pressable Button */}
         <TouchableOpacity style={[styles.bubbleIceBreaker, {backgroundColor: colors.ice, borderColor: colors.black,}]} onPress={handleIcebreakerPress}>
@@ -244,7 +246,7 @@ const styles = StyleSheet.create({
 
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.10,
+    shadowOpacity: 0.05,
     shadowRadius: 3.84,
 
     elevation: 5,
@@ -272,6 +274,13 @@ const styles = StyleSheet.create({
   },
   arrowIcon: {
     marginRight: 5,
+  },
+  divider: {
+    height: 0.5, // Thin line
+    width: '110%',
+    alignSelf: 'center',
+    backgroundColor: colors.grey,
+    marginHorizontal: 20,
   },
 });
 
