@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -10,10 +10,13 @@ import { colors } from '../stylevars'; // Ensure this contains the necessary col
 import { AuthContext } from '../AuthProvider';
 
 function QuotePage({ navigation }) {
+  const { user, userData } = useContext(AuthContext);
+  if(user === null){
+    return;
+  }
 
   const messages = [
-    'Hello Emaan Heidari',
-    '“The best way to predict the future is to create it.” – Peter Drucker',
+    'Hello ' + userData.fullName,
     '“Life is 10% what happens to us and 90% how we react to it.” – Charles R. Swindoll',
     '“Your time is limited, so don’t waste it living someone else’s life.” – Steve Jobs'
   ];

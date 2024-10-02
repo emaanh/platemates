@@ -2,11 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Animated, Easing } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { colors } from '../stylevars';
+import { AuthContext } from '../AuthProvider';
 
 function PersonalityQuizScreen({ navigation, route }) {
   const { school } = route.params;
 
   const questions = [
+    { type: 'multiple', question: "What grade are you in?", options: ['Freshman','Sophmore','Junior','Senior','Graduate'] },
+    { type: 'multiple', question: "What is your gender?", options: ['Male', 'Female', 'Other'] },
     { type: 'multiple', question: "What's your favorite color?", options: ['Red', 'Blue', 'Green'] },
     { type: 'multiple', question: "What is your favorite season?", options: ['Winter', 'Spring', 'Summer', 'Fall'] },
     { type: 'multiple', question: "Which animal do you like the most?", options: ['Dog', 'Cat', 'Bird', 'Fish'] },
@@ -16,7 +19,7 @@ function PersonalityQuizScreen({ navigation, route }) {
     { type: 'rating', question: "How organized do you consider yourself?", min: 1, max: 10 },
     { type: 'rating', question: "How much do you like taking risks?", min: 1, max: 10 },
     { type: 'rating', question: "How comfortable are you speaking in public?", min: 1, max: 10 },
-    { type: 'rating', question: "How much do you enjoy working in a team?", min: 1, max: 10 }
+    { type: 'rating', question: "How much do you enjoy working in a team?", min: 1, max: 10 },
   ];
 
   const [progress, setProgress] = useState(0);
@@ -113,7 +116,7 @@ function PersonalityQuizScreen({ navigation, route }) {
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
             {currentQuestion.options.map((option, index) => (
               <TouchableOpacity
-                key={index}
+                key={option}
                 style={[
                   styles.answerButton,
                   { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.black }

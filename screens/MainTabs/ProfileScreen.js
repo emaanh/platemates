@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext,useState } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,11 +8,18 @@ import Bookings from './ProfileScreens/Bookings';
 import Settings from './ProfileScreens/Settings';
 import { colors } from '../../stylevars';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import EditPersonalityQuestion from './ProfileScreens/EditPersonalityQuestion';
+import EditField from './ProfileScreens/EditField';
+import { AuthContext } from '../../AuthProvider';
+import EULAScreen from './ProfileScreens/EULAScreen';
+import TermsAndConditionsScreen from './ProfileScreens/TermsAndConditionsScreen';
+
 
 
 const Stack = createStackNavigator();
 
 function ProfileScreen() {
+  const { userData, user } = useContext(AuthContext);
 
   return (
     <Stack.Navigator screenOptions={{ swipeEnabled: false, headerShown: false  }}>
@@ -36,11 +43,29 @@ function ProfileScreen() {
         name="EditProfile"
         component={EditProfile}
       />
+      <Stack.Screen
+        name="EditPersonalityQuestion"
+        component={EditPersonalityQuestion}
+      />
+      <Stack.Screen
+        name="EditField"
+        component={EditField}
+      />
+      <Stack.Screen
+        name="TermsAndConditions"
+        component={TermsAndConditionsScreen}
+      />
+      <Stack.Screen
+        name="EULA"
+        component={EULAScreen}
+      />
     </Stack.Navigator>
   );
 }
 
 function ProfilePage({navigation}) {
+  const { userData } = useContext(AuthContext);
+
   const handleFindBookings = () => {
     navigation.navigate('Bookings');
   };
@@ -66,9 +91,9 @@ function ProfilePage({navigation}) {
 
 
       {/* Profile Name */}
-      <Text style={styles.profileName}>Emaan Heidari</Text>
-      <TouchableOpacity style={{marginTop: -15,padding: 10, backgroundColor: colors.dark_grey, borderRadius: 5}} onPress={handleEditProfile}>
-        <Text style={{fontFamily: 'Poppins_400Regular', color: colors.white, fontSize: 18}}>Edit Profile</Text>
+      <Text style={styles.profileName}>{userData.fullName}</Text>
+      <TouchableOpacity style={{marginTop: -15,padding: 10, backgroundColor: colors.light_grey, borderRadius: 5}} onPress={handleEditProfile}>
+        <Text style={{fontFamily: 'Poppins_400Regular', color: 'black', fontSize: 18}}>Edit Profile</Text>
       </TouchableOpacity>
 
       {/* Buttons */}

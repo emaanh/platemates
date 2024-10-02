@@ -1,24 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Text,
   View,
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Image,
+  ActivityIndicator,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import { AuthContext } from '../../../AuthProvider';
+import { db } from '../../../firebase/firebase-config';
+import {
+  collection,
+  query,
+  onSnapshot,
+  orderBy,
+} from 'firebase/firestore';
 
 function Bookings({ navigation }) {
-  // Sample data for bookings
-  const [bookings, setBookings] = useState([
-    {
-      id: '1',
-      date: '2024-10-15',
-      time: '7:00 PM',
-      location: 'The Grand Dinner Hall',
-    },
-  ]);
+  const { user } = useContext(AuthContext);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
+
+  useEffect(() => {
+    let unsubscribe;
+
+    if (user && user.uid) {
+      const eventsRef = collection(db, 'users', user.uid, 'events');
+
+      // Create a query to order events by timestamp
+      const eventsQuery = query(eventsRef, orderBy('timestamp', 'desc'));
+
+      // Set up real-time listener
+      unsubscribe = onSnapshot(
+        eventsQuery,
+        (querySnapshot) => {
+          const bookingsList = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const timestamp = data.timestamp;
+
+            // Convert Firestore Timestamp to JavaScript Date object
+            const date = timestamp.toDate();
+
+            // Format date to 'yyyy-mm-dd' and time to 'HH:MM AM/PM'
+            const formattedDate = date.toISOString().split('T')[0];
+            const options = { hour: 'numeric', minute: 'numeric', hour12: true };
+            const formattedTime = date.toLocaleTimeString('en-US', options);
+
+            bookingsList.push({
+              id: doc.id,
+              date: formattedDate,
+              time: formattedTime,
+              location: data.title || 'No location specified',
+            });
+          });
+          setBookings(bookingsList);
+          setLoading(false); // Data loaded
+        },
+        (error) => {
+          console.error('Error fetching bookings:', error);
+          setLoading(false); // Stop loading on error
+        }
+      );
+    } else {
+      setLoading(false); // Stop loading if user is not available
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user]);
 
   const renderBookingItem = ({ item }) => (
     <View style={styles.bookingItem}>
@@ -30,6 +85,16 @@ function Bookings({ navigation }) {
       </View>
     </View>
   );
+
+  if (loading) {
+    // Show loading indicator
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#E83F10" />
+        <Text style={styles.loadingText}>Loading bookings...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.screenContainer}>
@@ -58,7 +123,10 @@ function Bookings({ navigation }) {
           <Text style={styles.emptyText}>No Dinner Yet</Text>
           <TouchableOpacity
             style={styles.bookButton}
-            onPress={() => navigation.navigate('BookingScreen')} // Replace with your booking screen route
+            onPress={() => {
+              navigation.navigate('BookingScreen');
+              
+            }}
           >
             <Text style={styles.bookButtonText}>Book my Seat</Text>
           </TouchableOpacity>
@@ -88,7 +156,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 24,
     fontWeight: 'bold',
-    fontFamily: 'Poppins_700Bold'
+    fontFamily: 'Poppins_700Bold',
   },
   listContainer: {
     paddingHorizontal: 20,
@@ -102,26 +170,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 8,
   },
-  bookingDetails: {
-  },
+  bookingDetails: {},
   bookingDate: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 15,
-    fontFamily: 'Poppins_400Regular'
+    fontFamily: 'Poppins_400Regular',
   },
   bookingTime: {
     color: '#cccccc',
     fontSize: 14,
     marginLeft: 15,
-    fontFamily: 'Poppins_400Regular'
+    fontFamily: 'Poppins_400Regular',
   },
   bookingLocation: {
     color: '#cccccc',
     fontSize: 14,
     marginLeft: 15,
-    fontFamily: 'Poppins_400Regular'
+    fontFamily: 'Poppins_400Regular',
   },
   emptyContainer: {
     flex: 1,
@@ -144,6 +211,17 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#E83F10',
+    fontSize: 16,
+    marginTop: 10,
   },
 });
 
