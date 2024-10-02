@@ -14,6 +14,7 @@ import EmailPassword from './screens/EmailPassword';
 import MainPage from './screens/MainPage';
 import { colors } from './stylevars';
 import QuotePage from './screens/QuotePage';
+import LoginScreen from './screens/LoginScreen';
 
 
 const Stack = createStackNavigator();
@@ -43,6 +44,7 @@ function App() {
           <Stack.Screen name="EmailPasswordScreen" component={EmailPassword} />
           <Stack.Screen name="MainScreen" component={MainPage} />
           <Stack.Screen name="QuoteScreen" component={QuotePage} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

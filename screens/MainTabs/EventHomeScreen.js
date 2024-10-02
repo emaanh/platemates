@@ -41,7 +41,7 @@ function EventHomeScreen({navigation}) {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Icebreaker Game as a Pressable Button */}
-        <TouchableOpacity style={[styles.bubble, {backgroundColor: colors.ice, borderColor: colors.black,}]} onPress={handleIcebreakerPress}>
+        <TouchableOpacity style={[styles.bubbleIceBreaker, {backgroundColor: colors.ice, borderColor: colors.black,}]} onPress={handleIcebreakerPress}>
           <View style={styles.titleContainer}>
             <Text style={styles.titleText}>Icebreaker Game</Text>
             <Icon name="arrow-forward" size={24} color={colors.black} style={styles.arrowIcon} />
@@ -163,6 +163,14 @@ const styles = StyleSheet.create({
   bubble: {
     borderWidth: 2,
     borderColor: colors.black,
+    borderRadius: 15,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    marginVertical: 10,
+    backgroundColor: 'transparent',
+    marginHorizontal: 10,
+  },
+  bubbleIceBreaker: {
     borderRadius: 15,
     paddingVertical: 20,
     paddingHorizontal: 15,
