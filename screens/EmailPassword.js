@@ -1,26 +1,39 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { db, authentication } from '../firebase/firebase-config';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { colors } from '../stylevars';
-
 
 function EmailPassword({ navigation, route }) {
 
   const { phoneNumber, school, answers } = route.params;
+  
+  // 1. Add state for full name
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false); // Loading state
   const progress = 0.90;
 
   const handleSubmit = async () => {
+    // 4. Update validation to include full name
+    const emailDomain = email.trim().split('@')[1];
+    if (emailDomain !== school[2]) {
+      Alert.alert('Validation Error', 'Your email needs to be the domain: ' + school[2]);
+      return;
+    }
+
+    if (fullName.trim() === '') {
+      Alert.alert('Validation Error', 'Please enter your full name.');
+      return;
+    }
+
     if (email && password && confirmPassword && password === confirmPassword) {
       setLoading(true); // Show loading indicator
       try {
-        console.log(school);
         const answersMap = new Map(Object.entries(answers));
         const answersObject = Object.fromEntries(answersMap);
 
@@ -28,23 +41,35 @@ function EmailPassword({ navigation, route }) {
         const uid = userCredential.user.uid;
 
         await setDoc(doc(db, 'users', uid), {
-          email: email,
+          fullName: fullName.trim(), // 3. Include full name in Firestore
+          email: email.trim(),
           phone: phoneNumber,
-          school: school,
           answers: answersObject,
           shortSchool: school[1],
-          longSchool: school[0]
+          longSchool: school[0],
+          receiveSMS: true,
+          receiveNotifications: true,
+        });
+
+        await addDoc(collection(db, 'users', uid, 'notifications'), {
+          timestamp: serverTimestamp(),
+          message: 'Important Notifications Shown Here!'
+        });
+
+        await addDoc(collection(db, 'users', uid, 'events'), {
+          timestamp: serverTimestamp(),
+          title: 'Dinners Shown Here'
         });
 
         navigation.navigate('QuoteScreen');
 
       } catch (error) {
-        alert(`Error: ${error.message}`);
+        Alert.alert('Error', error.message);
       } finally {
         setLoading(false); // Hide loading indicator
       }
     } else {
-      alert('Please make sure all fields are filled and passwords match');
+      Alert.alert('Validation Error', 'Please make sure all fields are filled and passwords match.');
     }
   };
 
@@ -62,6 +87,17 @@ function EmailPassword({ navigation, route }) {
         </View>
       </View>
 
+      {/* 2. Add Full Name TextInput at the top */}
+      <TextInput
+        style={styles.textInput}
+        placeholder="Enter your full name"
+        placeholderTextColor={colors.grey}
+        value={fullName}
+        onChangeText={setFullName}
+        autoCapitalize="words"
+        returnKeyType="next"
+      />
+
       <TextInput
         style={styles.textInput}
         placeholder="Enter your email"
@@ -70,6 +106,7 @@ function EmailPassword({ navigation, route }) {
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
+        returnKeyType="next"
       />
 
       <TextInput
@@ -80,6 +117,7 @@ function EmailPassword({ navigation, route }) {
         value={password}
         onChangeText={setPassword}
         autoCapitalize="none"
+        returnKeyType="next"
       />
 
       <TextInput
@@ -90,6 +128,7 @@ function EmailPassword({ navigation, route }) {
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         autoCapitalize="none"
+        returnKeyType="done"
       />
 
       <TouchableOpacity style={styles.nextButton} onPress={handleSubmit} disabled={loading}>

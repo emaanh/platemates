@@ -1,21 +1,65 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Text, View, StyleSheet, FlatList } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { colors } from '../../stylevars';
+import { AuthContext } from '../../AuthProvider';
+import { db } from '../../firebase/firebase-config';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 function NotificationsScreen() {
+  const { user, userData } = useContext(AuthContext);
+  const [notifications, setNotifications] = useState([]);
 
-  const [notifications, setNotifications] = useState([
-    // { id: '1', title: 'Your order has been shipped!' },
-    // { id: '2', title: 'New message from John Doe' },
-    // { id: '3', title: 'Your password was changed successfully' },
-  ]);
+  useEffect(() => {
+    let unsubscribe;
+
+    if (user && user.uid) {
+      const notificationsRef = collection(db, 'users', user.uid, 'notifications');
+
+      // Create a query that orders notifications by timestamp in descending order
+      const notificationsQuery = query(
+        notificationsRef,
+        orderBy('timestamp', 'desc') // Make sure 'timestamp' is the correct field name
+      );
+
+      // Set up real-time listener
+      unsubscribe = onSnapshot(
+        notificationsQuery,
+        (querySnapshot) => {
+          const notificationsList = [];
+          querySnapshot.forEach((doc) => {
+            notificationsList.push({
+              id: doc.id,
+              title: doc.get('message'),
+              timestamp: doc.get('timestamp'),
+            });
+          });
+          setNotifications(notificationsList);
+        },
+        (error) => {
+          console.error('Error fetching notifications:', error);
+        }
+      );
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user]);
 
   // Render each notification item
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.button}>
       <Text style={styles.notificationText}>{item.title}</Text>
+      {/* {item.timestamp && (
+        <Text style={styles.notificationDate}>
+          {item.timestamp.toDate().toLocaleString()}
+        </Text>
+      )} */}
     </TouchableOpacity>
   );
 
@@ -64,12 +108,13 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 20,
     fontWeight: 'bold',
-    fontFamily: 'Poppins_700Bold'
+    fontFamily: 'Poppins_700Bold',
   },
   divider: {
     height: 1, // Thin line
     backgroundColor: colors.white,
     marginHorizontal: 20,
+    marginBottom: 2.5,
   },
   button: {
     backgroundColor: 'transparent',
@@ -85,7 +130,12 @@ const styles = StyleSheet.create({
   },
   notificationText: {
     color: colors.white,
-    fontSize: 18,
+    fontSize: 16,
+  },
+  notificationDate: {
+    color: colors.gray,
+    fontSize: 12,
+    marginTop: 5,
   },
   emptyContainer: {
     flex: 1,

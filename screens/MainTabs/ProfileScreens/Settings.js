@@ -1,6 +1,5 @@
 // Settings.js
-
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Text,
   View,
@@ -11,12 +10,48 @@ import {
   ScrollView,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import { AuthContext } from '../../../AuthProvider';
+import { deleteUser } from 'firebase/auth';
+import { doc, deleteDoc, updateDoc } from 'firebase/firestore'; // Import updateDoc
+import { db } from '../../../firebase/firebase-config';
 
 function Settings({ navigation }) {
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
+  const { userData, user } = useContext(AuthContext);
+  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(
+    userData.receiveNotifications
+  );
+  const [isSMSAlertsEnabled, setIsSMSAlertsEnabled] = useState(userData.receiveSMS);
 
-  const toggleNotifications = () => {
-    setIsNotificationsEnabled((previousState) => !previousState);
+  const toggleNotifications = async () => {
+    const newValue = !isNotificationsEnabled;
+    setIsNotificationsEnabled(newValue);
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      await updateDoc(userDocRef, {
+        receiveNotifications: newValue,
+      });
+    } catch (error) {
+      console.error('Error updating notifications:', error);
+      // Optionally revert the state if update fails
+      setIsNotificationsEnabled(isNotificationsEnabled);
+      Alert.alert('Error', 'Failed to update notification settings.');
+    }
+  };
+
+  const toggleSMSAlerts = async () => {
+    const newValue = !isSMSAlertsEnabled;
+    setIsSMSAlertsEnabled(newValue);
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      await updateDoc(userDocRef, {
+        receiveSMS: newValue,
+      });
+    } catch (error) {
+      console.error('Error updating SMS alerts:', error);
+      // Optionally revert the state if update fails
+      setIsSMSAlertsEnabled(isSMSAlertsEnabled);
+      Alert.alert('Error', 'Failed to update SMS alert settings.');
+    }
   };
 
   const handleLogout = () => {
@@ -34,14 +69,41 @@ function Settings({ navigation }) {
     );
   };
 
-  const performLogout = () => {
-    // Add your logout logic here, such as clearing user data and navigating to the login screen
-    // For example:
-    // auth.signOut();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }], // Replace 'Login' with your actual login screen name
-    });
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Confirm Delete Account',
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'LandingScreen' }],
+            });
+            const userDocRef = doc(db, 'users', user.uid);
+            await deleteDoc(userDocRef);
+
+            if (user) {
+              deleteUser(user)
+                .then(async () => {
+                })
+                .catch((error) => {
+                  alert('Error deleting user');
+                });
+            } else {
+              console.log('No user is signed in');
+            }
+          },
+          style: 'destructive',
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
@@ -59,7 +121,6 @@ function Settings({ navigation }) {
 
       {/* Settings Options */}
       <ScrollView contentContainerStyle={styles.contentContainer}>
-
         {/* Notifications Option */}
         <View style={styles.optionContainer}>
           <View style={styles.optionLeft}>
@@ -75,22 +136,37 @@ function Settings({ navigation }) {
           />
         </View>
 
-        {/* Privacy Option */}
+        {/* Receive SMS Alerts Option */}
+        <View style={styles.optionContainer}>
+          <View style={styles.optionLeft}>
+            <Feather name="message-square" size={24} color="white" />
+            <Text style={styles.optionText}>Receive SMS Alerts</Text>
+          </View>
+          <Switch
+            trackColor={{ false: '#767577', true: '#E83F10' }}
+            thumbColor={isSMSAlertsEnabled ? '#ffffff' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSMSAlerts}
+            value={isSMSAlertsEnabled}
+          />
+        </View>
+
+        {/* EULA Option */}
         <TouchableOpacity
           style={styles.optionContainer}
-          onPress={() => navigation.navigate('Privacy')} // Replace with your Privacy screen route
+          onPress={() => navigation.navigate('EULA')}
         >
           <View style={styles.optionLeft}>
-            <Feather name="lock" size={24} color="white" />
-            <Text style={[styles.optionText]}>EULA</Text>
+            <Feather name="file-text" size={24} color="white" />
+            <Text style={styles.optionText}>EULA</Text>
           </View>
           <Feather name="chevron-right" size={24} color="#555" />
         </TouchableOpacity>
 
-        {/* About Option */}
+        {/* Terms and Conditions Option */}
         <TouchableOpacity
           style={styles.optionContainer}
-          onPress={() => navigation.navigate('About')} // Replace with your About screen route
+          onPress={() => navigation.navigate('TermsAndConditions')}
         >
           <View style={styles.optionLeft}>
             <Feather name="info" size={24} color="white" />
@@ -110,6 +186,14 @@ function Settings({ navigation }) {
           </View>
           <Feather name="chevron-right" size={24} color="#FF3B30" />
         </TouchableOpacity>
+
+        {/* Delete Account Button */}
+        <TouchableOpacity
+          style={styles.deleteAccountButton}
+          onPress={handleDeleteAccount}
+        >
+          <Text style={styles.deleteAccountText}>Delete Account</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -121,7 +205,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   header: {
-    position: 'relative', // Add this line
+    position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: 55,
@@ -139,7 +223,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 24,
     fontWeight: 'bold',
-    fontFamily: 'Poppins_700Bold'
+    fontFamily: 'Poppins_700Bold',
   },
   contentContainer: {
     paddingHorizontal: 20,
@@ -162,7 +246,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     marginLeft: 15,
-    fontFamily: 'Poppins_400Regular'
+    fontFamily: 'Poppins_400Regular',
   },
   logoutButton: {
     backgroundColor: '#1a1a1a',
@@ -172,6 +256,15 @@ const styles = StyleSheet.create({
   logoutText: {
     color: '#FF3B30',
     fontWeight: 'bold',
+  },
+  deleteAccountButton: {
+    marginTop: 5,
+    alignItems: 'center',
+  },
+  deleteAccountText: {
+    color: '#FF3B30',
+    fontSize: 14,
+    fontFamily: 'Poppins_400Regular',
   },
 });
 

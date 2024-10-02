@@ -6,8 +6,8 @@ import { colors } from '../stylevars';
 
 function SelectSchool({ navigation }) {
   const schools = [
-    ["University of Southern California",'USC'],
-    ["University of California, Berkeley", 'UC Berkeley'],
+    ["University of Southern California",'USC','usc.edu'],
+    ["University of California, Berkeley", 'UC Berkeley','berkeley.edu'],
   ];
 
   return (

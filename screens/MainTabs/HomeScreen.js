@@ -11,10 +11,12 @@ import { AuthContext } from '../../AuthProvider';
 function HomeScreen({ setUserInEvent }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [school, setSchool] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { user, userData } = useContext(AuthContext);
-  console.log(userData);
+  if(userData === null){
+    return;
+  }
 
 
   const openModal = () => {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,11 +9,16 @@ import EventHomeScreen from './MainTabs/EventHomeScreen';
 import ProfileScreen from './MainTabs/ProfileScreen';
 import NotificationsScreen from './MainTabs/NotificationsScreen';
 import { colors } from '../stylevars';
+import { AuthContext } from '../AuthProvider';
 
 const Tab = createBottomTabNavigator();
 
 function MainPage() {
+  const { user, userData } = useContext(AuthContext);
   const [isUserInEvent, setIsUserInEvent] = useState(false);
+  if(user === null){
+    return;
+  }
 
   return (
     <Tab.Navigator

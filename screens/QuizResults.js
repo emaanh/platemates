@@ -63,7 +63,7 @@ function QuizResults({ navigation, route }) {
         <>
           <Feather name="check-circle" size={100} color={colors.white} />
           <Text style={styles.resultsText}>
-            We have found {compatibleStudents} compatible students at {school}
+            We have found {compatibleStudents} compatible students at {school[1]}
           </Text>
           <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('MainPage')}>
             <FontAwesome name="google" size={24} color={colors.dark_grey} style={styles.googleIcon} /> 
