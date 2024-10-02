@@ -2,15 +2,22 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto'
+import { LibreBaskerville_400Regular, LibreBaskerville_400Regular_Italic, LibreBaskerville_700Bold } from '@expo-google-fonts/libre-baskerville';
+import AppLoading from 'expo-app-loading';
 import { colors } from '../stylevars';
 
 function LandingPage({navigation}) {
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
     Roboto_700Bold,
+    LibreBaskerville_400Regular,
+    LibreBaskerville_400Regular_Italic,
+    LibreBaskerville_700Bold,
   });
 
-  return (
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {return (
     <View style={styles.container}>
       <Text style={styles.title}>Join Dinner with</Text>
       <Text style={styles.title}>3 Random</Text>
@@ -26,7 +33,8 @@ function LandingPage({navigation}) {
         </TouchableOpacity>
       </View>
     </View>
-  );
+    );
+  }  
 }
 
 const styles = StyleSheet.create({
@@ -39,8 +47,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 40,
-    fontWeight: 'bold',
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'LibreBaskerville_400Regular',
     marginBottom: 10,
     bottom: 60
   },

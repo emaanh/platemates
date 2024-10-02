@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     marginVertical: 10,
     alignSelf: 'center',
-    fontFamily: 'Poppins_700Bold',
+    fontFamily: 'LibreBaskerville_700Bold',
   },
   scrollContainer: {
     paddingBottom: 20,
