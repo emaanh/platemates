@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.progress_bar,
   },
   textInput: {
-    backgroundColor: colors.dark_grey,
+    backgroundColor: colors.background,
     color: colors.black,
     padding: 15,
     borderRadius: 8,
@@ -122,6 +122,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     width: '90%',
     alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: colors.black
   },
   nextButton: {
     backgroundColor: colors.primary,

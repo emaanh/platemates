@@ -65,12 +65,12 @@ function QuizResults({ navigation, route }) {
           <Text style={styles.resultsText}>
             We have found {compatibleStudents} compatible students at {school[1]}
           </Text>
-          <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('MainPage')}> 
-            <Image source={require('../assets/Images/Google.png')} style={styles.googleIcon} />
-            <Text style={styles.googleButtonText}>Sign up with Google</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.emailButton} onPress={() => navigation.navigate('PhoneNumberScreen', { school, answers })}>
             <Text style={styles.emailButtonText}>Sign up with email</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('MainPage')}>
+            <FontAwesome name="google" size={24} color="#333333" style={styles.googleIcon} /> 
+            <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
         </>
       )}
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   emailButton: {
     position: 'absolute',
-    backgroundColor: colors.dark_grey, // Dark grey buttons
+    backgroundColor: colors.black, // Dark grey buttons
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   googleButton: {
     position: 'absolute',
-    backgroundColor: colors.black, // Dark grey buttons
+    backgroundColor: '#ffffff', // Dark grey buttons
     flexDirection: 'row', // To align the icon with the text
     justifyContent: 'center',
     alignItems: 'center',
@@ -135,15 +135,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   googleButtonText: {
-    color: colors.white,
+    color: '#333333', // Dark grey text on the buttons
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
     marginLeft: 10, // Add some space between the icon and the text
   },
   googleIcon: {
-    height: 20,
-    width: 20,
     marginRight: 2.5, // Add space between icon and text
   },
 });

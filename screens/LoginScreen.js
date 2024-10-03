@@ -1,14 +1,32 @@
-import React, { useLayoutEffect, useEffect, useContext, useState, useRef } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { colors } from '../stylevars';
+import { Feather } from '@expo/vector-icons';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { authentication } from '../firebase/firebase-config';
 
 function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const handleLogin = async () => {
+        setLoading(true);
+        try {
+            await signInWithEmailAndPassword(authentication, email, password);
+            navigation.navigate('MainScreen'); // Navigate to the main page upon successful login
+        } catch (error) {
+            Alert.alert('Login Error', error.message); // Display the error as an alert
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <View style={styles.container}>
+        <TouchableOpacity style={{position: 'absolute',top: 80,left: 20,zIndex: 1,}} onPress={() => navigation.goBack()}>
+            <Feather name="arrow-left" size={30} color={colors.black} />
+        </TouchableOpacity>
             <Text style={styles.header}>Log In to your account</Text>
             <View style={styles.buttonContainer}>
                 <TextInput
@@ -25,13 +43,15 @@ function LoginScreen({ navigation }) {
                     style={styles.textInput}
                     placeholder="Enter your password"
                     placeholderTextColor={colors.dark_grey}
-                    value={email}
+                    value={password}
                     onChangeText={setPassword}
+                    secureTextEntry={true} // Make the password input hidden
                     autoCapitalize="none"
                 />
 
+
                 <View style={styles.shadowContainer}>
-                    <TouchableOpacity style={styles.LogInButton} onPress={() => navigation.navigate('MainScreen')} disabled={loading}>
+                    <TouchableOpacity style={styles.LogInButton} onPress={handleLogin} disabled={loading}>
                         {loading ? (
                             <ActivityIndicator size="large" color={colors.black} />
                         ) : (
@@ -44,14 +64,10 @@ function LoginScreen({ navigation }) {
 
                 <View style={styles.shadowContainer}>
                     <TouchableOpacity style={styles.GoogleButton} /*onPress={handleSubmit*/ disabled={loading}>
-                        {loading ? (
-                            <ActivityIndicator size="large" color={colors.black} />
-                        ) : (
-                            <View style={{flexDirection: 'row'}}>
-                                <Image source={require('../assets/Images/Google.png')} style={styles.googleIcon} />
-                                <Text style={styles.GoogleText}>Continue with Google</Text>
-                            </View>
-                        )}
+                        <View style={{flexDirection: 'row'}}>
+                            <Image source={require('../assets/Images/Google.png')} style={styles.googleIcon} />
+                            <Text style={styles.GoogleText}>Continue with Google</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -75,7 +91,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins_400Regular',
         width: '90%',
         alignSelf: 'center',
-        borderWidth: 2,
+        borderWidth: 1,
         borderRadius: 8,
     },
     header: {
@@ -106,9 +122,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     GoogleButton: {
-        // borderWidth: 2,
-        // borderColor: colors.black,
-        backgroundColor: colors.black,
+        borderWidth: 1,
+        borderColor: colors.black,
+        backgroundColor: 'transparent',
         borderRadius: 8,
         marginVerical: 10,
         alignItems: 'center',
@@ -119,7 +135,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     GoogleText: {
-        color: colors.white,
+        color: colors.black,
         fontSize: 18,
         fontWeight: 'bold',
         fontFamily: 'Poppins_700Bold',
@@ -130,6 +146,7 @@ const styles = StyleSheet.create({
         width: 20,
         marginRight: 2.5,
         top: 2,
+        tintColor: colors.black,
     },
     buttonContainer: {
         width: '100%',

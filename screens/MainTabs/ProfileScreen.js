@@ -92,7 +92,7 @@ function ProfilePage({navigation}) {
 
       {/* Profile Name */}
       <Text style={styles.profileName}>{userData.fullName}</Text>
-      <TouchableOpacity style={{marginTop: -15,padding: 10, backgroundColor: colors.light_grey, borderRadius: 5}} onPress={handleEditProfile}>
+      <TouchableOpacity style={{marginTop: -15,paddingVertical: 7.5, paddingHorizontal: 10, backgroundColor: 'transparent', borderRadius: 5, borderWidth: 1, borderColor: colors.black}} onPress={handleEditProfile}>
         <Text style={{fontFamily: 'Poppins_400Regular', color: 'black', fontSize: 18}}>Edit Profile</Text>
       </TouchableOpacity>
 

@@ -162,7 +162,7 @@ function PersonalityQuizScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Feather name="arrow-left" size={30} color={colors.primary} />
+        <Feather name="arrow-left" size={30} color={colors.black} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Personality</Text>

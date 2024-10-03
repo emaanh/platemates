@@ -4,6 +4,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../../../AuthProvider';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import { colors } from '../../../stylevars';
 
 function EditProfile({ navigation }) {
   const { userData } = useContext(AuthContext);
@@ -38,15 +39,16 @@ function EditProfile({ navigation }) {
   };
   return (
     <View style={styles.screenContainer}>
-      {/* Back Button */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Feather name="arrow-left" size={30} color="#E83F10" />
-      </TouchableOpacity>
 
-      <Text style={styles.headerText}>Profile</Text>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Feather name="arrow-left" size={30} color={colors.black} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Edit Profile</Text>
+      </View>
 
       {/* Scrollable Content */}
       <ScrollView contentContainerStyle={styles.editProfileContainer}>
@@ -57,7 +59,7 @@ function EditProfile({ navigation }) {
             <Text style={styles.label}>Email</Text>
             <Text style={styles.valueText}>{userData.email || 'Not set'}</Text>
           </View>
-          <Feather name="chevron-right" size={24} color="#888" />
+          <Feather name="chevron-right" size={24} color={colors.black} />
         </TouchableOpacity>
         <View style={styles.separator} />
 
@@ -66,7 +68,7 @@ function EditProfile({ navigation }) {
             <Text style={styles.label}>School</Text>
             <Text style={styles.valueText}>{userData.longSchool || 'Not set'}</Text>
           </View>
-          <Feather name="chevron-right" size={24} color="#888" />
+          <Feather name="chevron-right" size={24} color={colors.black} />
         </TouchableOpacity>
         <View style={styles.separator} />
 
@@ -75,7 +77,7 @@ function EditProfile({ navigation }) {
             <Text style={styles.label}>Full Name</Text>
             <Text style={styles.valueText}>{userData.fullName || 'Not set'}</Text>
           </View>
-          <Feather name="chevron-right" size={24} color="#888" />
+          <Feather name="chevron-right" size={24} color={colors.black} />
         </TouchableOpacity>
         <View style={styles.separator} />
 
@@ -84,7 +86,7 @@ function EditProfile({ navigation }) {
             <Text style={styles.label}>Phone Number</Text>
             <Text style={styles.valueText}>{userData.phone || 'Not set'}</Text>
           </View>
-          <Feather name="chevron-right" size={24} color="#888" />
+          <Feather name="chevron-right" size={24} color={colors.black} />
         </TouchableOpacity>
         <View style={styles.separator} />
 
@@ -110,7 +112,7 @@ function EditProfile({ navigation }) {
                       : 'Not set'}
                   </Text>
                 </View>
-                <Feather name="chevron-right" size={24} color="#888" />
+                <Feather name="chevron-right" size={24} color={colors.black} />
               </TouchableOpacity>
             </View>
             {index < questions.length - 1 && <View style={styles.separator} />}
@@ -126,23 +128,28 @@ function EditProfile({ navigation }) {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: '#000000',
-    paddingTop: 100, // Adjust as needed
-    width: '100%',
+    backgroundColor: colors.background,
+  },
+  header: {
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 65,
+    paddingBottom: 10,
+    paddingHorizontal: 20,
+    backgroundColor: colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
   },
   backButton: {
-    position: 'absolute',
-    top: 55,
-    left: 20,
-    zIndex: 1,
+    marginRight: 10,
   },
-  headerText: {
-    top: 55,
-    position: 'absolute',
-    color: 'white',
+  headerTitle: {
     alignSelf: 'center',
-    fontFamily: 'Poppins_400Regular',
+    color: colors.black,
     fontSize: 24,
+    fontWeight: 'bold',
+    fontFamily: 'LibreBaskerville_700Bold',
   },
   editProfileContainer: {
     alignItems: 'center',
@@ -153,7 +160,7 @@ const styles = StyleSheet.create({
     marginLeft: '5%',
     marginTop: 20,
     marginBottom: 10,
-    color: 'white',
+    color: colors.black,
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -165,21 +172,13 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   label: {
-    color: 'white',
+    color: colors.black,
     fontSize: 16,
     marginBottom: 5,
   },
-  input: {
-    backgroundColor: '#1c1c1c',
-    color: 'white',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 5,
-    fontSize: 16,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top', // For Android to align text at the top in multiline
+  valueText: {
+    color: colors.dark_grey,
+    fontSize: 14,
   },
   separator: {
     width: '90%',
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   saveButtonText: {
-    color: 'white',
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
   },

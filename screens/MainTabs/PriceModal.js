@@ -35,16 +35,15 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
         {/* Subscription Options */}
         <View style={styles.optionsContainer}>
           {[
-            { title: '1 Month', perMonth: '$9.99', total: '$9.99' },
-            { title: '3 Months', perMonth: '$7.99', originalPerMonth: '$9.99', total: '$23.97', discount: '20% OFF' },
-            { title: '6 Months', perMonth: '$5.99', originalPerMonth: '$9.99', total: '$35.94', discount: '40% OFF' },
+            { title: '1 Month', perMonth: '$9', total: '$9' },
+            { title: '3 Months', perMonth: '$7', originalPerMonth: '$9', total: '$23.97', discount: '20% OFF' },
+            { title: '6 Months', perMonth: '$5', originalPerMonth: '$9', total: '$35.94', discount: '40% OFF' },
           ].map((option, index) => (
             <TouchableOpacity
               key={index}
               style={[
                 styles.optionButton,
                 selectedOption === option.title && styles.selectedOption,
-                selectedOption === option.title && styles.goldBorder, // Apply gold border to the selected option
               ]}
               onPress={() => setSelectedOption(option.title)}
             >
@@ -55,9 +54,9 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
                   {option.discount && <Text style={styles.discountTag}>{option.discount}</Text>}
                 </View>
                 <Text style={styles.pricePerMonth}>
-                  {option.originalPerMonth && (
+                  {/* {option.originalPerMonth && (
                     <Text style={styles.strikethrough}>{option.originalPerMonth} </Text>
-                  )}
+                  )} */}
                   {`${option.perMonth} / month`}
                 </Text>
               </View>
@@ -73,7 +72,6 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
           style={[
             styles.optionButton,
             selectedOption === 'Single Ticket' && styles.selectedOption,
-            selectedOption === 'Single Ticket' && styles.goldBorder, // Apply gold border if selected
           ]}
           onPress={() => setSelectedOption('Single Ticket')}
         >
@@ -82,7 +80,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
               <Text style={styles.optionText}>Single Ticket</Text>
               <Text style={styles.optionTotal}>For one dinner</Text>
             </View>
-            <Text style={styles.pricePerMonth}>$4.99</Text>
+            <Text style={styles.pricePerMonth}>$4</Text>
           </View>
         </TouchableOpacity>
 
@@ -115,7 +113,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: colors.backgroundDark,
+    backgroundColor: colors.background,
     padding: 20,
     paddingTop: 40, // Add padding to move everything down
     justifyContent: 'center', // Center content vertically
@@ -165,7 +163,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_700Bold',
   },
   optionButton: {
-    backgroundColor: colors.optionBackground,
+    backgroundColor: colors.background,
     padding: 15,
     marginVertical: 8,
     borderRadius: 12,
@@ -196,13 +194,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_700Bold',
   },
   optionTotal: {
-    color: colors.grey,
+    color: colors.dark_grey,
     fontSize: 12,
     marginTop: 5,
     fontFamily: 'Poppins_400Regular',
   },
   discountTag: {
-    color: colors.gold,
+    color: colors.dark_grey,
     fontSize: 12,
     fontWeight: 'bold',
     marginTop: 5,
@@ -219,7 +217,7 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   selectedOption: {
-    backgroundColor: colors.selectedBackground,
+    backgroundColor: colors.light_grey,
   },
   buyButton: {
     backgroundColor: colors.green,
@@ -235,13 +233,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.disabled,
   },
   buyButtonText: {
-    color: colors.black,
+    color: colors.background,
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   cancelText: {
-    color: colors.black,
+    color: colors.background,
     fontSize: 12,
     marginTop: 5,
     fontFamily: 'Poppins_400Regular',

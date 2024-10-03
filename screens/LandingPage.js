@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto'
 import { LibreBaskerville_400Regular, LibreBaskerville_400Regular_Italic, LibreBaskerville_700Bold } from '@expo-google-fonts/libre-baskerville';
-import AppLoading from 'expo-app-loading';
 import { colors } from '../stylevars';
 
 function LandingPage({navigation}) {
@@ -16,7 +15,7 @@ function LandingPage({navigation}) {
   });
 
   if (!fontsLoaded) {
-    return <AppLoading />;
+    return <ActivityIndicator />;
   } else {return (
     <View style={styles.container}>
       <Text style={styles.title}>Join Dinner with</Text>

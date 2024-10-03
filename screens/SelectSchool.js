@@ -35,6 +35,7 @@ function SelectSchool({ navigation }) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -44,9 +45,9 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 55, // Adjust based on the status bar height
+    top: 55,
     left: 20,
-    zIndex: 1, // Ensure the button stays on top
+    zIndex: 1,
   },
   title: {
     color: colors.black, // White text for the title

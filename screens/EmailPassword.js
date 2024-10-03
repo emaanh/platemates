@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   textInput: {
-    backgroundColor: colors.dark_grey,
-    color: colors.white,
+    backgroundColor: colors.background,
+    color: colors.black,
     padding: 15,
     borderRadius: 8,
     marginVertical: 10,
@@ -188,6 +188,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     width: '90%',
     alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: colors.black
   },
   nextButton: {
     backgroundColor: colors.primary,

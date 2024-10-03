@@ -93,7 +93,7 @@ function EditField({ navigation, route }) {
       <TextInput
         style={styles.textInput}
         placeholder={`Enter your ${fieldLabels[field]}`}
-        placeholderTextColor={colors.grey}
+        placeholderTextColor={colors.black}
         keyboardType={field === 'phone' ? 'phone-pad' : 'default'}
         value={value}
         onChangeText={handleValueChange}
@@ -111,7 +111,7 @@ function EditField({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
     paddingTop: 55,
   },
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   title: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
   },
   textInput: {
-    backgroundColor: colors.dark_grey,
-    color: colors.white,
+    backgroundColor: 'transparent',
+    color: colors.black,
     padding: 15,
     borderRadius: 8,
     marginVertical: 10,
@@ -139,6 +139,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     width: '90%',
     alignSelf: 'center',
+    borderColor: colors.black,
+    borderWidth: 1
   },
   submitButton: {
     backgroundColor: colors.primary,

@@ -16,68 +16,15 @@ import {
   onSnapshot,
   orderBy,
 } from 'firebase/firestore';
+import { colors } from '../../../stylevars';
 
 function Bookings({ navigation }) {
-  const { user } = useContext(AuthContext);
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const { user, bookings } = useContext(AuthContext);
 
-  useEffect(() => {
-    let unsubscribe;
-
-    if (user && user.uid) {
-      const eventsRef = collection(db, 'users', user.uid, 'events');
-
-      // Create a query to order events by timestamp
-      const eventsQuery = query(eventsRef, orderBy('timestamp', 'desc'));
-
-      // Set up real-time listener
-      unsubscribe = onSnapshot(
-        eventsQuery,
-        (querySnapshot) => {
-          const bookingsList = [];
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const timestamp = data.timestamp;
-
-            // Convert Firestore Timestamp to JavaScript Date object
-            const date = timestamp.toDate();
-
-            // Format date to 'yyyy-mm-dd' and time to 'HH:MM AM/PM'
-            const formattedDate = date.toISOString().split('T')[0];
-            const options = { hour: 'numeric', minute: 'numeric', hour12: true };
-            const formattedTime = date.toLocaleTimeString('en-US', options);
-
-            bookingsList.push({
-              id: doc.id,
-              date: formattedDate,
-              time: formattedTime,
-              location: data.title || 'No location specified',
-            });
-          });
-          setBookings(bookingsList);
-          setLoading(false); // Data loaded
-        },
-        (error) => {
-          console.error('Error fetching bookings:', error);
-          setLoading(false); // Stop loading on error
-        }
-      );
-    } else {
-      setLoading(false); // Stop loading if user is not available
-    }
-
-    // Cleanup on unmount
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [user]);
 
   const renderBookingItem = ({ item }) => (
     <View style={styles.bookingItem}>
-      <Feather name="calendar" size={24} color="#E83F10" />
+      <Feather name="calendar" size={24} color={colors.primary} />
       <View style={styles.bookingDetails}>
         <Text style={styles.bookingDate}>{item.date}</Text>
         <Text style={styles.bookingTime}>{item.time}</Text>
@@ -86,25 +33,14 @@ function Bookings({ navigation }) {
     </View>
   );
 
-  if (loading) {
-    // Show loading indicator
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#E83F10" />
-        <Text style={styles.loadingText}>Loading bookings...</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.screenContainer}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Feather name="arrow-left" size={30} color="#E83F10" />
+          <Feather name="arrow-left" size={30} color={colors.black} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bookings</Text>
       </View>
@@ -139,24 +75,28 @@ function Bookings({ navigation }) {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
   },
   header: {
+    position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 55,
-    paddingBottom: 20,
+    paddingTop: 65,
+    paddingBottom: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.background,
   },
   backButton: {
     marginRight: 10,
   },
   headerTitle: {
-    color: 'white',
+    alignSelf: 'center',
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
-    fontFamily: 'Poppins_700Bold',
+    fontFamily: 'LibreBaskerville_700Bold',
   },
   listContainer: {
     paddingHorizontal: 20,
@@ -165,27 +105,29 @@ const styles = StyleSheet.create({
   bookingItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'transparent',
     padding: 15,
     borderRadius: 8,
     marginVertical: 8,
+    borderWidth: 1,
+    borderColor: colors.black
   },
   bookingDetails: {},
   bookingDate: {
-    color: 'white',
+    color: colors.black,
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 15,
     fontFamily: 'Poppins_400Regular',
   },
   bookingTime: {
-    color: '#cccccc',
+    color: colors.dark_grey,
     fontSize: 14,
     marginLeft: 15,
     fontFamily: 'Poppins_400Regular',
   },
   bookingLocation: {
-    color: '#cccccc',
+    color: colors.dark_grey,
     fontSize: 14,
     marginLeft: 15,
     fontFamily: 'Poppins_400Regular',
@@ -202,24 +144,24 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   bookButton: {
-    backgroundColor: '#E83F10',
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 25,
   },
   bookButtonText: {
-    color: 'white',
+    color: colors.black,
     fontSize: 16,
     fontWeight: 'bold',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#E83F10',
+    color: colors.black,
     fontSize: 16,
     marginTop: 10,
   },

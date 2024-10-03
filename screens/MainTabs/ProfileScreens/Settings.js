@@ -14,9 +14,10 @@ import { AuthContext } from '../../../AuthProvider';
 import { deleteUser } from 'firebase/auth';
 import { doc, deleteDoc, updateDoc } from 'firebase/firestore'; // Import updateDoc
 import { db } from '../../../firebase/firebase-config';
+import { colors } from '../../../stylevars';
 
 function Settings({ navigation }) {
-  const { userData, user } = useContext(AuthContext);
+  const { userData, user,signOut } = useContext(AuthContext);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(
     userData.receiveNotifications
   );
@@ -63,7 +64,9 @@ function Settings({ navigation }) {
           text: 'Cancel',
           style: 'cancel',
         },
-        { text: 'Logout', onPress: () => navigation.navigate('LandingScreen') },
+        { text: 'Logout', onPress: async() => {
+          await signOut();
+        }},
       ],
       { cancelable: false }
     );
@@ -81,10 +84,6 @@ function Settings({ navigation }) {
         {
           text: 'Delete',
           onPress: async () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'LandingScreen' }],
-            });
             const userDocRef = doc(db, 'users', user.uid);
             await deleteDoc(userDocRef);
 
@@ -114,7 +113,7 @@ function Settings({ navigation }) {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Feather name="arrow-left" size={30} color="#E83F10" />
+          <Feather name="arrow-left" size={30} color={colors.black} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Settings</Text>
       </View>
@@ -124,11 +123,11 @@ function Settings({ navigation }) {
         {/* Notifications Option */}
         <View style={styles.optionContainer}>
           <View style={styles.optionLeft}>
-            <Feather name="bell" size={24} color="white" />
+            <Feather name="bell" size={24} color={colors.black} />
             <Text style={styles.optionText}>Notifications</Text>
           </View>
           <Switch
-            trackColor={{ false: '#767577', true: '#E83F10' }}
+            trackColor={{ false: '#767577', true: colors.primary }}
             thumbColor={isNotificationsEnabled ? '#ffffff' : '#f4f3f4'}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleNotifications}
@@ -139,12 +138,12 @@ function Settings({ navigation }) {
         {/* Receive SMS Alerts Option */}
         <View style={styles.optionContainer}>
           <View style={styles.optionLeft}>
-            <Feather name="message-square" size={24} color="white" />
+            <Feather name="message-square" size={24} color={colors.black} />
             <Text style={styles.optionText}>Receive SMS Alerts</Text>
           </View>
           <Switch
-            trackColor={{ false: '#767577', true: '#E83F10' }}
-            thumbColor={isSMSAlertsEnabled ? '#ffffff' : '#f4f3f4'}
+            trackColor={{ false: '#767577', true: colors.primary }}
+            thumbColor={isSMSAlertsEnabled ? '#ffffff' : colors.primary}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSMSAlerts}
             value={isSMSAlertsEnabled}
@@ -157,7 +156,7 @@ function Settings({ navigation }) {
           onPress={() => navigation.navigate('EULA')}
         >
           <View style={styles.optionLeft}>
-            <Feather name="file-text" size={24} color="white" />
+            <Feather name="file-text" size={24} color={colors.black} />
             <Text style={styles.optionText}>EULA</Text>
           </View>
           <Feather name="chevron-right" size={24} color="#555" />
@@ -169,7 +168,7 @@ function Settings({ navigation }) {
           onPress={() => navigation.navigate('TermsAndConditions')}
         >
           <View style={styles.optionLeft}>
-            <Feather name="info" size={24} color="white" />
+            <Feather name="info" size={24} color={colors.black} />
             <Text style={styles.optionText}>Terms and Conditions</Text>
           </View>
           <Feather name="chevron-right" size={24} color="#555" />
@@ -202,16 +201,16 @@ function Settings({ navigation }) {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
   },
   header: {
     position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 55,
-    paddingBottom: 20,
+    paddingTop: 65,
+    paddingBottom: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
     borderBottomColor: '#333',
   },
@@ -220,10 +219,10 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     alignSelf: 'center',
-    color: 'white',
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
-    fontFamily: 'Poppins_700Bold',
+    fontFamily: 'LibreBaskerville_700Bold',
   },
   contentContainer: {
     paddingHorizontal: 20,
@@ -233,24 +232,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'transparent',
     padding: 15,
     borderRadius: 8,
     marginBottom: 15,
+    borderColor: colors.black,
+    borderWidth: 1
   },
   optionLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   optionText: {
-    color: 'white',
+    color: colors.black,
     fontSize: 16,
     marginLeft: 15,
     fontFamily: 'Poppins_400Regular',
   },
   logoutButton: {
-    backgroundColor: '#1a1a1a',
-    borderWidth: 1,
+    backgroundColor: colors.background,
+    borderWidth: 2,
     borderColor: '#FF3B30',
   },
   logoutText: {

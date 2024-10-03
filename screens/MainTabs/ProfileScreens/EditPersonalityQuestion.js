@@ -6,6 +6,7 @@ import { AuthContext } from '../../../AuthProvider';
 import { Feather } from '@expo/vector-icons';
 import { setDoc, doc } from 'firebase/firestore';  
 import { db } from '../../../firebase/firebase-config';
+import { colors } from '../../../stylevars';
 
 function EditPersonalityQuestion({ navigation, route }) {
   const { question, index } = route.params;
@@ -32,7 +33,6 @@ function EditPersonalityQuestion({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <Feather name="arrow-left" size={30} color="#E83F10" />
       </TouchableOpacity>
@@ -81,7 +81,7 @@ function EditPersonalityQuestion({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: colors.background,
     paddingTop: 100,
     width: '100%',
   },
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   title: {
     top: 55,
     position: 'absolute',
-    color: 'white',
+    color: colors.black,
     alignSelf: 'center',
     fontFamily: 'Poppins_400Regular',
     fontSize: 24,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   questionText: {
-    color: 'white',
+    color: colors.black,
     fontSize: 24,
     marginBottom: 10,
     fontFamily: 'Poppins_400Regular',
@@ -118,12 +118,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: colors.black,
     width: '90%',
     alignSelf: 'center',
   },
   optionText: {
-    color: 'white',
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   ratingLabel: {
     fontFamily: 'Poppins_400Regular',
-    color: 'white',
+    color: colors.black,
     fontSize: 15,
     marginTop: 20,
   },
@@ -150,13 +150,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: 'white',
+    borderColor: colors.black,
     borderWidth: 1,
     marginBottom: 10,
     borderRadius: 8,
   },
   ratingText: {
-    color: 'white',
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

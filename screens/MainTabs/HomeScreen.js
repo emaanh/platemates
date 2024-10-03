@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Modal, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, Modal, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
 import { colors } from '../../stylevars';
@@ -14,9 +14,7 @@ function HomeScreen({ setUserInEvent }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { user, userData } = useContext(AuthContext);
-  if(userData === null){
-    return;
-  }
+
 
 
   const openModal = () => {
@@ -30,11 +28,15 @@ function HomeScreen({ setUserInEvent }) {
   return (
     <View style={styles.screenContainer}>
       {/* Description */}
-      <Text style={styles.title}>UC Berkeley</Text>
-      <Text style={styles.description}>Select the date for a dinner with 3 students selected by our algorithm</Text>
-
+      <Image 
+        source={require('../../assets/logo_plates.png')} 
+        style={styles.logoImage} 
+        resizeMode="contain"
+      />
       {/* Date Buttons */}
-      <View style={styles.optionsContainer}>
+      <View style={[styles.optionsContainer,{width: '90%',position: 'absolute', bottom: '2%'}]}>
+        <Text style={[styles.title]}>UC Berkeley</Text>
+        <Text style={[styles.description]}>Select the date for a dinner with 3 students selected by our algorithm</Text>
         {['October 9th', 'October 16th', 'October 23rd'].map((option, index) => (
           <TouchableOpacity
             key={index}
@@ -56,15 +58,15 @@ function HomeScreen({ setUserInEvent }) {
             </View>
           </TouchableOpacity>
         ))}
+        <TouchableOpacity
+          style={[styles.bottomButton, !selectedOption && styles.disabledButton]}
+          onPress={() => openModal()}
+          disabled={!selectedOption}
+        >
+          <Text style={styles.bottomButtonText}>Book my seat</Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={[styles.bottomButton, !selectedOption && styles.disabledButton]}
-        onPress={() => openModal()}
-        disabled={!selectedOption}
-      >
-        <Text style={styles.bottomButtonText}>Book my seat</Text>
-      </TouchableOpacity>
 
       <PriceModal 
         isVisible={isModalVisible} 
@@ -85,37 +87,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.background,
   },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 24, // Adjust this size as needed
-    color: colors.black,
-    marginBottom: 10,
-    textAlign: 'center',
-    fontFamily: 'Poppins_700Bold'
+  contentContainer: {
+    width: '90%', // Adjust this width as needed to fit within the screen
+    alignSelf: 'center', // Centers this container within the parent container
+    paddingHorizontal: 20, // Adjust the padding to control the internal spacing
   },
-  description: {
-    color: colors.grey,
-    fontSize: 16,
+  title: {
+    fontSize: 24,
+    color: colors.black,
     marginBottom: 20,
     textAlign: 'left',
-    width: '85%',
-    fontFamily: 'Poppins_400Regular'
+    fontFamily: 'LibreBaskerville_700Bold',
+    paddingHorizontal: 2.5
+  },
+  description: {
+    paddingHorizontal: 2.5,
+    marginBottom: 15,
+    color: colors.grey,
+    fontSize: 16,
+    textAlign: 'left',
+    fontFamily: 'Poppins_400Regular',
   },
   optionsContainer: {
     marginBottom: 20,
     width: '100%',
   },
   button: {
-    top: 140,
     backgroundColor: 'transparent',
-    paddingVertical: 15,
+    paddingVertical: 17,
     paddingHorizontal: 20,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.black,
-    width: '90%',
+    width: '100%',
     alignSelf: 'center',
-    marginVertical: 10,
+    marginVertical: 13,
   },
   buttonContent: {
     flexDirection: 'row',
@@ -125,9 +131,9 @@ const styles = StyleSheet.create({
   radialButton: {
     width: 20,
     height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: 'white',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.black,
     backgroundColor: 'transparent',
   },
   selectedRadial: {
@@ -137,30 +143,29 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   dateText: {
-    color: 'white',
+    color: colors.black,
     fontSize: 16, 
     fontWeight: 'bold',
   },
   subText: {
-    color: 'white',
+    color: colors.dark_grey,
     fontSize: 14,
-    marginTop: 5,
+    marginTop: 10,
   },
   bottomButton: {
-    top: 120,
+    top: 0,
     backgroundColor: colors.primary,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
-    width: '90%',
     alignItems: 'center',
     marginTop: 20,
   },
   disabledButton: {
-    backgroundColor: 'grey',
+    backgroundColor: colors.grey,
   },
   bottomButtonText: {
-    color: 'white',
+    color: colors.background,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -198,6 +203,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     fontFamily: 'Poppins_400Regular',
+  },
+  logoImage: {
+    width: '100%',
+    height: '100%',
   },
 });
 

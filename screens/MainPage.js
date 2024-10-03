@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather'; // Updated import
@@ -13,11 +13,18 @@ import { AuthContext } from '../AuthProvider';
 
 const Tab = createBottomTabNavigator();
 
+import { useNavigation } from '@react-navigation/native';
+
 function MainPage() {
+  const navigation = useNavigation();
   const { user, userData } = useContext(AuthContext);
   const [isUserInEvent, setIsUserInEvent] = useState(false);
   if(user === null){
-    return;
+    navigation.navigate('LandingScreen');
+    return (
+      <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background}}>
+      </View>
+    );
   }
 
   return (

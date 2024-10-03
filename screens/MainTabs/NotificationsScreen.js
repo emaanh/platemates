@@ -8,48 +8,9 @@ import { db } from '../../firebase/firebase-config';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 function NotificationsScreen() {
-  const { user, userData } = useContext(AuthContext);
-  const [notifications, setNotifications] = useState([]);
+  const { notifications } = useContext(AuthContext);
 
-  useEffect(() => {
-    let unsubscribe;
 
-    if (user && user.uid) {
-      const notificationsRef = collection(db, 'users', user.uid, 'notifications');
-
-      // Create a query that orders notifications by timestamp in descending order
-      const notificationsQuery = query(
-        notificationsRef,
-        orderBy('timestamp', 'desc') // Make sure 'timestamp' is the correct field name
-      );
-
-      // Set up real-time listener
-      unsubscribe = onSnapshot(
-        notificationsQuery,
-        (querySnapshot) => {
-          const notificationsList = [];
-          querySnapshot.forEach((doc) => {
-            notificationsList.push({
-              id: doc.id,
-              title: doc.get('message'),
-              timestamp: doc.get('timestamp'),
-            });
-          });
-          setNotifications(notificationsList);
-        },
-        (error) => {
-          console.error('Error fetching notifications:', error);
-        }
-      );
-    }
-
-    // Cleanup on unmount
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [user]);
 
   // Render each notification item
   const renderItem = ({ item }) => (
@@ -106,7 +67,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: colors.black,
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     fontFamily: 'LibreBaskerville_700Bold',
   },

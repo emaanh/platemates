@@ -19,7 +19,7 @@ function EventHub(){
     <Stack.Navigator screenOptions={{ gestureEnabled: false, swipeEnabled: false, headerShown: false  }}>
       <Stack.Screen
         name="EventHome"
-        component={EventHomeScreen}
+        component={EventHomeScreen}xr
       />
       <Stack.Screen
         name="Icebreaker"
