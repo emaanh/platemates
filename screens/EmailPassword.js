@@ -161,7 +161,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'LibreBaskerville_700Bold',
+    top: 10,
   },
   progressBarContainer: {
     marginBottom: 20,
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.progress_bar,
   },
   textInput: {
     backgroundColor: colors.background,

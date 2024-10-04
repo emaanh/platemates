@@ -105,6 +105,21 @@ function PersonalityQuizScreen({ navigation, route }) {
     }
   };
 
+  const progressAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    // Animate the progress bar whenever the progress changes
+    Animated.timing(progressAnim, {
+      toValue: progress,
+      duration: 500, // Adjust the duration as needed
+      useNativeDriver: false,
+    }).start();
+  }, [progress]);
+
+  const progressWidth = progressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
+  });
+
   const renderQuestion = () => {
     const currentQuestion = questions[currentQuestionIndex];
     const selectedAnswer = answers[currentQuestionIndex];
@@ -115,17 +130,19 @@ function PersonalityQuizScreen({ navigation, route }) {
           <View style={styles.quizQuestion}>
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
             {currentQuestion.options.map((option, index) => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.answerButton,
-                  { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.black }
-                ]}
-                onPress={() => handleOptionPress(index, 'multiple')}
-                activeOpacity={1}
-              >
-                <Text style={styles.answerButtonText}>{option}</Text>
-              </TouchableOpacity>
+              <View style={styles.shadowContainer}>
+                <TouchableOpacity
+                  key={option}
+                  style={[
+                    styles.answerButton,
+                    { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.black }
+                  ]}
+                  onPress={() => handleOptionPress(index, 'multiple')}
+                  activeOpacity={1}
+                >
+                  <Text style={styles.answerButtonText}>{option}</Text>
+                </TouchableOpacity>
+              </View>
             ))}
           </View>
         );
@@ -170,7 +187,7 @@ function PersonalityQuizScreen({ navigation, route }) {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.progressBarContainer}>
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+            <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
           </View>
         </View>
 
@@ -219,7 +236,7 @@ const styles = StyleSheet.create({
     width: '80%',
     textAlign: 'center',
     alignSelf: 'center',
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'LibreBaskerville_700Bold',
   },
   scrollViewContent: {
     paddingBottom: 20,
@@ -236,7 +253,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   answerButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: colors.background,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -296,6 +313,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     width: '90%',
     alignSelf: 'center',
+  },
+  shadowContainer: {
+    width: '100%',
+    alignItems: 'center',
+    borderRadius: 10,
+    padding: 2,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
 });
 

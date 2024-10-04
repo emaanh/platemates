@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'LibreBaskerville_700Bold',
+    top: 10,
   },
   progressBarContainer: {
     marginBottom: 20,
