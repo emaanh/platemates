@@ -1,6 +1,6 @@
 export const colors = {
   primary: '#f17511',
-  background: '#F1E7DA',//'#ebdbc1',
+  background: '#F3EFE0',//'#ebdbc1',
   white: '#ffffff',
   black: '#2f2621', 
   grey: '#aaaaaa',
@@ -18,7 +18,8 @@ export const colors = {
   separator: '#333333',
   selectedBackground: '#333333',
   green: '#00ab66',
-  disabled: '#666666'
+  disabled: '#666666', 
+  dark_tan: '#DFCDB9',
 }
 
 export const questions = [

@@ -86,7 +86,7 @@ function ProfilePage({navigation}) {
     <View style={styles.screenContainer}>
       {/* Profile Picture */}
       <View style={styles.profileIconContainer}>
-        <Icon name="user-circle" size={150} color="#ccc" />
+        <Icon name="user-circle" size={150} color={colors.dark_tan} />
       </View>
 
 
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75, // Makes the container a circle
-    backgroundColor: '#f0f0f0', // Background color for the circle
+    backgroundColor: colors.background, // Background color for the circle
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
