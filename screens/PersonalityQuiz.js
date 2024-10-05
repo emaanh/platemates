@@ -8,19 +8,36 @@ function PersonalityQuizScreen({ navigation, route }) {
   const { school } = route.params;
 
   const questions = [
-    { type: 'multiple', question: "What grade are you in?", options: ['Freshman','Sophmore','Junior','Senior','Graduate'] },
-    { type: 'multiple', question: "What is your gender?", options: ['Male', 'Female', 'Other'] },
-    { type: 'multiple', question: "What's your favorite color?", options: ['Red', 'Blue', 'Green'] },
-    { type: 'multiple', question: "What is your favorite season?", options: ['Winter', 'Spring', 'Summer', 'Fall'] },
-    { type: 'multiple', question: "Which animal do you like the most?", options: ['Dog', 'Cat', 'Bird', 'Fish'] },
-    { type: 'multiple', question: "What is your favorite type of movie?", options: ['Action', 'Comedy', 'Drama', 'Horror'] },
-    { type: 'multiple', question: "What genre of music do you prefer?", options: ['Pop', 'Rock', 'Classical', 'Hip-Hop'] },
-    { type: 'rating', question: "How much do you enjoy social events?", min: 1, max: 10 },
-    { type: 'rating', question: "How organized do you consider yourself?", min: 1, max: 10 },
-    { type: 'rating', question: "How much do you like taking risks?", min: 1, max: 10 },
-    { type: 'rating', question: "How comfortable are you speaking in public?", min: 1, max: 10 },
-    { type: 'rating', question: "How much do you enjoy working in a team?", min: 1, max: 10 },
+    { type: 'multiple', question: "What is your ideal vacation?", options: ['Going to the mountains', 'Laying on a beach', 'Strolling through Manhattan', 'Visiting ruins'] },
+    { type: 'multiple', question: "In your friend group, which role do you play?", options: ['The Planner (Always organizing hangouts)', 'The Wild Card (Down for anything)', 'The Therapist (The go-to for advice)', 'The Quiet Observer (Loves being part of the group, but stays chill)'] },
+    { type: 'multiple', question: "If your life was a fashion style, would it be:", options: ['Classic and refined', 'Trendy and expressive'] },
+    { type: 'multiple', question: "What would your perfect night look like?", options: ['Planned in advance', 'Spontaneous and improvised'] },
+    { type: 'multiple', question: "What genre of movies do you prefer?", options: ['Action/Adventure', 'Comedy', 'Drama', 'Horror', 'Science Fiction/Fantasy'] },
+    { type: 'multiple', question: "It's a Friday night, what are you doing?", options: ['Schoolwork', 'Going out', 'Having friends over', 'Watching a movie', 'Gaming', 'Drinking alone in my room'] },
+    { type: 'multiple', question: "What do you geek out about?", options: ['Science and Tech innovations', 'Art, music, or creative projects', 'Movies, TV series, or pop culture', 'Fitness or outdoors', 'History, culture, or philosophy'] },
+    { type: 'multiple', question: "I’m a self-motivated person", options: ['Needs constant reminders', 'Motivated with a nudge', 'Only when it interests me', 'Pretty driven', 'I’m a machine'] },
+    { type: 'multiple', question: "How often are you stressed", options: ['I’m always chill', 'Only when things get hectic', 'Comes and goes', 'Most days', 'I’m a stress magnet'] },
+    { type: 'multiple', question: "I take risks", options: ['Play it safe', 'Only when necessary', 'Occasionally spontaneous', 'Love a good thrill', 'Daredevil!'] },
+    { type: 'multiple', question: "I like to workout", options: ['Not my thing', 'When I’m in the mood', 'I try to be consistent', 'I am obsessed'] },
+    { type: 'multiple', question: "How much does academic success matter to you?", options: ['Doesn’t matter to me', 'I aim to do pretty well', 'I work hard for high grades', 'It’s my top priority'] },
+    { type: 'rating', question: "I’m creative", min: 1, max: 10, labels: ['Strongly Disagree', 'Strongly Agree'] },
+    { type: 'rating', question: "How often do you drink?", min: 1, max: 10, labels: ['Never', 'Everyday'] },
+    { type: 'rating', question: "I’m an introvert", min: 1, max: 10, labels: ['Strongly Disagree', 'Strongly Agree'] },
+    { type: 'rating', question: "I enjoy spending time more", min: 1, max: 10, labels: ['In nature', 'In the city'] },
+    { type: 'rating', question: "How important is having a good sense of humor to you?", min: 1, max: 10, labels: ['Not important', 'Very important'] },
+    { type: 'rating', question: "I enjoy going out with friends", min: 1, max: 10, labels: ['Never', 'Almost always'] },
+    { type: 'rating', question: "I enjoy politically incorrect humor", min: 1, max: 10, labels: ['Strongly Disagree', 'Strongly Agree'] },
+    { type: 'rating', question: "I enjoy discussing politics/news", min: 1, max: 10, labels: ['Strongly Disagree', 'Strongly Agree'] },
+    { type: 'rating', question: "How important is spirituality to you?", min: 1, max: 10, labels: ['Not important', 'Very important'] },
+    { type: 'multiple', question: "How much do you usually spend when out with friends?", options: ['$ (< 15)', '$$ (15-30)', '$$$ (30+)'] },
+    { type: 'multiple', question: "What menu options do you want to see at your dinner?", options: ['Meat', 'Fish', 'Vegetarian/Vegan', 'Gluten-Free'] },
+    { type: 'multiple', question: "What category is your major in?", options: ['STEM', 'Humanities & Social Science', 'Business and Economics', 'Arts and Creative Disciplines', 'Other'] },
+    { type: 'multiple', question: "What grade are you in?", options: ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Grad'] },
+    { type: 'multiple', question: "How do you define yourself", options: ['Woman', 'Man', 'Non-binary'] },
+    { type: 'multiple', question: "What is your relationship status?", options: ['Single', 'In a relationship', 'It’s complicated', 'Skip'] },
+    { type: 'multiple', question: "What are you most excited to get out of joining PlateMates?", options: ['Meeting like-minded students', 'Exploring fun, new social experiences', 'Stepping out of my comfort zone', 'Building meaningful connections', 'Enjoying good laughs over food'] },
   ];
+
 
   const [progress, setProgress] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -134,7 +151,9 @@ function PersonalityQuizScreen({ navigation, route }) {
           <View style={styles.quizQuestion}>
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
             <View style={styles.ratingContainer}>
-              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.black, fontSize: 15, marginTop: 20 }}>Not At All</Text>
+              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.black, fontSize: 15, marginTop: 20 }}>
+                {currentQuestion.labels ? currentQuestion.labels[0] : 'Not At All'}
+              </Text>
               <View style={styles.buttonGrid}>
                 {[...Array(10)].map((_, index) => (
                   <TouchableOpacity
@@ -150,7 +169,9 @@ function PersonalityQuizScreen({ navigation, route }) {
                   </TouchableOpacity>
                 ))}
               </View>
-              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.black, fontSize: 15, marginTop: -10, textAlign: 'right' }}>Very Much</Text>
+              <Text style={{ fontFamily: 'Poppins_400Regular', color: colors.black, fontSize: 15, marginTop: -10, textAlign: 'right' }}>
+                {currentQuestion.labels ? currentQuestion.labels[1] : 'Very Much'}
+              </Text>
             </View>
           </View>
         );
@@ -162,7 +183,7 @@ function PersonalityQuizScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Feather name="arrow-left" size={30} color={colors.black} />
+        <Feather name="arrow-left" size={30} color={colors.primary} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Personality</Text>
