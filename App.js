@@ -18,6 +18,7 @@ import LoginScreen from './screens/LoginScreen';
 import { useContext } from 'react';
 import { AuthContext } from './AuthProvider';
 import { LibreBaskerville_400Regular, LibreBaskerville_700Bold } from '@expo-google-fonts/libre-baskerville';
+import { withIAPContext } from 'react-native-iap';
 
 
 const Stack = createStackNavigator();
@@ -75,4 +76,4 @@ function RootNavigator() {
   );
 }
 
-export default App;
+export default withIAPContext(App);

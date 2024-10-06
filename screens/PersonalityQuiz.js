@@ -9,12 +9,12 @@ function PersonalityQuizScreen({ navigation, route }) {
 
   const questions = [
     { type: 'multiple', question: "What is your ideal vacation?", options: ['Going to the mountains', 'Laying on a beach', 'Strolling through Manhattan', 'Visiting ruins'] },
-    { type: 'multiple', question: "In your friend group, which role do you play?", options: ['The Planner (Always organizing hangouts)', 'The Wild Card (Down for anything)', 'The Therapist (The go-to for advice)', 'The Quiet Observer (Loves being part of the group, but stays chill)'] },
+    { type: 'multiple', question: "In your friend group, which role do you play?", options: ['The Planner', 'The Wild Card', 'The Therapist', 'The Quiet Observer'] },
     { type: 'multiple', question: "If your life was a fashion style, would it be:", options: ['Classic and refined', 'Trendy and expressive'] },
     { type: 'multiple', question: "What would your perfect night look like?", options: ['Planned in advance', 'Spontaneous and improvised'] },
     { type: 'multiple', question: "What genre of movies do you prefer?", options: ['Action/Adventure', 'Comedy', 'Drama', 'Horror', 'Science Fiction/Fantasy'] },
     { type: 'multiple', question: "It's a Friday night, what are you doing?", options: ['Schoolwork', 'Going out', 'Having friends over', 'Watching a movie', 'Gaming', 'Drinking alone in my room'] },
-    { type: 'multiple', question: "What do you geek out about?", options: ['Science and Tech innovations', 'Art, music, or creative projects', 'Movies, TV series, or pop culture', 'Fitness or outdoors', 'History, culture, or philosophy'] },
+    { type: 'multiple', question: "What do you geek out about?", options: ['Science and Tech', 'Art and Music', 'TV and Cinema', 'Fitness', 'History and Culture'] },
     { type: 'multiple', question: "I’m a self-motivated person", options: ['Needs constant reminders', 'Motivated with a nudge', 'Only when it interests me', 'Pretty driven', 'I’m a machine'] },
     { type: 'multiple', question: "How often are you stressed?", options: ['I’m always chill', 'Only when things get hectic', 'Comes and goes', 'Most days', 'I’m a stress magnet'] },
     { type: 'multiple', question: "I take risks", options: ['Play it safe', 'Only when necessary', 'Occasionally spontaneous', 'Love a good thrill', 'Daredevil!'] },
@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
+    textAlign: 'center'
   },
   ratingContainer: {
     width: '90%',

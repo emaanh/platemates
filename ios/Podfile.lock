@@ -1224,6 +1224,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNIap (12.15.4):
+    - React-Core
   - RNReanimated (3.15.4):
     - DoubleConversion
     - glog
@@ -1404,6 +1406,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNIap (from `../node_modules/react-native-iap`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -1543,6 +1546,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNIap:
+    :path: "../node_modules/react-native-iap"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -1619,6 +1624,7 @@ SPEC CHECKSUMS:
   ReactCommon: bfd464c8f774a0acb93cf2a45afa80b763431f1b
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
   RNGestureHandler: 23e9a5f971368837d73eb2ffccb5365d98dd0b9f
+  RNIap: 38776f86996edea5837ba2a0dfc1e35427191327
   RNReanimated: c5d30ed621afc2b392e408fe43c4752e71de75f0
   RNScreens: 83f0de0b3589f55dd46d4d4614d4770d5951caed
   RNSVG: 4590aa95758149fa27c5c83e54a6a466349a1688

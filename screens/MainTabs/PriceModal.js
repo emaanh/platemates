@@ -1,17 +1,68 @@
-import React, { useState } from 'react';
-import { Modal, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Modal, Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { colors } from '../../stylevars'; // Import colors from stylevars.js
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as RNIap from 'react-native-iap';
+
+const itemSkus = [
+  'com.example.single_ticket', // Replace with actual SKU for single purchase
+  'com.example.subscription_1month', // Replace with actual SKU for 1 month subscription
+  'com.example.subscription_3months', // Replace with actual SKU for 3 months subscription
+  'com.example.subscription_6months', // Replace with actual SKU for 6 months subscription
+];
 
 const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
   const [selectedOption, setSelectedOption] = useState('1 Month'); // Default to "1 Month"
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Update the buy button text based on the selected option
+  useEffect(() => {
+    // Initialize IAP connection
+    const initIAP = async () => {
+      try {
+        await RNIap.initConnection();
+        const availableProducts = await RNIap.getProducts(itemSkus);
+        setProducts(availableProducts);
+        setLoading(false);
+      } catch (err) {
+        console.warn(err);
+      }
+    };
+
+    initIAP();
+
+    return () => {
+      RNIap.endConnection();
+    };
+  }, []);
+
   const getBuyButtonText = () => {
     if (selectedOption === 'Single Ticket') {
       return 'Buy Single Ticket';
     }
     return `Buy ${selectedOption}`;
+  };
+
+  const handlePurchase = async () => {
+    try {
+      const sku =
+        selectedOption === 'Single Ticket'
+          ? 'com.example.single_ticket'
+          : selectedOption === '1 Month'
+          ? 'com.example.subscription_1month'
+          : selectedOption === '3 Months'
+          ? 'com.example.subscription_3months'
+          : 'com.example.subscription_6months';
+
+      const purchase = await RNIap.requestPurchase(sku);
+      if (purchase) {
+        Alert.alert('Purchase Successful', 'Thank you for your purchase!');
+        setUserInEvent(true);
+      }
+    } catch (err) {
+      console.warn(err);
+      Alert.alert('Purchase Failed', 'Please try again.');
+    }
   };
 
   return (
@@ -29,15 +80,15 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
         {/* Description Section */}
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionTitle}>Access to All Dinners</Text>
-          <Text style={styles.descriptionText}>Subscribe for unlimited access to dinners every Wednesday</Text>
+          <Text style={styles.descriptionText}>Subscribe for access to dinners every Wednesday of the month</Text>
         </View>
 
         {/* Subscription Options */}
         <View style={styles.optionsContainer}>
           {[
-            { title: '1 Month', perMonth: '$9', total: '$9' },
-            { title: '3 Months', perMonth: '$7', originalPerMonth: '$9', total: '$23.97', discount: '20% OFF' },
-            { title: '6 Months', perMonth: '$5', originalPerMonth: '$9', total: '$35.94', discount: '40% OFF' },
+            { title: '1 Month', perMonth: '$7.99', total: '$7.99' },
+            { title: '3 Months', perMonth: '$4.99', originalPerMonth: '$9', total: '$14.99', discount: '20% OFF' },
+            { title: '6 Months', perMonth: '$3.33', originalPerMonth: '$9', total: '$19.99', discount: '40% OFF' },
           ].map((option, index) => (
             <TouchableOpacity
               key={index}
@@ -50,15 +101,14 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
               <View style={styles.optionContent}>
                 <View style={styles.textContainer}>
                   <Text style={styles.optionText}>{option.title}</Text>
-                  <Text style={styles.optionTotal}>{`Total: ${option.total}`}</Text>
                   {option.discount && <Text style={styles.discountTag}>{option.discount}</Text>}
                 </View>
-                <Text style={styles.pricePerMonth}>
-                  {/* {option.originalPerMonth && (
-                    <Text style={styles.strikethrough}>{option.originalPerMonth} </Text>
-                  )} */}
-                  {`${option.perMonth} / month`}
-                </Text>
+                <View style={styles.textContainer2}>
+                  <Text style={styles.pricePerMonth}>
+                    {`${option.perMonth} / month`}
+                  </Text>
+                  <Text style={styles.optionTotal}>{`Total: ${option.total}`}</Text>
+                </View>
               </View>
             </TouchableOpacity>
           ))}
@@ -80,7 +130,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
               <Text style={styles.optionText}>Single Ticket</Text>
               <Text style={styles.optionTotal}>For one dinner</Text>
             </View>
-            <Text style={styles.pricePerMonth}>$4</Text>
+            <Text style={styles.pricePerMonth}>$4.99</Text>
           </View>
         </TouchableOpacity>
 
@@ -90,16 +140,10 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
             styles.buyButton,
             !selectedOption && styles.disabledButton,
           ]}
-          onPress={() => {
-            if (selectedOption) {
-              setUserInEvent(true);
-              console.log(getBuyButtonText());
-            }
-          }}
+          onPress={handlePurchase}
           disabled={!selectedOption}
         >
           <Text style={styles.buyButtonText}>{getBuyButtonText()}</Text>
-          {/* Only show "Cancel Anytime" if the selected option is not "Single Ticket" */}
           {selectedOption !== 'Single Ticket' && (
             <Text style={styles.cancelText}>Cancel Anytime</Text>
           )}
@@ -185,6 +229,10 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'flex-start',
+    flex: 1,
+  },
+  textContainer2: {
+    alignItems: 'flex-end',
     flex: 1,
   },
   optionText: {
