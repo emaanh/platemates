@@ -18,7 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 function MainPage() {
   const navigation = useNavigation();
   const { user, userData } = useContext(AuthContext);
-  const [isUserInEvent, setIsUserInEvent] = useState(false);
+  const [isUserInEvent, setIsUserInEvent] = useState(true);
   if(user === null){
     navigation.navigate('LandingScreen');
     return (
