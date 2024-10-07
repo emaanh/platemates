@@ -9,14 +9,14 @@ function PersonalityQuizScreen({ navigation, route }) {
 
   const questions = [
     { type: 'multiple', question: "What is your ideal vacation?", options: ['Going to the mountains', 'Laying on a beach', 'Strolling through Manhattan', 'Visiting ruins'] },
-    { type: 'multiple', question: "In your friend group, which role do you play?", options: ['The Planner', 'The Wild Card', 'The Therapist', 'The Quiet Observer'] },
+    { type: 'multiple', question: "In your friend group, which role do you play?", options: ['The Planner (Always organizing hangouts)', 'The Wild Card (Down for anything)', 'The Therapist (The go-to for advice)', 'The Quiet Observer (Loves being part of the group, but stays chill)'] },
     { type: 'multiple', question: "If your life was a fashion style, would it be:", options: ['Classic and refined', 'Trendy and expressive'] },
     { type: 'multiple', question: "What would your perfect night look like?", options: ['Planned in advance', 'Spontaneous and improvised'] },
     { type: 'multiple', question: "What genre of movies do you prefer?", options: ['Action/Adventure', 'Comedy', 'Drama', 'Horror', 'Science Fiction/Fantasy'] },
     { type: 'multiple', question: "It's a Friday night, what are you doing?", options: ['Schoolwork', 'Going out', 'Having friends over', 'Watching a movie', 'Gaming', 'Drinking alone in my room'] },
-    { type: 'multiple', question: "What do you geek out about?", options: ['Science and Tech', 'Art and Music', 'TV and Cinema', 'Fitness', 'History and Culture'] },
+    { type: 'multiple', question: "What do you geek out about?", options: ['Science and Tech innovations', 'Art, music, or creative projects', 'Movies, TV series, or pop culture', 'Fitness or outdoors', 'History, culture, or philosophy'] },
     { type: 'multiple', question: "I’m a self-motivated person", options: ['Needs constant reminders', 'Motivated with a nudge', 'Only when it interests me', 'Pretty driven', 'I’m a machine'] },
-    { type: 'multiple', question: "How often are you stressed?", options: ['I’m always chill', 'Only when things get hectic', 'Comes and goes', 'Most days', 'I’m a stress magnet'] },
+    { type: 'multiple', question: "How often are you stressed", options: ['I’m always chill', 'Only when things get hectic', 'Comes and goes', 'Most days', 'I’m a stress magnet'] },
     { type: 'multiple', question: "I take risks", options: ['Play it safe', 'Only when necessary', 'Occasionally spontaneous', 'Love a good thrill', 'Daredevil!'] },
     { type: 'multiple', question: "I like to workout", options: ['Not my thing', 'When I’m in the mood', 'I try to be consistent', 'I am obsessed'] },
     { type: 'multiple', question: "How much does academic success matter to you?", options: ['Doesn’t matter to me', 'I aim to do pretty well', 'I work hard for high grades', 'It’s my top priority'] },
@@ -122,6 +122,21 @@ function PersonalityQuizScreen({ navigation, route }) {
     }
   };
 
+  const progressAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    // Animate the progress bar whenever the progress changes
+    Animated.timing(progressAnim, {
+      toValue: progress,
+      duration: 500, // Adjust the duration as needed
+      useNativeDriver: false,
+    }).start();
+  }, [progress]);
+
+  const progressWidth = progressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
+  });
+
   const renderQuestion = () => {
     const currentQuestion = questions[currentQuestionIndex];
     const selectedAnswer = answers[currentQuestionIndex];
@@ -132,17 +147,19 @@ function PersonalityQuizScreen({ navigation, route }) {
           <View style={styles.quizQuestion}>
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
             {currentQuestion.options.map((option, index) => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.answerButton,
-                  { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.black }
-                ]}
-                onPress={() => handleOptionPress(index, 'multiple')}
-                activeOpacity={1}
-              >
-                <Text style={styles.answerButtonText}>{option}</Text>
-              </TouchableOpacity>
+              <View style={styles.shadowContainer}>
+                <TouchableOpacity
+                  key={option}
+                  style={[
+                    styles.answerButton,
+                    { borderColor: buttonBorderColors[currentQuestionIndex] === index ? colors.primary : colors.black }
+                  ]}
+                  onPress={() => handleOptionPress(index, 'multiple')}
+                  activeOpacity={1}
+                >
+                  <Text style={styles.answerButtonText}>{option}</Text>
+                </TouchableOpacity>
+              </View>
             ))}
           </View>
         );
@@ -191,7 +208,7 @@ function PersonalityQuizScreen({ navigation, route }) {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.progressBarContainer}>
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+            <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
           </View>
         </View>
 
@@ -240,7 +257,7 @@ const styles = StyleSheet.create({
     width: '80%',
     textAlign: 'center',
     alignSelf: 'center',
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'LibreBaskerville_700Bold',
   },
   scrollViewContent: {
     paddingBottom: 20,
@@ -254,12 +271,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: 'Poppins_400Regular',
     alignSelf: 'center',
-    width: '100%',
-    textAlign:'center',
-    paddingHorizontal: 5
+    paddingHorizontal: 20,
   },
   answerButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: colors.background,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -275,7 +290,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
-    textAlign: 'center'
   },
   ratingContainer: {
     width: '90%',
@@ -320,6 +334,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     width: '90%',
     alignSelf: 'center',
+  },
+  shadowContainer: {
+    width: '100%',
+    alignItems: 'center',
+    borderRadius: 10,
+    padding: 2,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
 });
 
