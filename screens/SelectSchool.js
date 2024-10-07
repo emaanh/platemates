@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     width: '80%',
     textAlign: 'center',
     alignSelf: 'center',
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'LibreBaskerville_700Bold',
   },
   scrollViewContent: {
     paddingBottom: 20,

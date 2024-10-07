@@ -1,5 +1,5 @@
-import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto'
 import { LibreBaskerville_400Regular, LibreBaskerville_400Regular_Italic, LibreBaskerville_700Bold } from '@expo-google-fonts/libre-baskerville';
@@ -14,13 +14,96 @@ function LandingPage({navigation}) {
     LibreBaskerville_700Bold,
   });
 
+  const opacityAnim1 = useRef(new Animated.Value(0)).current;
+  const opacityAnim2 = useRef(new Animated.Value(0)).current;
+  const opacityAnim3 = useRef(new Animated.Value(0)).current;
+  const translateXAnim1 = useRef(new Animated.Value(-100)).current;
+  const translateXAnim2 = useRef(new Animated.Value(-100)).current;
+  const translateXAnim3 = useRef(new Animated.Value(-100)).current;
+
+  useEffect(() => {
+    // Staggered animation sequence
+    Animated.stagger(300, [
+      Animated.parallel([
+        Animated.timing(opacityAnim1, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateXAnim1, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(opacityAnim2, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateXAnim2, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(opacityAnim3, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateXAnim3, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  }, [opacityAnim1, opacityAnim2, opacityAnim3, translateXAnim1, translateXAnim2, translateXAnim3]);
+
   if (!fontsLoaded) {
     return <ActivityIndicator />;
   } else {return (
     <View style={styles.container}>
-      <Text style={styles.title}>Join Dinner with</Text>
+      <Animated.Text
+        style={[
+          styles.title,
+          {
+            opacity: opacityAnim1,
+            transform: [{ translateX: translateXAnim1 }],
+          },
+        ]}
+      >
+        Join Dinner with
+      </Animated.Text>
+      <Animated.Text
+        style={[
+          styles.title,
+          {
+            opacity: opacityAnim2,
+            transform: [{ translateX: translateXAnim2 }],
+          },
+        ]}
+      >
+        3 Random
+      </Animated.Text>
+      <Animated.Text
+        style={[
+          styles.title,
+          {
+            opacity: opacityAnim3,
+            transform: [{ translateX: translateXAnim3 }],
+          },
+        ]}
+      >
+        Students
+      </Animated.Text>
+
+      {/* <Text style={styles.title}>Join Dinner with</Text>
       <Text style={styles.title}>3 Random</Text>
-      <Text style={styles.title}>Students</Text>
+      <Text style={styles.title}>Students</Text> */}
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.getStartedButton} onPress={() => navigation.navigate('SelectSchoolScreen')}>

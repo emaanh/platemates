@@ -32,7 +32,7 @@ function IcebreakerScreen({ navigation }) {
         <Feather name="arrow-left" size={30} color={colors.black} />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Icebreaker</Text>
+      <Text style={styles.title}>Icebreakers</Text>
 
       <View style={[styles.swiperContainer, {backgroundColor: 'transparent'}]}>
         <Swiper
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 24, // Changed from string to number
     fontFamily: 'LibreBaskerville_700Bold',
-    top: 55,
+    top: 65,
   },
   swiperContainer: {
     top: 60,
