@@ -9,7 +9,6 @@ import { db } from '../../../firebase/firebase-config';
 function EditField({ navigation, route }) {
   const { field, index } = route.params;
   const { userData, user } = useContext(AuthContext);
-  console.log(userData[field]);
 
   const formatPhoneNumber = (text) => {
     const cleaned = text.replace(/\D/g, '').slice(0, 10); // Limit to 10 digits

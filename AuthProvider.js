@@ -3,6 +3,9 @@ import { authentication } from './firebase/firebase-config'; // Adjust the impor
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot, query, orderBy, collection } from 'firebase/firestore';
 import { db } from './firebase/firebase-config';
+import { Alert } from 'react-native';
+import {initConnection, getAvailablePurchases, endConnection,} from 'react-native-iap';
+import { sendSignInLinkToEmail, signInWithEmailLink } from 'firebase/auth';
 
 export const AuthContext = createContext(null);
 
@@ -13,6 +16,20 @@ export const AuthProvider = ({ children }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true); // New state for bookings loading
   const [loaded, setLoaded] = useState(false); // Authentication loading
+  const [subscribed, setSubscribed] = useState(false); // Track subscription products
+  const [hasTicket, setHasTicket] = useState(false);
+  const [caller, setCaller] = useState(false);
+  const [subscriptionType, setSubscriptionType] = useState(false);
+
+
+  const sendRegisterLink = async (email) => {
+
+  };
+
+  const sendSignInLink = async (emailLink) => {
+
+  };
+
 
   // Listen for authentication state changes
   useEffect(() => {
@@ -32,6 +49,9 @@ export const AuthProvider = ({ children }) => {
       unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         if (docSnap.exists()) {
           setUserData(docSnap.data());
+          if (docSnap.get('tickets').length > 0){
+            setHasTicket(true);
+          }
         } else {
           setUser(null);
           setUserData(null);
@@ -139,6 +159,35 @@ export const AuthProvider = ({ children }) => {
     };
   }, [user]);
 
+  const getUserPurchases = async () => {
+    try {
+      await initConnection();
+  
+      const purchases = await getAvailablePurchases();
+      const productIds = purchases
+        .map(purchase => purchase.productId)
+        .filter(productId => !productId.includes('1time'));
+      
+      if (productIds.includes('month1') || productIds.includes('month3') || productIds.includes('month6')) {
+        setSubscribed(true);
+        setSubscriptionType(productIds[0]);
+      }
+      
+      return productIds;
+    } catch (error) {
+      console.error('Error fetching purchases:', error);
+      Alert.alert('Error', 'Failed to retrieve purchases');
+    }
+  };
+
+  useEffect(() => {
+    getUserPurchases();
+
+    return () => {
+      endConnection();
+    };
+  }, [caller]);
+
   const handleSignOut = () => {
     signOut(authentication)
       .then(() => {
@@ -157,7 +206,12 @@ export const AuthProvider = ({ children }) => {
       bookings, 
       signOut: handleSignOut, 
       authLoaded: loaded, 
-      bookingsLoading: loading // Exposing loading state
+      bookingsLoading: loading, // Exposing loading state
+      subscribed,
+      caller,
+      setCaller,
+      hasTicket,
+      subscriptionType
     }}>
       {children}
     </AuthContext.Provider>

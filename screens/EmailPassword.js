@@ -49,6 +49,8 @@ function EmailPassword({ navigation, route }) {
           longSchool: school[0],
           receiveSMS: true,
           receiveNotifications: true,
+          tickets: [],
+          inEvent: false,
         });
 
         await addDoc(collection(db, 'users', uid, 'notifications'), {

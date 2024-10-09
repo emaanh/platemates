@@ -1,11 +1,11 @@
-import React, {useContext, useState} from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import { ActivityIndicator, Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather'; // Updated import
 import { TouchableOpacity } from 'react-native';
 import HomeScreen from './MainTabs/HomeScreen';
-import EventHomeScreen from './MainTabs/EventHomeScreen';
+import EventHub from './MainTabs/EventHomeScreen';
 import ProfileScreen from './MainTabs/ProfileScreen';
 import NotificationsScreen from './MainTabs/NotificationsScreen';
 import { colors } from '../stylevars';
@@ -17,15 +17,42 @@ import { useNavigation } from '@react-navigation/native';
 
 function MainPage() {
   const navigation = useNavigation();
-  const { user, userData } = useContext(AuthContext);
-  const [isUserInEvent, setIsUserInEvent] = useState(true);
-  if(user === null){
-    navigation.navigate('LandingScreen');
+  const { user, userData, subscribed} = useContext(AuthContext);
+  const [isUserInEvent, setIsUserInEvent] = useState(userData ? userData.inEvent : false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (userData) {
+      setIsUserInEvent(userData.inEvent);
+      setLoading(false);
+    }
+  }, [userData]);
+
+
+  if(loading){
     return (
-      <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background}}>
+      <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
+        <ActivityIndicator size="large" color="black" />
       </View>
     );
   }
+
+  if(user === null){
+    navigation.navigate('LandingScreen');
+    return (
+      <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
+  }
+
+
+
+  const toggleUserInEvent = (bool) => {
+    setIsUserInEvent(bool);
+  }
+
+  console.log(subscribed);
 
   return (
     <Tab.Navigator
@@ -64,9 +91,9 @@ function MainPage() {
       <Tab.Screen name="Home">
         {(props) =>
           isUserInEvent ? (
-            <EventHomeScreen {...props} setUserInEvent={setIsUserInEvent} />
+            <EventHub {...props} toggleUserInEvent={toggleUserInEvent} />
           ) : (
-            <HomeScreen {...props} setUserInEvent={setIsUserInEvent} />
+            <HomeScreen {...props} toggleUserInEvent={toggleUserInEvent} />
           )
         }
       </Tab.Screen>
@@ -103,4 +130,3 @@ const styles = StyleSheet.create({
 });
 
 export default MainPage;
-

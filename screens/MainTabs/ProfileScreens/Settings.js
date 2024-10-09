@@ -17,11 +17,12 @@ import { db } from '../../../firebase/firebase-config';
 import { colors } from '../../../stylevars';
 
 function Settings({ navigation }) {
-  const { userData, user,signOut } = useContext(AuthContext);
+  const { userData, user, signOut, subscriptionType, subscribed } = useContext(AuthContext);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(
     userData.receiveNotifications
   );
   const [isSMSAlertsEnabled, setIsSMSAlertsEnabled] = useState(userData.receiveSMS);
+  const [subscriptionStatus, setSubscriptionStatus] = useState(userData.subscriptionStatus); // Add subscription status
 
   const toggleNotifications = async () => {
     const newValue = !isNotificationsEnabled;
@@ -33,7 +34,6 @@ function Settings({ navigation }) {
       });
     } catch (error) {
       console.error('Error updating notifications:', error);
-      // Optionally revert the state if update fails
       setIsNotificationsEnabled(isNotificationsEnabled);
       Alert.alert('Error', 'Failed to update notification settings.');
     }
@@ -49,7 +49,6 @@ function Settings({ navigation }) {
       });
     } catch (error) {
       console.error('Error updating SMS alerts:', error);
-      // Optionally revert the state if update fails
       setIsSMSAlertsEnabled(isSMSAlertsEnabled);
       Alert.alert('Error', 'Failed to update SMS alert settings.');
     }
@@ -64,9 +63,12 @@ function Settings({ navigation }) {
           text: 'Cancel',
           style: 'cancel',
         },
-        { text: 'Logout', onPress: async() => {
-          await signOut();
-        }},
+        {
+          text: 'Logout',
+          onPress: async () => {
+            await signOut();
+          },
+        },
       ],
       { cancelable: false }
     );
@@ -89,8 +91,7 @@ function Settings({ navigation }) {
 
             if (user) {
               deleteUser(user)
-                .then(async () => {
-                })
+                .then(async () => {})
                 .catch((error) => {
                   alert('Error deleting user');
                 });
@@ -103,6 +104,15 @@ function Settings({ navigation }) {
       ],
       { cancelable: false }
     );
+  };
+
+  const renderSubscriptionStatus = () => {
+    if (!subscribed && userData.tickets.length > 0) {
+      return `${userData.tickets.length} tickets`;
+    } else if (subscribed) {
+      return `${subscriptionType} subscription`;
+    }
+    return 'No active subscription';
   };
 
   return (
@@ -120,6 +130,17 @@ function Settings({ navigation }) {
 
       {/* Settings Options */}
       <ScrollView contentContainerStyle={styles.contentContainer}>
+        
+        {/* Subscription Status */}
+        <View style={[styles.subscribeContainer, {textAlign: 'center',height: 100}]}>
+          <View style={[styles.optionLeft,{alignSelf: 'center'}]}>
+            <Text style={[styles.optionText,{marginLeft: 5, marginTop: -5}]}>Subscription Status</Text>
+          </View>
+          <Text style={styles.subscriptionText}>
+            {renderSubscriptionStatus()}
+          </Text>
+        </View>
+
         {/* Notifications Option */}
         <View style={styles.optionContainer}>
           <View style={styles.optionLeft}>
@@ -237,7 +258,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
     borderColor: colors.black,
-    borderWidth: 1
+    borderWidth: 1,
+  },
+  subscribeContainer: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    borderColor: colors.black,
+    borderWidth: 1,
   },
   optionLeft: {
     flexDirection: 'row',
@@ -248,6 +279,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 15,
     fontFamily: 'Poppins_400Regular',
+  },
+  subscriptionText: {
+    top: -10,
+    color: colors.primary,
+    fontSize: 16,
+    fontFamily: 'Poppins_700Bold',
   },
   logoutButton: {
     backgroundColor: colors.background,

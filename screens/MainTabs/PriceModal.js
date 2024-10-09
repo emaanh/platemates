@@ -1,17 +1,81 @@
-import React, { useState } from 'react';
-import { Modal, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { Platform, Modal, Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { colors } from '../../stylevars'; // Import colors from stylevars.js
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getAvailablePurchases, initConnection, getProducts, requestPurchase } from 'react-native-iap';
+import { AuthContext } from '../../AuthProvider';
+import { addDoc, doc, collection, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../../firebase/firebase-config';
+
+const productSkus = ['1time', 'month1', 'month3', 'month6'];
 
 const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
   const [selectedOption, setSelectedOption] = useState('1 Month'); // Default to "1 Month"
+  const { setCaller, caller, user, userData } = useContext(AuthContext);
 
-  // Update the buy button text based on the selected option
+  useEffect(() => {
+    handleGetProducts();
+  }, []);
+
+  const handleGetProducts = async () => {
+    try {
+      await initConnection();
+      const productResults = await getProducts({ skus: productSkus });
+      console.log(productResults);
+    } catch (error) {
+      console.log({ message: 'handleGetProducts', error });
+    }
+  };
+
   const getBuyButtonText = () => {
     if (selectedOption === 'Single Ticket') {
       return 'Buy Single Ticket';
     }
     return `Buy ${selectedOption}`;
+  };
+
+  const handleBuyProduct = async () => {
+    let sku;
+    switch (selectedOption) {
+      case '1 Month':
+        sku = 'month1';
+        break;
+      case '3 Months':
+        sku = 'month3';
+        break;
+      case '6 Months':
+        sku = 'month6';
+        break;
+      case 'Single Ticket':
+        sku = '1time';
+        break;
+      default:
+        sku = '1time';
+        break;
+    }
+
+    const purchaseResult = await requestPurchase({ sku });
+
+
+    if (purchaseResult.transactionReceipt) {
+      closeModal();
+      await addDoc(collection(db, 'users', user.uid, 'purchases'), {
+        purchase: selectedOption,
+        timestamp: serverTimestamp(),
+      });
+      if(selectedOption == 'Single Ticket'){
+        const tempArray = userData.tickets;
+        tempArray.push(new Date());
+        await setDoc(doc(db,'users',user.uid),{tickets:tempArray},{merge:true});
+      }
+      setCaller(!caller);
+      Alert.alert(`${selectedOption} purchased!`);
+
+
+    } else {
+      console.error('Purchase failed');
+    }
+
   };
 
   return (
@@ -29,15 +93,15 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
         {/* Description Section */}
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionTitle}>Access to All Dinners</Text>
-          <Text style={styles.descriptionText}>Subscribe for unlimited access to dinners every Wednesday</Text>
+          <Text style={styles.descriptionText}>Subscribe for access to dinners every Wednesday of the month</Text>
         </View>
 
         {/* Subscription Options */}
         <View style={styles.optionsContainer}>
           {[
-            { title: '1 Month', perMonth: '$9', total: '$9' },
-            { title: '3 Months', perMonth: '$7', originalPerMonth: '$9', total: '$23.97', discount: '20% OFF' },
-            { title: '6 Months', perMonth: '$5', originalPerMonth: '$9', total: '$35.94', discount: '40% OFF' },
+            { title: '1 Month', perMonth: '$7.99', total: '$7.99' },
+            { title: '3 Months', perMonth: '$4.99', originalPerMonth: '$9', total: '$14.99', discount: '20% OFF' },
+            { title: '6 Months', perMonth: '$3.33', originalPerMonth: '$9', total: '$19.99', discount: '40% OFF' },
           ].map((option, index) => (
             <TouchableOpacity
               key={index}
@@ -50,15 +114,14 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
               <View style={styles.optionContent}>
                 <View style={styles.textContainer}>
                   <Text style={styles.optionText}>{option.title}</Text>
-                  <Text style={styles.optionTotal}>{`Total: ${option.total}`}</Text>
                   {option.discount && <Text style={styles.discountTag}>{option.discount}</Text>}
                 </View>
-                <Text style={styles.pricePerMonth}>
-                  {/* {option.originalPerMonth && (
-                    <Text style={styles.strikethrough}>{option.originalPerMonth} </Text>
-                  )} */}
-                  {`${option.perMonth} / month`}
-                </Text>
+                <View style={styles.textContainer2}>
+                  <Text style={styles.pricePerMonth}>
+                    {`${option.perMonth} / month`}
+                  </Text>
+                  <Text style={styles.optionTotal}>{`Total: ${option.total}`}</Text>
+                </View>
               </View>
             </TouchableOpacity>
           ))}
@@ -80,7 +143,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
               <Text style={styles.optionText}>Single Ticket</Text>
               <Text style={styles.optionTotal}>For one dinner</Text>
             </View>
-            <Text style={styles.pricePerMonth}>$4</Text>
+            <Text style={styles.pricePerMonth}>$4.99</Text>
           </View>
         </TouchableOpacity>
 
@@ -90,21 +153,14 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
             styles.buyButton,
             !selectedOption && styles.disabledButton,
           ]}
-          onPress={() => {
-            if (selectedOption) {
-              setUserInEvent(true);
-              console.log(getBuyButtonText());
-            }
-          }}
+          onPress={handleBuyProduct}
           disabled={!selectedOption}
         >
           <Text style={styles.buyButtonText}>{getBuyButtonText()}</Text>
-          {/* Only show "Cancel Anytime" if the selected option is not "Single Ticket" */}
           {selectedOption !== 'Single Ticket' && (
             <Text style={styles.cancelText}>Cancel Anytime</Text>
           )}
         </TouchableOpacity>
-
       </SafeAreaView>
     </Modal>
   );
@@ -115,8 +171,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     padding: 20,
-    paddingTop: 40, // Add padding to move everything down
-    justifyContent: 'center', // Center content vertically
+    paddingTop: 40,
+    justifyContent: 'center',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
@@ -185,6 +241,10 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'flex-start',
+    flex: 1,
+  },
+  textContainer2: {
+    alignItems: 'flex-end',
     flex: 1,
   },
   optionText: {
