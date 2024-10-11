@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useEffect, useContext, useState, useRef } from 
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { colors } from '../stylevars';
+import * as Haptics from 'expo-haptics';
 
 
 function SelectSchool({ navigation }) {
@@ -24,8 +25,9 @@ function SelectSchool({ navigation }) {
             <TouchableOpacity
               key={index}
               style={styles.schoolButton}
-              onPress={() => navigation.navigate('PersonalityQuizScreen', { school })}
-            >
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.navigate('PersonalityQuizScreen', { school })}}>
               <Text style={styles.schoolButtonText}>{school[0]}</Text>
             </TouchableOpacity>
           </View>

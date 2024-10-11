@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Animat
 import { Feather } from '@expo/vector-icons';
 import { colors } from '../stylevars';
 import { AuthContext } from '../AuthProvider';
+import * as Haptics from 'expo-haptics';
 
 function PersonalityQuizScreen({ navigation, route }) {
   const { school } = route.params;
@@ -89,6 +90,7 @@ function PersonalityQuizScreen({ navigation, route }) {
   };
 
   const handleOptionPress = (index, type = 'multiple') => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const currentQuestion = questions[currentQuestionIndex];
 
     if (type === 'multiple') {
@@ -205,7 +207,7 @@ function PersonalityQuizScreen({ navigation, route }) {
 
       <Text style={styles.title}>Personality</Text>
 
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.progressBarContainer}>
           <View style={styles.progressBar}>
             <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
@@ -216,7 +218,7 @@ function PersonalityQuizScreen({ navigation, route }) {
         <Animated.View style={{ opacity: fadeAnim }}>
           {renderQuestion()}
         </Animated.View>
-      </ScrollView>
+      </View>
     </View>
   );
 }

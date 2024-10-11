@@ -92,16 +92,16 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
 
         {/* Description Section */}
         <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionTitle}>Access to All Dinners</Text>
-          <Text style={styles.descriptionText}>Subscribe for access to dinners every Wednesday of the month</Text>
+          <Text style={styles.descriptionTitle}>Access to Weekly Dinners</Text>
+          <Text style={styles.descriptionText}>Subscribe for 4 dinners each month</Text>
         </View>
 
         {/* Subscription Options */}
         <View style={styles.optionsContainer}>
           {[
-            { title: '1 Month', perMonth: '$7.99', total: '$7.99' },
-            { title: '3 Months', perMonth: '$4.99', originalPerMonth: '$9', total: '$14.99', discount: '20% OFF' },
-            { title: '6 Months', perMonth: '$3.33', originalPerMonth: '$9', total: '$19.99', discount: '40% OFF' },
+            { title: '1 Month', perMonth: '$1.99', total: '$7.99' },
+            { title: '3 Months', perMonth: '$1.25', originalPerMonth: '$9.99', total: '$14.99', discount: '38% OFF' },
+            { title: '6 Months', perMonth: '$0.83', originalPerMonth: '$9.99', total: '$19.99', discount: '58% OFF' },
           ].map((option, index) => (
             <TouchableOpacity
               key={index}
@@ -118,7 +118,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
                 </View>
                 <View style={styles.textContainer2}>
                   <Text style={styles.pricePerMonth}>
-                    {`${option.perMonth} / month`}
+                    {`${option.perMonth} / dinner`}
                   </Text>
                   <Text style={styles.optionTotal}>{`Total: ${option.total}`}</Text>
                 </View>
@@ -288,6 +288,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.green,
     marginTop: 20,
+    justifyContent: 'center',
+    textAlign: 'center'
   },
   disabledButton: {
     backgroundColor: colors.disabled,

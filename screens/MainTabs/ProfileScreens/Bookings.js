@@ -10,6 +10,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../../../AuthProvider';
 import { db } from '../../../firebase/firebase-config';
+import { createStackNavigator } from '@react-navigation/stack';
 import {
   collection,
   query,
@@ -17,20 +18,41 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { colors } from '../../../stylevars';
+import BookingSnap from './BookingSnap';
+
+const Stack = createStackNavigator();
+
+function BookingsHub() {
+
+  return (
+    <Stack.Navigator screenOptions={{ swipeEnabled: false, headerShown: false  }}>
+      <Stack.Screen
+        name="BookingsList"
+        component={Bookings}
+      />
+      <Stack.Screen
+        name="BookingSnap"
+        component={BookingSnap}
+      />
+    </Stack.Navigator>
+  );
+}
 
 function Bookings({ navigation }) {
   const { user, bookings } = useContext(AuthContext);
 
 
   const renderBookingItem = ({ item }) => (
-    <View style={styles.bookingItem}>
+    <TouchableOpacity style={styles.bookingItem} onPress={() => {
+      navigation.navigate('BookingSnap',{eventID: item.eventID});
+    }}>
       <Feather name="calendar" size={24} color={colors.primary} />
       <View style={styles.bookingDetails}>
         <Text style={styles.bookingDate}>{item.date}</Text>
         <Text style={styles.bookingTime}>{item.time}</Text>
         <Text style={styles.bookingLocation}>{item.location}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -60,7 +82,6 @@ function Bookings({ navigation }) {
           <TouchableOpacity
             style={styles.bookButton}
             onPress={() => {
-              navigation.navigate('BookingScreen');
               
             }}
           >
@@ -165,6 +186,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
   },
+  lateText: {
+    color: colors.red,
+    fontFamily: 'Poppins_400Regular',
+    fontSize: 20,
+    right: '-100%',
+    bottom: 2
+  },
 });
 
-export default Bookings;
+export default BookingsHub;

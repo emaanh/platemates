@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto'
 import { LibreBaskerville_400Regular, LibreBaskerville_400Regular_Italic, LibreBaskerville_700Bold } from '@expo-google-fonts/libre-baskerville';
 import { colors } from '../stylevars';
+import * as Haptics from 'expo-haptics';
 
 function LandingPage({navigation}) {
   let [fontsLoaded] = useFonts({
@@ -106,11 +107,16 @@ function LandingPage({navigation}) {
       <Text style={styles.title}>Students</Text> */}
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.getStartedButton} onPress={() => navigation.navigate('SelectSchoolScreen')}>
+        <TouchableOpacity style={styles.getStartedButton} onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.navigate('SelectSchoolScreen')
+          }}>
           <Text style={styles.getStartedText}>Get Started</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.outlineButton} onPress={() => navigation.navigate('LoginScreen')}>
+        <TouchableOpacity style={styles.outlineButton} onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          navigation.navigate('LoginScreen')}}>
           <Text style={styles.outlineButtonText}>I already have an account</Text>
         </TouchableOpacity>
       </View>

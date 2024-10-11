@@ -11,35 +11,18 @@ import {
   Modal,
   TextInput
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Ensure this is installed and linked
-import IcebreakerScreen from './IcebreakerScreen';
-import { createStackNavigator } from '@react-navigation/stack';
-import { colors } from '../../stylevars';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { colors } from '../../../stylevars';
 import { onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp, addDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase-config';
-import { AuthContext } from '../../AuthProvider';
+import { db } from '../../../firebase/firebase-config';
+import { AuthContext } from '../../../AuthProvider';
 import { useNavigation } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 
 
-const Stack = createStackNavigator();
+function BookingSnap({route}) {
+  const { eventID } = route.params;
 
-function EventHub({toggleUserInEvent}){
-  return (
-    <Stack.Navigator screenOptions={{ gestureEnabled: false, swipeEnabled: false, headerShown: false  }}>
-      <Stack.Screen
-        name="EventHome"
-        children={() => <EventHomeScreen toggleUserInEvent={toggleUserInEvent} />}
-      />
-      <Stack.Screen
-        name="Icebreaker"
-        component={IcebreakerScreen}
-      />
-    </Stack.Navigator>
-  );
-}
-
-
-function EventHomeScreen({toggleUserInEvent}) {
   const [isGroupRevealed, setIsGroupRevealed] = useState(false);
   const [isRestaurantRevealed, setIsRestaurantRevealed] = useState(false);
   const [isDinnerHidden, setIsDinnerHidden] = useState(false);
@@ -66,8 +49,8 @@ function EventHomeScreen({toggleUserInEvent}) {
     let unsubscribe;
   
     const fetchEventDetails = async () => {
-      if (userData && userData.eventID !== null) {
-        const eventRef = doc(db, 'events', userData.eventID);
+      if (true) {
+        const eventRef = doc(db, 'events', eventID);
         
         unsubscribe = onSnapshot(eventRef, (docSnapshot) => {
           if (docSnapshot.exists()) {
@@ -87,14 +70,6 @@ function EventHomeScreen({toggleUserInEvent}) {
                 .map(user => user.name)
                 .filter(name => name !== userData.fullName);
               setGroupNames(groupNames);
-
-              const currentUser = eventData.userList.find(user => user.name === userData.fullName);
-
-              if (currentUser && currentUser.late === true) {
-                setIsLateNotified(true);
-              } else {
-                setIsLateNotified(false);
-              }
             } else {
               setUserList([]);
             }
@@ -118,49 +93,12 @@ function EventHomeScreen({toggleUserInEvent}) {
     };
   }, [userData]);
 
-  const handleLatePress = async () => {
-    if (!isLateNotified) {
-      alert('Everyone has been notified that you\'re late.');
-      const updatedUserList = userList.map(userItem => {
-        if (userItem.name === userData.fullName) {
-          return { ...userItem, late: true };
-        }
-        return userItem;
-      });
-      await setDoc(doc(db, 'events', userData.eventID), { userList: updatedUserList }, { merge: true });
-
-      setIsLateNotified(true);
-    }
-  };
-
-  const handleCancelPress = () => {
-    Alert.alert(
-      "Cancel Event",
-      "Are you sure you want to cancel? This action cannot be undone.",
-      [
-        {
-          text: "No",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          onPress: async () => {
-            toggleUserInEvent(false);
-            await addDoc(collection(db, 'cancelNotice'), { name: userData.fullName, timestamp: serverTimestamp(), oldEventID: userData.eventID });
-            await setDoc(doc(db, 'users', user.uid), { inEvent: false, eventID: null }, { merge: true });
-          }
-        }
-      ],
-      { cancelable: true }
-    );
-  };
 
   const handleToggleHeart = async(index) => {
     const newList = [...userList];
     newList[index].liked = !newList[index].liked;
     setUserList(newList);
-    await setDoc(doc(db,'events',userData.eventID),{userList:newList},{merge:true});
+    await setDoc(doc(db,'events',eventID),{userList:newList},{merge:true});
   };
 
   const handleExitEvent = () => {
@@ -175,7 +113,10 @@ function EventHomeScreen({toggleUserInEvent}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Dinner Scheduled</Text>
+      <TouchableOpacity style={{position: 'absolute', top: 60, left: 20}} onPress={() => navigation.goBack()}>
+        <Feather name="arrow-left" size={30} color={colors.black} />
+      </TouchableOpacity>
+      <Text style={styles.header}>Old Dinner</Text>
 
       <View style={styles.divider} />
 
@@ -190,7 +131,7 @@ function EventHomeScreen({toggleUserInEvent}) {
 
         {/* Existing Content */}
         {!isSeatConfirmedHidden && <View style={[styles.bubble, { backgroundColor: colors.primary, borderWidth: 0 }]}>
-          <Text style={[styles.bubbleText, { color: colors.background }]}>Your seat is confirmed</Text>
+          <Text style={[styles.bubbleText, { color: colors.background }]}>Old Location</Text>
 
           <View style={styles.dateTimeContainer}>
             <Icon name="calendar-today" size={20} color={colors.background} style={styles.icon} />
@@ -204,40 +145,6 @@ function EventHomeScreen({toggleUserInEvent}) {
           <View style={styles.locationContainer}>
             <Icon name="location-on" size={20} color={colors.background} style={styles.icon} />
             <Text style={[styles.locationText, { color: colors.background }]}>UC Berkeley</Text>
-          </View>
-
-          <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary, borderColor: colors.background, borderWidth: 1 }]}
-            onPress={() => {
-              if(isLateNotified){
-                Alert.alert('This action cannot be reversed');
-                return;
-              }
-              setLateModal(true)
-            }}
-          >
-            <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.background }]}>
-              {isLateNotified ? 'Dinner members notified' : 'I will be late'}
-            </Text>
-          </TouchableOpacity>
-
-            {/* <View style={styles.shadowContainer}>
-              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary, borderColor: colors.background, borderWidth: 1 }]}>
-                <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.background}]}>
-                  Reschedule
-                </Text>
-              </TouchableOpacity>
-            </View> */}
-
-            <View style={{}}>
-              <TouchableOpacity onPress={handleCancelPress} style={[{ backgroundColor: colors.primary, marginTop: 10, alignSelf: 'center', borderWidth: 0 }]}>
-                <Text style={[styles.buttonText, { textDecorationStyle: 'solid', fontFamily: 'Poppins_700Bold', color: colors.background }]}>
-                  Cancel
-                </Text>
-                {/* <View style={{height: 0.6,backgroundColor: colors.white, borderRadius: 1, }} /> */}
-              </TouchableOpacity>
-            </View>
           </View>
         </View>}
 
@@ -270,18 +177,8 @@ function EventHomeScreen({toggleUserInEvent}) {
               <View style={styles.shadowContainer}>
                 <TouchableOpacity
                   style={[styles.button, { backgroundColor: colors.primary, borderWidth: 0 }]}
-                  onPress={async() => {
-                    const updatedUserList = userList.map(userItem => {
-                      if (userItem.name === userData.fullName) {
-                        return { ...userItem, late: true, lateMessage };
-                      }
-                      return userItem;
-                    });
-                    await setDoc(doc(db, 'events', userData.eventID), { userList: updatedUserList }, { merge: true });
-                    setLateModal(false);
-                    setIsLateNotified(true);
-                    Alert.alert('Everyone has been notified that you\'re late.');
-                  }}
+                  onPressIn={() => setLate(true)}
+                  onPress={() => setLateModal(!lateModal)}
                 >
                   <Text style={[styles.buttonText, {fontFamily: 'Poppins_700Bold', color: colors.white}]}>Confirm You'll be Late</Text>
                 </TouchableOpacity>
@@ -307,7 +204,7 @@ function EventHomeScreen({toggleUserInEvent}) {
             <View>
               {userList.map((userItem, index) => (
                 <Text key={index} style={{fontSize: 20, marginTop: 5, marginLeft: 10, fontFamily: 'Poppins_400Regular'}}>
-                  - {userItem.name} {userItem.late ? (userItem.lateMessage ? ' ('+userItem.lateMessage+')' : '(Late)') : ''}
+                  - {userItem.name} {userItem.late ? '(Late)' : ''}
                 </Text>
               ))}
             </View>
@@ -373,7 +270,7 @@ function EventHomeScreen({toggleUserInEvent}) {
             {userList.map((person, index) => (
               <View key={index} style={styles.feedbackItem}>
                 <Text style={styles.feedbackName}>{person.name}</Text>
-                <TouchableOpacity onPress={() => handleToggleHeart(index)}>
+                <TouchableOpacity onPress={() => {Alert.alert('This feature is only available after dinners.')}}>
                   <Icon
                     name={person.liked ? 'favorite' : 'favorite-border'}
                     size={28}
@@ -382,16 +279,6 @@ function EventHomeScreen({toggleUserInEvent}) {
                 </TouchableOpacity>
               </View>
             ))}
-            <View style={[styles.shadowContainer,{marginTop: 10}]}>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.red, borderColor: colors.background }]}
-                onPress={() => console.log('Exiting the event...')}  // Replace with actual function
-              >
-                <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.background }]}>
-                  Exit Event
-                </Text>
-              </TouchableOpacity>
-            </View>
             <Text style={{fontSize: 15, textAlign: 'center', marginTop: 10, fontFamily: 'Poppins_400Regular', color: colors.grey}}>*If you had any issues with your dinner, call 650-282-0663 for compensation.</Text>
           </View>
         )}
@@ -579,14 +466,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
   },
   textInput: {
-    fontFamily: 'Poppins_400Regular',
     width: '100%',
     borderColor: colors.black,
     borderWidth: 1,
     padding: 10,
     borderRadius: 8,
     marginBottom: 20,
-    fontSize: 15
+    fontSize: 16
   },
   LateModalTitleText: {
     fontSize: 20,
@@ -598,4 +484,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default EventHub;
+export default BookingSnap;

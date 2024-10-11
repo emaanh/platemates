@@ -4,10 +4,15 @@ import { Feather, FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { colors } from '../stylevars';
 import { signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
-import { authentication } from '../firebase/firebase-config';
+import { authentication,db } from '../firebase/firebase-config';
+
+import { setDoc,doc } from 'firebase/firestore';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { AuthContext } from '../AuthProvider';
+import * as Haptics from 'expo-haptics';
+
+
 
 function QuizResults({ navigation, route }) {
   const [isMatching, setIsMatching] = useState(true);
@@ -66,7 +71,7 @@ function QuizResults({ navigation, route }) {
       const userCredential = await signInWithCredential(authentication, googleCredential);
       const userEmail = userCredential.user.email;
       const emailDomain = userEmail.split('@')[1];
-      setUser(userCredential.user);
+
 
       if (emailDomain !== school[2]) {
         Alert.alert('Email domain does not match the required school domain.');
@@ -74,6 +79,11 @@ function QuizResults({ navigation, route }) {
 
         return;
       }
+
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        email: userEmail.trim(),
+        tickets: []
+      },{merge:true});
 
       navigation.navigate('GoogleInfoScreen', { uid: userCredential.user.uid, email: userCredential.user.email, school, answers });
     } catch (error) {
@@ -91,7 +101,7 @@ function QuizResults({ navigation, route }) {
                 cx="50"
                 cy="50"
                 r="40"
-                stroke={colors.black}
+                stroke={colors.white}
                 strokeWidth="5"
                 fill="none"
                 strokeDasharray="251.2"
@@ -109,11 +119,14 @@ function QuizResults({ navigation, route }) {
           </Text>
           <TouchableOpacity
             style={styles.emailButton}
-            onPress={() => navigation.navigate('PhoneNumberScreen', { school, answers })}
-          >
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); 
+              navigation.navigate('PhoneNumberScreen', { school, answers })}}>
             <Text style={styles.emailButtonText}>Sign up with email</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.googleButton} onPress={signInWithGoogle}>
+          <TouchableOpacity style={styles.googleButton} onPress={()=> {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            signInWithGoogle()}}>
             <FontAwesome name="google" size={24} color="#333333" style={styles.googleIcon} />
             <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>

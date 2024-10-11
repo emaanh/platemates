@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { db, authentication } from '../firebase/firebase-config';
 import { setDoc, doc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { colors } from '../stylevars';
+import { AuthContext } from '../AuthProvider';
 
 function GoogleInfo({ navigation, route }) {
+
     const { uid, email, school, answers } = route.params;
   
     const [fullName, setFullName] = useState('');
@@ -68,17 +70,19 @@ function GoogleInfo({ navigation, route }) {
               tickets: [],
               inEvent: false,
               eventID: null
-            });
+            },{merge:true});
     
             await addDoc(collection(db, 'users', uid, 'notifications'), {
               timestamp: serverTimestamp(),
-              message: 'Important Notifications Shown Here!'
+              message: 'Important Notification',
+              description: 'Check this screen for valuable info.'
             });
     
             await addDoc(collection(db, 'users', uid, 'events'), {
               timestamp: serverTimestamp(),
               title: 'Dinners Shown Here'
             });
+
     
             navigation.navigate('QuoteScreen');
     

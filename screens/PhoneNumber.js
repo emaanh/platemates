@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, Animated, Easing, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { colors } from '../stylevars';
+import * as Haptics from 'expo-haptics';
 
 function PhoneNumber({ navigation, route }) {
   const { school, answers } = route.params;
@@ -68,7 +69,9 @@ function PhoneNumber({ navigation, route }) {
           maxLength={12} // Format XXX-XXX-XXXX has 12 characters including dashes
         />
 
-        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+        <TouchableOpacity style={styles.nextButton} onPress={()=>{
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          handleNext()}}>
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
       </Animated.View>

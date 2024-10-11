@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Image, Modal, Text, View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Alert, Image, Modal, Text, View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
 import { colors } from '../../stylevars';
@@ -58,11 +58,51 @@ function HomeScreen({ toggleUserInEvent }) {
     }
 
     if(subscribed){
-      joinDinnerQueueSubscribe();
+      Alert.alert(
+        "Confirm Booking",
+        "Are you sure you want to book this date?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => {
+              console.log("Booking cancelled");
+              // Optional: Any additional cancellation logic
+            },
+            style: "cancel",
+          },
+          {
+            text: "Yes",
+            onPress: () => {
+              joinDinnerQueueSubscribe();
+            },
+          },
+        ],
+        { cancelable: false } // Prevents dismissal by tapping outside
+      );
     }
 
     if(hasTicket){
-      joinDinnerQueueTickets();
+      Alert.alert(
+        "Confirm Booking",
+        "Are you sure you want to book this date? Once booked, your ticket will be used.",
+        [
+          {
+            text: "Cancel",
+            onPress: () => {
+              console.log("Booking cancelled");
+              // Optional: Any additional cancellation logic
+            },
+            style: "cancel",
+          },
+          {
+            text: "Yes",
+            onPress: () => {
+              joinDinnerQueueTickets();
+            },
+          },
+        ],
+        { cancelable: false } // Prevents dismissal by tapping outside
+      );
     }
   };
 

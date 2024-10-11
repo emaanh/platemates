@@ -30,11 +30,12 @@ export const AuthProvider = ({ children }) => {
 
   };
 
-  console.log('user:',user);
 
+  console.log('outUser:',user);
   // Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authentication, (user) => {
+      console.log('inUser:',user);
       setUser(user);
       setLoaded(true);
     });
@@ -52,6 +53,8 @@ export const AuthProvider = ({ children }) => {
           setUserData(docSnap.data());
           if (docSnap.get('tickets').length > 0){
             setHasTicket(true);
+          } else{
+            setHasTicket(false);
           }
         } else {
           setUser(null);
@@ -88,6 +91,7 @@ export const AuthProvider = ({ children }) => {
               id: doc.id,
               title: doc.get('message'),
               timestamp: doc.get('timestamp'),
+              description: doc.get('description')
             });
           });
           console.log(notificationsList);
@@ -139,6 +143,7 @@ export const AuthProvider = ({ children }) => {
               date: formattedDate,
               time: formattedTime,
               location: data.title || 'No location specified',
+              eventID: data.eventID
             });
           });
           setBookings(bookingsList);

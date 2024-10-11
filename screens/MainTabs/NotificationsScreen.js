@@ -7,20 +7,58 @@ import { AuthContext } from '../../AuthProvider';
 import { db } from '../../firebase/firebase-config';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
+// Helper function to calculate time since the timestamp
+const formatTimeSince = (timestamp) => {
+  const now = new Date();
+  const then = timestamp instanceof Date ? timestamp : timestamp.toDate();
+  const diffInSeconds = Math.floor((now - then) / 1000);
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds}s`;
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}h`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7) {
+    return `${diffInDays}d`;
+  }
+
+  const diffInWeeks = Math.floor(diffInDays / 7);
+  if (diffInWeeks < 4) {
+    return `${diffInWeeks}w`;
+  }
+
+  const diffInMonths = Math.floor(diffInWeeks / 4);
+  if (diffInMonths < 12) {
+    return `${diffInMonths}mo`;
+  }
+
+  const diffInYears = Math.floor(diffInMonths / 12);
+  return `${diffInYears}y`;
+};
+
 function NotificationsScreen() {
   const { notifications } = useContext(AuthContext);
-
-
 
   // Render each notification item
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.button}>
-      <Text style={styles.notificationText}>{item.title}</Text>
-      {/* {item.timestamp && (
-        <Text style={styles.notificationDate}>
-          {item.timestamp.toDate().toLocaleString()}
+      <Text style={styles.notificationTitle}>{item.title}</Text>
+      <Text style={styles.notificationDescription}>
+        {item.description}{' '}
+        <Text style={styles.notificationTime}>
+          {formatTimeSince(item.timestamp)}
         </Text>
-      )} */}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -91,9 +129,21 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
   },
-  notificationText: {
+  notificationTitle: {
     color: colors.black,
     fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    fontFamily: 'Poppins_700Bold',
+  },
+  notificationDescription: {
+    fontFamily: 'Poppins_400Regular',
+    color: colors.black,
+    fontSize: 16,
+  },
+  notificationTime: {
+    color: colors.grey, // Light grey color for timestamp
+    fontSize: 14,
   },
   emptyContainer: {
     flex: 1,

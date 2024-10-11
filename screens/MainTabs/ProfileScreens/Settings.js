@@ -12,7 +12,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../../../AuthProvider';
 import { deleteUser } from 'firebase/auth';
-import { doc, deleteDoc, updateDoc } from 'firebase/firestore'; // Import updateDoc
+import { doc, collection, updateDoc,getDocs, writeBatch, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
 import { colors } from '../../../stylevars';
 
@@ -74,6 +74,29 @@ function Settings({ navigation }) {
     );
   };
 
+  const deleteSubCollection = async (userDocRef, subCollectionName) => {
+    const subCollectionRef = collection(userDocRef, subCollectionName);
+    const snapshot = await getDocs(subCollectionRef);
+    
+    if (snapshot.empty) {
+      console.log(`No documents found in ${subCollectionName} sub-collection.`);
+      return;
+    }
+  
+    const batch = writeBatch(db);
+    snapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+  
+    try {
+      await batch.commit();
+      console.log(`Successfully deleted all documents in ${subCollectionName} sub-collection.`);
+    } catch (error) {
+      console.error(`Error deleting documents in ${subCollectionName} sub-collection:`, error);
+      throw error; // Propagate error to handle it in the calling function
+    }
+  };
+
   const handleDeleteAccount = () => {
     Alert.alert(
       'Confirm Delete Account',
@@ -87,6 +110,8 @@ function Settings({ navigation }) {
           text: 'Delete',
           onPress: async () => {
             const userDocRef = doc(db, 'users', user.uid);
+            await deleteSubCollection(userDocRef, 'events');
+            await deleteSubCollection(userDocRef, 'notifications');
             await deleteDoc(userDocRef);
 
             if (user) {
@@ -105,11 +130,20 @@ function Settings({ navigation }) {
     );
   };
 
+  const subscriptionMap = {
+    month1: '1 Month',
+    month3: '3 Months',
+    month6: '6 Months',
+  };
+  
   const renderSubscriptionStatus = () => {
     if (!subscribed && userData.tickets.length > 0) {
-      return `${userData.tickets.length} tickets`;
+      const ticketCount = userData.tickets.length;
+      const ticketText = ticketCount === 1 ? '1 ticket' : `${ticketCount} tickets`;
+      return ticketText;
     } else if (subscribed) {
-      return `${subscriptionType} subscription`;
+      const subscriptionDisplay = subscriptionMap[subscriptionType] || 'Unknown Subscription';
+      return `${subscriptionDisplay} subscription`;
     }
     return 'No active subscription';
   };

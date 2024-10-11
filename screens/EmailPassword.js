@@ -56,7 +56,8 @@ function EmailPassword({ navigation, route }) {
 
         await addDoc(collection(db, 'users', uid, 'notifications'), {
           timestamp: serverTimestamp(),
-          message: 'Important Notifications Shown Here!'
+          message: 'Important Notifications Shown Here!',
+          description: 'Check this screen for valuable info.'
         });
 
         await addDoc(collection(db, 'users', uid, 'events'), {
@@ -134,7 +135,9 @@ function EmailPassword({ navigation, route }) {
         returnKeyType="done"
       />
 
-      <TouchableOpacity style={styles.nextButton} onPress={handleSubmit} disabled={loading}>
+      <TouchableOpacity style={styles.nextButton} onPress={()=>{
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        handleSubmit}} disabled={loading}>
         {loading ? (
           <ActivityIndicator size="large" color={colors.black} />
         ) : (
