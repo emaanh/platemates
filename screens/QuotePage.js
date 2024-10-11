@@ -11,7 +11,7 @@ import { AuthContext } from '../AuthProvider';
 
 function QuotePage({ navigation }) {
   const { user, userData } = useContext(AuthContext);
-  if(user === null){
+  if(userData === null){
     return;
   }
 

@@ -15,6 +15,7 @@ import { colors } from '../../stylevars';
 import { onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
 import { AuthContext } from '../../AuthProvider';
+import { useNavigation } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,7 @@ function EventHomeScreen({toggleUserInEvent}) {
   const [isFeedbackRevealed, setIsFeedbackRevealed] = useState(false);
   const [isSeatConfirmedHidden, setIsSeatConfirmedHidden] = useState(false);
 
+  const navigation = useNavigation();
   const { userData, user } = useContext(AuthContext);
 
   const [userList, setUserList] = useState([]);

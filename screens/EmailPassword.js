@@ -51,6 +51,7 @@ function EmailPassword({ navigation, route }) {
           receiveNotifications: true,
           tickets: [],
           inEvent: false,
+          eventID: null
         });
 
         await addDoc(collection(db, 'users', uid, 'notifications'), {

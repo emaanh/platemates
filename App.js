@@ -19,6 +19,7 @@ import { useContext } from 'react';
 import { AuthContext } from './AuthProvider';
 import { LibreBaskerville_400Regular, LibreBaskerville_700Bold } from '@expo-google-fonts/libre-baskerville';
 import { withIAPContext } from 'react-native-iap';
+import GoogleInfo from './screens/GoogleInfo';
 
 
 const Stack = createStackNavigator();
@@ -70,6 +71,7 @@ function RootNavigator() {
       <Stack.Screen name="QuizResultsScreen" component={QuizResults} />
       <Stack.Screen name="PhoneNumberScreen" component={PhoneNumber} />
       <Stack.Screen name="EmailPasswordScreen" component={EmailPassword} />
+      <Stack.Screen name="GoogleInfoScreen" component={GoogleInfo} />
       <Stack.Screen name="QuoteScreen" component={QuotePage} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
     </Stack.Navigator>

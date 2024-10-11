@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   };
 
+  console.log('user:',user);
 
   // Listen for authentication state changes
   useEffect(() => {
@@ -211,7 +212,8 @@ export const AuthProvider = ({ children }) => {
       caller,
       setCaller,
       hasTicket,
-      subscriptionType
+      subscriptionType,
+      setUser,
     }}>
       {children}
     </AuthContext.Provider>

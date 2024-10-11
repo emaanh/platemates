@@ -1,16 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, Animated, Easing, Image } from 'react-native';
-import { Feather, FontAwesome } from '@expo/vector-icons'; // Import FontAwesome for Google icon
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { Alert, StyleSheet, TouchableOpacity, Text, View, Animated, Easing } from 'react-native';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { colors } from '../stylevars';
+import { signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { authentication } from '../firebase/firebase-config';
+
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { AuthContext } from '../AuthProvider';
 
 function QuizResults({ navigation, route }) {
   const [isMatching, setIsMatching] = useState(true);
-  const [compatibleStudents, setCompatibleStudents] = useState(0); // Store the random number
+  const [compatibleStudents, setCompatibleStudents] = useState(0);
   const { school, answers } = route.params;
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
+  const { signOut, setUser } = useContext(AuthContext);
+
+
+
   useEffect(() => {
+
+    GoogleSignin.configure({
+      webClientId: '970420223223-8dpfrs1gsqt77aj67s25ogn4lnc9r8oo.apps.googleusercontent.com',
+      offlineAccess: true,
+    });
+
+
     const randomStudents = Math.floor(Math.random() * 46) + 5;
     setCompatibleStudents(randomStudents);
 
@@ -39,6 +55,32 @@ function QuizResults({ navigation, route }) {
     outputRange: ['0deg', '360deg'],
   });
 
+  // Implement the sign-in with Google function
+  const signInWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const userInfo = await GoogleSignin.signIn();
+      const { data } = userInfo;
+      const idToken = data.idToken;
+      const googleCredential = GoogleAuthProvider.credential(idToken);
+      const userCredential = await signInWithCredential(authentication, googleCredential);
+      const userEmail = userCredential.user.email;
+      const emailDomain = userEmail.split('@')[1];
+      setUser(userCredential.user);
+
+      if (emailDomain !== school[2]) {
+        Alert.alert('Email domain does not match the required school domain.');
+        await signOut();
+
+        return;
+      }
+
+      navigation.navigate('GoogleInfoScreen', { uid: userCredential.user.uid, email: userCredential.user.email, school, answers });
+    } catch (error) {
+      console.error('Google Sign-In Error:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {isMatching ? (
@@ -65,11 +107,14 @@ function QuizResults({ navigation, route }) {
           <Text style={styles.resultsText}>
             We have found {compatibleStudents} compatible students at {school[1]}
           </Text>
-          <TouchableOpacity style={styles.emailButton} onPress={() => navigation.navigate('PhoneNumberScreen', { school, answers })}>
+          <TouchableOpacity
+            style={styles.emailButton}
+            onPress={() => navigation.navigate('PhoneNumberScreen', { school, answers })}
+          >
             <Text style={styles.emailButtonText}>Sign up with email</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('MainPage')}>
-            <FontAwesome name="google" size={24} color="#333333" style={styles.googleIcon} /> 
+          <TouchableOpacity style={styles.googleButton} onPress={signInWithGoogle}>
+            <FontAwesome name="google" size={24} color="#333333" style={styles.googleIcon} />
             <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
         </>

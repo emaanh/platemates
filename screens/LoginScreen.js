@@ -1,32 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { colors } from '../stylevars';
 import { Feather } from '@expo/vector-icons';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { authentication } from '../firebase/firebase-config';
+import { signInWithEmailAndPassword, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { authentication, db } from '../firebase/firebase-config';
+import { getDoc,doc } from 'firebase/firestore';
+
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: '970420223223-8dpfrs1gsqt77aj67s25ogn4lnc9r8oo.apps.googleusercontent.com',
+        });
+    }, []);
+
     const handleLogin = async () => {
         setLoading(true);
         try {
             await signInWithEmailAndPassword(authentication, email, password);
-            navigation.navigate('MainScreen'); // Navigate to the main page upon successful login
+            navigation.navigate('MainScreen');
         } catch (error) {
-            Alert.alert('Login Error', error.message); // Display the error as an alert
+            Alert.alert('Login Error', error.message);
         } finally {
             setLoading(false);
         }
     };
 
+    const handleGoogleSignIn = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            const { data } = userInfo;
+            const idToken = data.idToken;
+            const googleCredential = GoogleAuthProvider.credential(idToken);
+            const userCredential = await signInWithCredential(authentication, googleCredential);
+            const docSnap = await getDoc(doc(db, 'users', userCredential.user.uid));
+
+            if (!docSnap.exists()) {
+              Alert.alert('This account does not exist. Please go back and register.');
+              return;
+            }
+        
+            navigation.navigate('MainScreen');
+        } catch (error) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // User cancelled the sign-in process
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                // Sign-in is in progress already
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                Alert.alert('Error', 'Google Play Services not available or outdated');
+            } else {
+                Alert.alert('Google Sign-In Error', error.message);
+            }
+        }
+    };
+
     return (
         <View style={styles.container}>
-        <TouchableOpacity style={{position: 'absolute',top: 80,left: 20,zIndex: 1,}} onPress={() => navigation.goBack()}>
-            <Feather name="arrow-left" size={30} color={colors.black} />
-        </TouchableOpacity>
+            <TouchableOpacity
+                style={{ position: 'absolute', top: 80, left: 20, zIndex: 1 }}
+                onPress={() => navigation.navigate('LandingScreen')}
+            >
+                <Feather name="arrow-left" size={30} color={colors.black} />
+            </TouchableOpacity>
             <Text style={styles.header}>Log In to your account</Text>
             <View style={styles.buttonContainer}>
                 <TextInput
@@ -45,10 +86,9 @@ function LoginScreen({ navigation }) {
                     placeholderTextColor={colors.dark_grey}
                     value={password}
                     onChangeText={setPassword}
-                    secureTextEntry={true} // Make the password input hidden
+                    secureTextEntry={true}
                     autoCapitalize="none"
                 />
-
 
                 <View style={styles.shadowContainer}>
                     <TouchableOpacity style={styles.LogInButton} onPress={handleLogin} disabled={loading}>
@@ -60,11 +100,22 @@ function LoginScreen({ navigation }) {
                     </TouchableOpacity>
                 </View>
 
-                <View style={{width: '90%', backgroundColor: colors.dark_grey, height: 1, marginVertical: 20 }}/>
+                <View
+                    style={{
+                        width: '90%',
+                        backgroundColor: colors.dark_grey,
+                        height: 1,
+                        marginVertical: 20,
+                    }}
+                />
 
                 <View style={styles.shadowContainer}>
-                    <TouchableOpacity style={styles.GoogleButton} /*onPress={handleSubmit*/ disabled={loading}>
-                        <View style={{flexDirection: 'row'}}>
+                    <TouchableOpacity
+                        style={styles.GoogleButton}
+                        onPress={handleGoogleSignIn}
+                        disabled={loading}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image source={require('../assets/Images/Google.png')} style={styles.googleIcon} />
                             <Text style={styles.GoogleText}>Continue with Google</Text>
                         </View>

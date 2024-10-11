@@ -58,28 +58,41 @@ function HomeScreen({ toggleUserInEvent }) {
     }
 
     if(subscribed){
-      await setDoc(doc(db,'users',user.uid),{inEvent: true},{merge:true});
-      joinDinnerQueue();
+      joinDinnerQueueSubscribe();
     }
 
     if(hasTicket){
-      const tempArray = userData.tickets;
-      tempArray.pop();
-      await setDoc(doc(db,'users',user.uid),{inEvent: true, tickets:tempArray},{merge:true});
-      joinDinnerQueue();
+      joinDinnerQueueTickets();
     }
   };
 
-  const joinDinnerQueue = async() => {
+  const joinDinnerQueueSubscribe = async() => {
     setIsFindingDinner(true); // Show the modal
     const formattedOption = selectedOption.format('YYYY-MM-DD HH:mm:ss');
     await addDoc(collection(db,'queue'),{uid: user.uid, name: userData.fullName, timestamp: serverTimestamp(), selectedDinner: formattedOption });
 
     // Simulate loading time between 8-16 seconds
     const delay = Math.floor(Math.random() * (8 - 4 + 1) + 4) * 1000; // Random between 8 and 16 seconds
-    setTimeout(() => {
+    setTimeout(async() => {
       setIsFindingDinner(false); // Hide the modal
-      toggleUserInEvent(false);
+      toggleUserInEvent(true);
+      await setDoc(doc(db,'users',user.uid),{inEvent: true},{merge:true});
+    }, delay);
+  };
+
+  const joinDinnerQueueTickets = async() => {
+    setIsFindingDinner(true); // Show the modal
+    const formattedOption = selectedOption.format('YYYY-MM-DD HH:mm:ss');
+    await addDoc(collection(db,'queue'),{uid: user.uid, name: userData.fullName, timestamp: serverTimestamp(), selectedDinner: formattedOption });
+
+    // Simulate loading time between 8-16 seconds
+    const delay = Math.floor(Math.random() * (8 - 4 + 1) + 4) * 1000; // Random between 8 and 16 seconds
+    setTimeout(async() => {
+      setIsFindingDinner(false); // Hide the modal
+      toggleUserInEvent(true);
+      const tempArray = userData.tickets;
+      tempArray.pop();
+      await setDoc(doc(db,'users',user.uid),{inEvent: true, tickets:tempArray},{merge:true});
     }, delay);
   };
 

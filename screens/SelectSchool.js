@@ -12,7 +12,7 @@ function SelectSchool({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('LandingScreen')}>
         <Feather name="arrow-left" size={30} color={colors.black} />
       </TouchableOpacity>
 

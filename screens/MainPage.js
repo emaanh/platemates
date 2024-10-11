@@ -21,13 +21,13 @@ function MainPage() {
   const [isUserInEvent, setIsUserInEvent] = useState(userData ? userData.inEvent : false);
   const [loading, setLoading] = useState(true);
 
+  
   useEffect(() => {
     if (userData) {
       setIsUserInEvent(userData.inEvent);
       setLoading(false);
     }
   }, [userData]);
-
 
   if(loading){
     return (
@@ -45,7 +45,6 @@ function MainPage() {
       </View>
     );
   }
-
 
 
   const toggleUserInEvent = (bool) => {
