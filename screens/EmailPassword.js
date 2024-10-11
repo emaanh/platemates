@@ -1,24 +1,176 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { db, authentication } from '../firebase/firebase-config';
 import { setDoc, doc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { colors } from '../stylevars';
 import * as Haptics from 'expo-haptics';
+import * as Linking from 'expo-linking';
 
 function EmailPassword({ navigation, route }) {
 
   const { school, answers } = route.params;
   const [phoneNumber, setPhoneNumber] = useState('');
   
-  // 1. Add state for full name
+  // State for full name
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const progress = 0.90;
+
+  // Check if the link is opened
+  useEffect(() => {
+    const handleUrl = async (url) => {
+      if (isSignInWithEmailLink(authentication, url)) {
+        let storedEmail = window.localStorage.getItem('emailForSignIn');
+        if (!storedEmail) {
+          // Prompt the user to provide their email
+          Alert.prompt(
+            'Sign In',
+            'Please enter your email to complete sign in',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+              {
+                text: 'OK',
+                onPress: async (inputEmail) => {
+                  try {
+                    await completeSignIn(inputEmail, url);
+                  } catch (error) {
+                    Alert.alert('Error', error.message);
+                  }
+                },
+              },
+            ],
+            'plain-text'
+          );
+        } else {
+          await completeSignIn(storedEmail, url);
+        }
+      }
+    };
+
+    const getInitialURL = async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        handleUrl(initialUrl);
+      }
+    };
+
+    Linking.addEventListener('url', ({ url }) => {
+      handleUrl(url);
+    });
+
+    getInitialURL();
+
+    return () => {
+      Linking.removeAllListeners('url');
+    };
+  }, []);
+
+  const completeSignIn = async (email, url) => {
+    setLoading(true);
+    try {
+      await setPersistence(authentication, browserLocalPersistence);
+      const result = await signInWithEmailLink(authentication, email, url);
+      // Clear email from storage
+      window.localStorage.removeItem('emailForSignIn');
+      // User is signed in
+      const uid = result.user.uid;
+
+      // Check if user document exists
+      const userDoc = await doc(db, 'users', uid).get();
+      if (!userDoc.exists()) {
+        // If not, create it
+        await setDoc(doc(db, 'users', uid), {
+          fullName: fullName.trim(), // Ensure fullName is set appropriately
+          email: email.trim(),
+          phone: phoneNumber,
+          answers: answers,
+          shortSchool: school[1],
+          longSchool: school[0],
+          receiveSMS: true,
+          receiveNotifications: true,
+          tickets: [],
+          inEvent: false,
+          eventID: null,
+          createdAt: serverTimestamp(),
+        });
+
+        await addDoc(collection(db, 'users', uid, 'notifications'), {
+          timestamp: serverTimestamp(),
+          message: 'Important Notifications Shown Here!',
+          description: 'Check this screen for valuable info.'
+        });
+
+        await addDoc(collection(db, 'users', uid, 'events'), {
+          timestamp: serverTimestamp(),
+          title: 'Dinners Shown Here',
+          eventID: 'hZt2oxXbroIJqLOVAlJy'
+        };
+      }
+
+      navigation.navigate('QuoteScreen');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const emailDomain = email.trim().split('@')[1];
+    if (emailDomain !== school[2]) {
+      Alert.alert('Validation Error', 'Your email needs to be the domain: ' + school[2]);
+      return;
+    }
+
+    const cleanedNumber = phoneNumber.replace(/\D/g, '');
+    if (cleanedNumber.length !== 10) {
+      Alert.alert('Invalid Phone Number', 'Please enter a valid 10-digit phone number.');
+      return;
+    }
+
+    if (fullName.trim() === '') {
+      Alert.alert('Validation Error', 'Please enter your full name.');
+      return;
+    }
+
+    if (email) {
+      setLoading(true); // Show loading indicator
+      try {
+        const actionCodeSettings = {
+          // URL you want to redirect back to. The domain (www.example.com) for this
+          // URL must be whitelisted in the Firebase Console.
+          url: 'https://platemates.page.link/dmCn', // Replace with your dynamic link
+          handleCodeInApp: true,
+          // iOS: {
+          //   bundleId: 'com.yourapp.bundle',
+          // },
+          // android: {
+          //   packageName: 'com.yourapp.package',
+          //   installApp: true,
+          //   minimumVersion: '12',
+          // },
+          // dynamicLinkDomain: 'yourapp.page.link', // Optional if set in Firebase
+        };
+
+        await sendSignInLinkToEmail(authentication, email, actionCodeSettings);
+        window.localStorage.setItem('emailForSignIn', email);
+        Alert.alert('Email Sent', 'A sign-in link has been sent to your email. Please check your inbox.');
+        // Optionally navigate to a screen informing the user to check their email
+      } catch (error) {
+        Alert.alert('Error', error.message);
+      } finally {
+        setLoading(false); // Hide loading indicator
+      }
+    } else {
+      Alert.alert('Validation Error', 'Please enter your email.');
+    }
+  };
 
   const handlePhoneNumberChange = (text) => {
     const formatted = formatPhoneNumber(text);
@@ -43,79 +195,13 @@ function EmailPassword({ navigation, route }) {
     return formattedNumber;
   };
 
-  const handleSubmit = async () => {
-    // 4. Update validation to include full name
-    const emailDomain = email.trim().split('@')[1];
-    if (emailDomain !== school[2]) {
-      Alert.alert('Validation Error', 'Your email needs to be the domain: ' + school[2]);
-      return;
-    }
-
-    const cleanedNumber = phoneNumber.replace(/\D/g, '');
-    if (!cleanedNumber.length === 10) {
-      Alert.alert('Invalid Phone Number', 'Please enter a valid 10-digit phone number.');
-      return;
-    }
-
-    if (fullName.trim() === '') {
-      Alert.alert('Validation Error', 'Please enter your full name.');
-      return;
-    }
-
-    if (email && password && confirmPassword && password === confirmPassword) {
-      setLoading(true); // Show loading indicator
-      try {
-        const answersMap = new Map(Object.entries(answers));
-        const answersObject = Object.fromEntries(answersMap);
-
-        const userCredential = await createUserWithEmailAndPassword(authentication, email, password);
-        const uid = userCredential.user.uid;
-
-        await setDoc(doc(db, 'users', uid), {
-          fullName: fullName.trim(), // 3. Include full name in Firestore
-          email: email.trim(),
-          phone: phoneNumber,
-          answers: answersObject,
-          shortSchool: school[1],
-          longSchool: school[0],
-          receiveSMS: true,
-          receiveNotifications: true,
-          tickets: [],
-          inEvent: false,
-          eventID: null
-        });
-
-        await addDoc(collection(db, 'users', uid, 'notifications'), {
-          timestamp: serverTimestamp(),
-          message: 'Important Notifications Shown Here!',
-          description: 'Check this screen for valuable info.'
-        });
-
-        await addDoc(collection(db, 'users', uid, 'events'), {
-          timestamp: serverTimestamp(),
-          title: 'Dinners Shown Here',
-          eventID: 'hZt2oxXbroIJqLOVAlJy'
-        });
-
-        navigation.navigate('QuoteScreen');
-
-      } catch (error) {
-        Alert.alert('Error', error.message);
-      } finally {
-        setLoading(false); // Hide loading indicator
-      }
-    } else {
-      Alert.alert('Validation Error', 'Please make sure all fields are filled and passwords match.');
-    }
-  };
-
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Feather name="arrow-left" size={30} color={colors.primary} />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Email and Password</Text>
+      <Text style={styles.title}>Sign In with Email Link</Text>
 
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBar}>
@@ -123,7 +209,7 @@ function EmailPassword({ navigation, route }) {
         </View>
       </View>
 
-      {/* 2. Add Full Name TextInput at the top */}
+      {/* Full Name TextInput */}
       <TextInput
         style={styles.textInput}
         placeholder="Enter your full name"
@@ -134,6 +220,7 @@ function EmailPassword({ navigation, route }) {
         returnKeyType="next"
       />
 
+      {/* Phone Number TextInput */}
       <TextInput
         style={styles.textInput}
         placeholder="Enter your phone number"
@@ -144,6 +231,7 @@ function EmailPassword({ navigation, route }) {
         maxLength={12}
       />
 
+      {/* Email TextInput */}
       <TextInput
         style={styles.textInput}
         placeholder="Enter your email"
@@ -152,38 +240,14 @@ function EmailPassword({ navigation, route }) {
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
-        returnKeyType="next"
-      />
-
-      <TextInput
-        style={styles.textInput}
-        placeholder="Enter your password"
-        placeholderTextColor={colors.grey}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize="none"
-        returnKeyType="next"
-      />
-
-      <TextInput
-        style={styles.textInput}
-        placeholder="Confirm your password"
-        placeholderTextColor={colors.grey}
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        autoCapitalize="none"
         returnKeyType="done"
       />
 
-      <TouchableOpacity style={styles.nextButton} onPress={()=>{
-        handleSubmit();
-        }} disabled={loading}>
+      <TouchableOpacity style={styles.nextButton} onPress={handleSubmit} disabled={loading}>
         {loading ? (
           <ActivityIndicator size="large" color={colors.black} />
         ) : (
-          <Text style={styles.nextButtonText}>Submit</Text>
+          <Text style={styles.nextButtonText}>Send Sign-In Link</Text>
         )}
       </TouchableOpacity>
     </View>

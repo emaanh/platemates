@@ -13,7 +13,7 @@ function HomeScreen({ toggleUserInEvent }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [school, setSchool] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isFindingDinner, setIsFindingDinner] = useState(true); // New state variable
+  const [isFindingDinner, setIsFindingDinner] = useState(false); // New state variable
   const [loadingComplete, setLoadingComplete] = useState(false);
 
   const { user, userData, subscribed, hasTicket } = useContext(AuthContext);
