@@ -121,7 +121,7 @@ function QuizResults({ navigation, route }) {
             style={styles.emailButton}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); 
-              navigation.navigate('PhoneNumberScreen', { school, answers })}}>
+              navigation.navigate('EmailPasswordScreen', { school, answers })}}>
             <Text style={styles.emailButtonText}>Sign up with email</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.googleButton} onPress={()=> {

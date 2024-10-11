@@ -5,10 +5,12 @@ import { db, authentication } from '../firebase/firebase-config';
 import { setDoc, doc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { colors } from '../stylevars';
+import * as Haptics from 'expo-haptics';
 
 function EmailPassword({ navigation, route }) {
 
-  const { phoneNumber, school, answers } = route.params;
+  const { school, answers } = route.params;
+  const [phoneNumber, setPhoneNumber] = useState('');
   
   // 1. Add state for full name
   const [fullName, setFullName] = useState('');
@@ -18,11 +20,40 @@ function EmailPassword({ navigation, route }) {
   const [loading, setLoading] = useState(false); // Loading state
   const progress = 0.90;
 
+  const handlePhoneNumberChange = (text) => {
+    const formatted = formatPhoneNumber(text);
+    setPhoneNumber(formatted);
+  };
+
+  const formatPhoneNumber = (text) => {
+    // Remove all non-numeric characters
+    const cleaned = text.replace(/\D/g, '').slice(0, 10); // Limit to 10 digits
+
+    let formattedNumber = '';
+    if (cleaned.length > 0) {
+      formattedNumber += cleaned.substring(0, Math.min(3, cleaned.length));
+    }
+    if (cleaned.length >= 4) {
+      formattedNumber += '-' + cleaned.substring(3, Math.min(6, cleaned.length));
+    }
+    if (cleaned.length >= 7) {
+      formattedNumber += '-' + cleaned.substring(6, 10);
+    }
+
+    return formattedNumber;
+  };
+
   const handleSubmit = async () => {
     // 4. Update validation to include full name
     const emailDomain = email.trim().split('@')[1];
     if (emailDomain !== school[2]) {
       Alert.alert('Validation Error', 'Your email needs to be the domain: ' + school[2]);
+      return;
+    }
+
+    const cleanedNumber = phoneNumber.replace(/\D/g, '');
+    if (!cleanedNumber.length === 10) {
+      Alert.alert('Invalid Phone Number', 'Please enter a valid 10-digit phone number.');
       return;
     }
 
@@ -62,7 +93,8 @@ function EmailPassword({ navigation, route }) {
 
         await addDoc(collection(db, 'users', uid, 'events'), {
           timestamp: serverTimestamp(),
-          title: 'Dinners Shown Here'
+          title: 'Dinners Shown Here',
+          eventID: 'hZt2oxXbroIJqLOVAlJy'
         });
 
         navigation.navigate('QuoteScreen');
@@ -104,6 +136,16 @@ function EmailPassword({ navigation, route }) {
 
       <TextInput
         style={styles.textInput}
+        placeholder="Enter your phone number"
+        placeholderTextColor={colors.grey}
+        keyboardType="phone-pad"
+        value={phoneNumber}
+        onChangeText={handlePhoneNumberChange}
+        maxLength={12}
+      />
+
+      <TextInput
+        style={styles.textInput}
         placeholder="Enter your email"
         placeholderTextColor={colors.grey}
         keyboardType="email-address"
@@ -136,8 +178,8 @@ function EmailPassword({ navigation, route }) {
       />
 
       <TouchableOpacity style={styles.nextButton} onPress={()=>{
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        handleSubmit}} disabled={loading}>
+        handleSubmit();
+        }} disabled={loading}>
         {loading ? (
           <ActivityIndicator size="large" color={colors.black} />
         ) : (

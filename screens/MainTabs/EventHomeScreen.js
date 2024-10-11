@@ -147,6 +147,7 @@ function EventHomeScreen({toggleUserInEvent}) {
           text: "Yes",
           onPress: async () => {
             toggleUserInEvent(false);
+            Alert.alert('You have been removed from this event.');
             await addDoc(collection(db, 'cancelNotice'), { name: userData.fullName, timestamp: serverTimestamp(), oldEventID: userData.eventID });
             await setDoc(doc(db, 'users', user.uid), { inEvent: false, eventID: null }, { merge: true });
           }

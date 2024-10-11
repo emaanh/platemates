@@ -80,7 +80,8 @@ function GoogleInfo({ navigation, route }) {
     
             await addDoc(collection(db, 'users', uid, 'events'), {
               timestamp: serverTimestamp(),
-              title: 'Dinners Shown Here'
+              title: 'Dinners Shown Here',
+              eventID: 'hZt2oxXbroIJqLOVAlJy'
             });
 
     

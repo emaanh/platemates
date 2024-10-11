@@ -7,12 +7,13 @@ import PriceModal from './PriceModal';
 import { AuthContext } from '../../AuthProvider';
 import moment from 'moment';
 import { MaterialIndicator } from 'react-native-indicators';
+import * as Progress from 'react-native-progress';
 
 function HomeScreen({ toggleUserInEvent }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [school, setSchool] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isFindingDinner, setIsFindingDinner] = useState(false); // New state variable
+  const [isFindingDinner, setIsFindingDinner] = useState(true); // New state variable
   const [loadingComplete, setLoadingComplete] = useState(false);
 
   const { user, userData, subscribed, hasTicket } = useContext(AuthContext);
@@ -200,7 +201,12 @@ function HomeScreen({ toggleUserInEvent }) {
           <View style={styles.findingDinnerModal}>
             {!loadingComplete ? (
               <>
-                <ActivityIndicator size="large" color={colors.primary} />
+                <Progress.Circle
+                  size={100} // Adjust the size as needed
+                  indeterminate={true}
+                  color={colors.primary}
+                  borderWidth={3} // Adjust the thickness as needed
+                />
                 <Text style={styles.findingDinnerText}>Finding a Suitable Dinner</Text>
               </>
             ) : (
@@ -362,8 +368,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   findingDinnerModal: {
-    backgroundColor: 'white',
-    borderRadius: 20,
+    backgroundColor: colors.background,
+    borderRadius: 10,
     padding: 30,
     alignItems: 'center',
     justifyContent: 'center',
