@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { Alert, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { db } from './firebase/firebase-config';
 import LandingPage from './screens/LandingPage';
@@ -15,7 +15,7 @@ import MainPage from './screens/MainPage';
 import { colors } from './stylevars';
 import QuotePage from './screens/QuotePage';
 import LoginScreen from './screens/LoginScreen';
-import { useEffect,useContext } from 'react';
+import { useEffect,useContext, useState } from 'react';
 import { AuthContext } from './AuthProvider';
 import { LibreBaskerville_400Regular, LibreBaskerville_700Bold } from '@expo-google-fonts/libre-baskerville';
 import { withIAPContext } from 'react-native-iap';
@@ -25,11 +25,66 @@ import { isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth';
 import { authentication } from './firebase/firebase-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setDoc, doc } from 'firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 const Stack = createStackNavigator();
 
 
 function App() {
+  const [fcmToken, setFcmToken] = useState('');
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+    
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    // Function to request permission and get the token
+    const requestPermissionAndGetToken = async () => {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+      if (enabled) {
+        console.log('Authorization status:', authStatus);
+        // Get the FCM token
+        const token = await messaging().getToken();
+        console.log('FCM Token:', token);
+        setFcmToken(token);
+  
+        // Optionally, send the token to your server for later use
+        // await sendTokenToServer(token);
+      } else {
+        Alert.alert('Permission denied', 'Unable to get notification permissions.');
+      }
+    };
+  
+    requestPermissionAndGetToken();
+  
+    // Listen for token refresh
+    const unsubscribeTokenRefresh = messaging().onTokenRefresh(token => {
+      console.log('FCM Token refreshed:', token);
+      setFcmToken(token);
+      // Optionally, update the token on your server
+      // sendTokenToServer(token);
+    });
+  
+    // Listen for foreground messages
+    const unsubscribeMessage = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+  
+    return () => {
+      unsubscribeTokenRefresh();
+      unsubscribeMessage();
+    };
+  }, []);
+
   let [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_700Bold,
