@@ -2,53 +2,59 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { db, authentication } from '../firebase/firebase-config';
-import { setDoc, doc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp, addDoc, collection, getDoc } from 'firebase/firestore';
 import { sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { colors } from '../stylevars';
 import * as Haptics from 'expo-haptics';
 import * as Linking from 'expo-linking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function EmailPassword({ navigation, route }) {
 
   const { school, answers } = route.params;
   const [phoneNumber, setPhoneNumber] = useState('');
   
-  // State for full name
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const progress = 0.90;
 
-  // Check if the link is opened
   useEffect(() => {
     const handleUrl = async (url) => {
       if (isSignInWithEmailLink(authentication, url)) {
-        let storedEmail = window.localStorage.getItem('emailForSignIn');
-        if (!storedEmail) {
-          // Prompt the user to provide their email
-          Alert.prompt(
-            'Sign In',
-            'Please enter your email to complete sign in',
-            [
-              {
-                text: 'Cancel',
-                style: 'cancel',
-              },
-              {
-                text: 'OK',
-                onPress: async (inputEmail) => {
-                  try {
-                    await completeSignIn(inputEmail, url);
-                  } catch (error) {
-                    Alert.alert('Error', error.message);
-                  }
+        try {
+          const storedEmail = await AsyncStorage.getItem('emailForSignIn');
+          if (!storedEmail) {
+            Alert.prompt(
+              'Sign In',
+              'Please enter your email to complete sign in',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
                 },
-              },
-            ],
-            'plain-text'
-          );
-        } else {
-          await completeSignIn(storedEmail, url);
+                {
+                  text: 'OK',
+                  onPress: async (inputEmail) => {
+                    if (inputEmail && inputEmail.includes('@')) {
+                      try {
+                        await completeSignIn(inputEmail, url);
+                      } catch (error) {
+                        Alert.alert('Error', error.message);
+                      }
+                    } else {
+                      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+                    }
+                  },
+                },
+              ],
+              'plain-text'
+            );
+          } else {
+            await completeSignIn(storedEmail, url);
+          }
+        } catch (error) {
+          Alert.alert('Error', 'Failed to retrieve email from storage.');
         }
       }
     };
@@ -60,14 +66,16 @@ function EmailPassword({ navigation, route }) {
       }
     };
 
-    Linking.addEventListener('url', ({ url }) => {
+    // Subscribe to URL events
+    const urlListener = Linking.addEventListener('url', ({ url }) => {
       handleUrl(url);
     });
 
     getInitialURL();
 
     return () => {
-      Linking.removeAllListeners('url');
+      // Clean up the event listener
+      urlListener.remove();
     };
   }, []);
 
@@ -77,15 +85,16 @@ function EmailPassword({ navigation, route }) {
       await setPersistence(authentication, browserLocalPersistence);
       const result = await signInWithEmailLink(authentication, email, url);
       // Clear email from storage
-      window.localStorage.removeItem('emailForSignIn');
+      await AsyncStorage.removeItem('emailForSignIn');
       // User is signed in
       const uid = result.user.uid;
 
       // Check if user document exists
-      const userDoc = await doc(db, 'users', uid).get();
+      const userDocRef = doc(db, 'users', uid);
+      const userDoc = await getDoc(userDocRef);
       if (!userDoc.exists()) {
         // If not, create it
-        await setDoc(doc(db, 'users', uid), {
+        await setDoc(userDocRef, {
           fullName: fullName.trim(), // Ensure fullName is set appropriately
           email: email.trim(),
           phone: phoneNumber,
@@ -110,7 +119,7 @@ function EmailPassword({ navigation, route }) {
           timestamp: serverTimestamp(),
           title: 'Dinners Shown Here',
           eventID: 'hZt2oxXbroIJqLOVAlJy'
-        };
+        })
       }
 
       navigation.navigate('QuoteScreen');
@@ -145,7 +154,7 @@ function EmailPassword({ navigation, route }) {
         const actionCodeSettings = {
           // URL you want to redirect back to. The domain (www.example.com) for this
           // URL must be whitelisted in the Firebase Console.
-          url: 'https://platemates.page.link/dmCn', // Replace with your dynamic link
+          url: 'https://platemates.page.link/tHrB', // Replace with your dynamic link
           handleCodeInApp: true,
           // iOS: {
           //   bundleId: 'com.yourapp.bundle',
@@ -159,7 +168,7 @@ function EmailPassword({ navigation, route }) {
         };
 
         await sendSignInLinkToEmail(authentication, email, actionCodeSettings);
-        window.localStorage.setItem('emailForSignIn', email);
+        await AsyncStorage.setItem('emailForSignIn', email);
         Alert.alert('Email Sent', 'A sign-in link has been sent to your email. Please check your inbox.');
         // Optionally navigate to a screen informing the user to check their email
       } catch (error) {

@@ -39,6 +39,13 @@ target 'PlateMates' do
   use_expo_modules!
   config = use_native_modules!
 
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true;
+  pod 'RNFBApp', path: '../node_modules/@react-native-firebase/app', :modular_headers => true
+  pod 'RNFBDynamicLinks', path: '../node_modules/@react-native-firebase/dynamic-links', :modular_headers => true
+  $RNFirebaseAsStaticFramework = true
+  use_frameworks! :linkage => :static
+
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
   use_frameworks! :linkage => ENV['USE_FRAMEWORKS'].to_sym if ENV['USE_FRAMEWORKS']
 

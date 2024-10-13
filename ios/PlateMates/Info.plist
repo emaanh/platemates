@@ -76,5 +76,9 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://platemates.page.link</string>
+	</array>
 </dict>
 </plist>
