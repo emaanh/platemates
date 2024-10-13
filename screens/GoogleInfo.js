@@ -6,10 +6,17 @@ import { setDoc, doc, serverTimestamp, addDoc, collection } from 'firebase/fires
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { colors } from '../stylevars';
 import { AuthContext } from '../AuthProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function GoogleInfo({ navigation, route }) {
 
-    const { uid, email, school, answers } = route.params;
+    const { user } = useContext(AuthContext);
+    if(user==null){
+      return;
+    }
+
+    const uid = user.uid;
+    const email = user.email;
   
     const [fullName, setFullName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -54,8 +61,12 @@ function GoogleInfo({ navigation, route }) {
         if (email) {
           setLoading(true); // Show loading indicator
           try {
+            const school = JSON.parse(await AsyncStorage.getItem('school'));
+            const answers = JSON.parse(await AsyncStorage.getItem('answers'));
             const answersMap = new Map(Object.entries(answers));
             const answersObject = Object.fromEntries(answersMap);
+            await AsyncStorage.removeItem('school');
+            await AsyncStorage.removeItem('answers');
 
     
             await setDoc(doc(db, 'users', uid), {

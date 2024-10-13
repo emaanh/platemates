@@ -19,10 +19,10 @@ function EditPersonalityQuestion({ navigation, route }) {
     setSelectedOption(option);
 
     // Update userData.answers
-    const updatedAnswers = new Map(Object.entries(userData.answers));
+    const updatedAnswers = new Map(Object.entries(userData.answers || {}));
     updatedAnswers.set(index, option);
 
-    await setDoc(doc(db, 'users', user.uid),{answers: Object.fromEntries(updatedAnswers)},{merge:true});
+    await setDoc(doc(db, 'users', user.uid), { answers: Object.fromEntries(updatedAnswers) }, { merge: true });
 
     navigation.goBack();
   };
@@ -30,6 +30,9 @@ function EditPersonalityQuestion({ navigation, route }) {
   const handleBack = () => {
     navigation.goBack();
   };
+
+  // Destructure labels with default values
+  const [leftLabel = 'Strongly Disagree', rightLabel = 'Strongly Agree'] = question.labels || [];
 
   return (
     <View style={styles.container}>
@@ -55,7 +58,7 @@ function EditPersonalityQuestion({ navigation, route }) {
         ))}
         {question.type === 'rating' && (
           <View style={styles.ratingContainer}>
-            <Text style={styles.ratingLabel}>Strongly Disagree</Text>
+            <Text style={styles.ratingLabel}>{leftLabel}</Text>
             <View style={styles.buttonGrid}>
               {[...Array(10)].map((_, idx) => (
                 <TouchableOpacity
@@ -70,7 +73,7 @@ function EditPersonalityQuestion({ navigation, route }) {
                 </TouchableOpacity>
               ))}
             </View>
-            <Text style={[styles.ratingLabel, { textAlign: 'right', marginTop: -10 }]}>Strongly Agree</Text>
+            <Text style={[styles.ratingLabel, { textAlign: 'right', marginTop: -10 }]}>{rightLabel}</Text>
           </View>
         )}
       </ScrollView>

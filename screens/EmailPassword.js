@@ -12,123 +12,52 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 function EmailPassword({ navigation, route }) {
 
   const { school, answers } = route.params;
-  const [phoneNumber, setPhoneNumber] = useState('');
   
-  const [fullName, setFullName] = useState('');
+
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const progress = 0.90;
 
   useEffect(() => {
-    const handleUrl = async (url) => {
-      if (isSignInWithEmailLink(authentication, url)) {
-        try {
-          const storedEmail = await AsyncStorage.getItem('emailForSignIn');
-          if (!storedEmail) {
-            Alert.prompt(
-              'Sign In',
-              'Please enter your email to complete sign in',
-              [
-                {
-                  text: 'Cancel',
-                  style: 'cancel',
-                },
-                {
-                  text: 'OK',
-                  onPress: async (inputEmail) => {
-                    if (inputEmail && inputEmail.includes('@')) {
-                      try {
-                        await completeSignIn(inputEmail, url);
-                      } catch (error) {
-                        Alert.alert('Error', error.message);
-                      }
-                    } else {
-                      Alert.alert('Invalid Email', 'Please enter a valid email address.');
-                    }
-                  },
-                },
-              ],
-              'plain-text'
-            );
-          } else {
-            await completeSignIn(storedEmail, url);
-          }
-        } catch (error) {
-          Alert.alert('Error', 'Failed to retrieve email from storage.');
-        }
+    const handleDeepLink = async (event) => {
+      const url = event.url;
+      const { queryParams } = Linking.parse(url);
+      const isRegister = queryParams.register === 'false';
+
+      if(isRegister){
+        return;
       }
+
+      if (isSignInWithEmailLink(authentication, url)) {
+        const storedEmail = await AsyncStorage.getItem('emailForSignIn');
+        const result = await signInWithEmailLink(authentication, storedEmail, url);
+        console.log('result:',result);
+        await setDoc(doc(db, 'users', result.user.uid), {
+          email: storedEmail.trim(),
+          tickets: []
+        },{merge:true});
+
+        await AsyncStorage.removeItem('emailForSignIn');
+
+        console.log('navigated');
+        navigation.navigate('GoogleInfoScreen');
+      }
+
     };
 
-    const getInitialURL = async () => {
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+
+    (async () => {
       const initialUrl = await Linking.getInitialURL();
       if (initialUrl) {
-        handleUrl(initialUrl);
+        handleDeepLink({ url: initialUrl });
       }
-    };
-
-    // Subscribe to URL events
-    const urlListener = Linking.addEventListener('url', ({ url }) => {
-      handleUrl(url);
-    });
-
-    getInitialURL();
+    })();
 
     return () => {
-      // Clean up the event listener
-      urlListener.remove();
+      subscription.remove();
     };
   }, []);
-
-  const completeSignIn = async (email, url) => {
-    setLoading(true);
-    try {
-      await setPersistence(authentication, browserLocalPersistence);
-      const result = await signInWithEmailLink(authentication, email, url);
-      // Clear email from storage
-      await AsyncStorage.removeItem('emailForSignIn');
-      // User is signed in
-      const uid = result.user.uid;
-
-      // Check if user document exists
-      const userDocRef = doc(db, 'users', uid);
-      const userDoc = await getDoc(userDocRef);
-      if (!userDoc.exists()) {
-        // If not, create it
-        await setDoc(userDocRef, {
-          fullName: fullName.trim(), // Ensure fullName is set appropriately
-          email: email.trim(),
-          phone: phoneNumber,
-          answers: answers,
-          shortSchool: school[1],
-          longSchool: school[0],
-          receiveSMS: true,
-          receiveNotifications: true,
-          tickets: [],
-          inEvent: false,
-          eventID: null,
-          createdAt: serverTimestamp(),
-        });
-
-        await addDoc(collection(db, 'users', uid, 'notifications'), {
-          timestamp: serverTimestamp(),
-          message: 'Important Notifications Shown Here!',
-          description: 'Check this screen for valuable info.'
-        });
-
-        await addDoc(collection(db, 'users', uid, 'events'), {
-          timestamp: serverTimestamp(),
-          title: 'Dinners Shown Here',
-          eventID: 'hZt2oxXbroIJqLOVAlJy'
-        })
-      }
-
-      navigation.navigate('QuoteScreen');
-    } catch (error) {
-      Alert.alert('Error', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async () => {
     const emailDomain = email.trim().split('@')[1];
@@ -137,71 +66,27 @@ function EmailPassword({ navigation, route }) {
       return;
     }
 
-    const cleanedNumber = phoneNumber.replace(/\D/g, '');
-    if (cleanedNumber.length !== 10) {
-      Alert.alert('Invalid Phone Number', 'Please enter a valid 10-digit phone number.');
-      return;
-    }
-
-    if (fullName.trim() === '') {
-      Alert.alert('Validation Error', 'Please enter your full name.');
-      return;
-    }
-
     if (email) {
       setLoading(true); // Show loading indicator
       try {
         const actionCodeSettings = {
-          // URL you want to redirect back to. The domain (www.example.com) for this
-          // URL must be whitelisted in the Firebase Console.
-          url: 'https://platemates.page.link/tHrB', // Replace with your dynamic link
+          url: 'https://platemates.page.link/tHrB?register=true',
           handleCodeInApp: true,
-          // iOS: {
-          //   bundleId: 'com.yourapp.bundle',
-          // },
-          // android: {
-          //   packageName: 'com.yourapp.package',
-          //   installApp: true,
-          //   minimumVersion: '12',
-          // },
-          // dynamicLinkDomain: 'yourapp.page.link', // Optional if set in Firebase
         };
 
         await sendSignInLinkToEmail(authentication, email, actionCodeSettings);
         await AsyncStorage.setItem('emailForSignIn', email);
+        await AsyncStorage.setItem('school', JSON.stringify(school));
+        await AsyncStorage.setItem('answers', JSON.stringify(answers));
         Alert.alert('Email Sent', 'A sign-in link has been sent to your email. Please check your inbox.');
-        // Optionally navigate to a screen informing the user to check their email
       } catch (error) {
         Alert.alert('Error', error.message);
       } finally {
-        setLoading(false); // Hide loading indicator
+        setLoading(false);
       }
     } else {
       Alert.alert('Validation Error', 'Please enter your email.');
     }
-  };
-
-  const handlePhoneNumberChange = (text) => {
-    const formatted = formatPhoneNumber(text);
-    setPhoneNumber(formatted);
-  };
-
-  const formatPhoneNumber = (text) => {
-    // Remove all non-numeric characters
-    const cleaned = text.replace(/\D/g, '').slice(0, 10); // Limit to 10 digits
-
-    let formattedNumber = '';
-    if (cleaned.length > 0) {
-      formattedNumber += cleaned.substring(0, Math.min(3, cleaned.length));
-    }
-    if (cleaned.length >= 4) {
-      formattedNumber += '-' + cleaned.substring(3, Math.min(6, cleaned.length));
-    }
-    if (cleaned.length >= 7) {
-      formattedNumber += '-' + cleaned.substring(6, 10);
-    }
-
-    return formattedNumber;
   };
 
   return (
@@ -217,28 +102,6 @@ function EmailPassword({ navigation, route }) {
           <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
         </View>
       </View>
-
-      {/* Full Name TextInput */}
-      <TextInput
-        style={styles.textInput}
-        placeholder="Enter your full name"
-        placeholderTextColor={colors.grey}
-        value={fullName}
-        onChangeText={setFullName}
-        autoCapitalize="words"
-        returnKeyType="next"
-      />
-
-      {/* Phone Number TextInput */}
-      <TextInput
-        style={styles.textInput}
-        placeholder="Enter your phone number"
-        placeholderTextColor={colors.grey}
-        keyboardType="phone-pad"
-        value={phoneNumber}
-        onChangeText={handlePhoneNumberChange}
-        maxLength={12}
-      />
 
       {/* Email TextInput */}
       <TextInput

@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { colors } from '../stylevars';
 import { Feather } from '@expo/vector-icons';
-import { signInWithEmailAndPassword, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { isSignInWithEmailLink, signInWithEmailLink, sendSignInLinkToEmail, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
 import { authentication, db } from '../firebase/firebase-config';
 import { getDoc,doc } from 'firebase/firestore';
+import * as Linking from 'expo-linking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -19,11 +21,56 @@ function LoginScreen({ navigation }) {
         });
     }, []);
 
+    useEffect(() => {
+        const handleDeepLink = async (event) => {
+          const url = event.url;
+          const { queryParams } = Linking.parse(url);
+          const isRegister = queryParams.register === 'true';
+
+          if(isRegister){
+            return;
+          }
+    
+          if (isSignInWithEmailLink(authentication, url)) {
+            const storedEmail = await AsyncStorage.getItem('emailForSignIn');
+            const result = await signInWithEmailLink(authentication, storedEmail, url);
+            await AsyncStorage.removeItem('emailForSignIn');
+            const userSnap = await getDoc(doc(db,'users',result.user.uid));
+            if(!userSnap.exists()){
+                Alert.alert('This account is not found. Either register or try another auth provider.');
+                return;
+            }
+
+            navigation.navigate('MainScreen');
+          }
+    
+        };
+    
+        const subscription = Linking.addEventListener('url', handleDeepLink);
+    
+        (async () => {
+          const initialUrl = await Linking.getInitialURL();
+          if (initialUrl) {
+            handleDeepLink({ url: initialUrl });
+          }
+        })();
+    
+        return () => {
+          subscription.remove();
+        };
+      }, []);
+
     const handleLogin = async () => {
         setLoading(true);
         try {
-            await signInWithEmailAndPassword(authentication, email, password);
-            navigation.navigate('MainScreen');
+            const actionCodeSettings = {
+                url: 'https://platemates.page.link/tHrB?register=false',
+                handleCodeInApp: true,
+            };
+      
+            await sendSignInLinkToEmail(authentication, email, actionCodeSettings);
+            await AsyncStorage.setItem('emailForSignIn', email);
+            Alert.alert('Email Sent', 'A sign-in link has been sent to your email. Please check your inbox.');
         } catch (error) {
             Alert.alert('Login Error', error.message);
         } finally {
@@ -77,16 +124,6 @@ function LoginScreen({ navigation }) {
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
-                    autoCapitalize="none"
-                />
-
-                <TextInput
-                    style={styles.textInput}
-                    placeholder="Enter your password"
-                    placeholderTextColor={colors.dark_grey}
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry={true}
                     autoCapitalize="none"
                 />
 
@@ -202,7 +239,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '100%',
         alignItems: 'center',
-        position: 'absolute',
+        top: 50,
         bottom: '40%',
         alignSelf: 'center',
     },

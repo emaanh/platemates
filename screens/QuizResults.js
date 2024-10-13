@@ -11,6 +11,7 @@ import { setDoc,doc } from 'firebase/firestore';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { AuthContext } from '../AuthProvider';
 import * as Haptics from 'expo-haptics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -85,7 +86,10 @@ function QuizResults({ navigation, route }) {
         tickets: []
       },{merge:true});
 
-      navigation.navigate('GoogleInfoScreen', { uid: userCredential.user.uid, email: userCredential.user.email, school, answers });
+
+      await AsyncStorage.setItem('school', JSON.stringify(school));
+      await AsyncStorage.setItem('answers', JSON.stringify(answers));
+      navigation.navigate('GoogleInfoScreen', {});
     } catch (error) {
       console.error('Google Sign-In Error:', error);
     }

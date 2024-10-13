@@ -21,7 +21,10 @@ import { LibreBaskerville_400Regular, LibreBaskerville_700Bold } from '@expo-goo
 import { withIAPContext } from 'react-native-iap';
 import GoogleInfo from './screens/GoogleInfo';
 import * as Linking from 'expo-linking';
-
+import { isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth';
+import { authentication } from './firebase/firebase-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setDoc, doc } from 'firebase/firestore';
 
 const Stack = createStackNavigator();
 
@@ -34,36 +37,6 @@ function App() {
     LibreBaskerville_700Bold,
   });
 
-  useEffect(() => {
-    const handleDeepLink = (event) => {
-      const url = event.url;
-      const { path, queryParams } = Linking.parse(url);
-
-      console.log(url);
-
-      // // Example: Handle a link like yourappscheme://quote?id=123
-      // if (path === 'quote' && queryParams.id) {
-      //   navigate('QuoteScreen', { quoteId: queryParams.id });
-      // }
-
-      // // Add more conditions based on your dynamic link structure
-    };
-
-    // Subscribe to incoming links
-    const subscription = Linking.addEventListener('url', handleDeepLink);
-
-    // Handle the initial URL if the app is opened via a dynamic link
-    (async () => {
-      const initialUrl = await Linking.getInitialURL();
-      if (initialUrl) {
-        handleDeepLink({ url: initialUrl });
-      }
-    })();
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   if (!fontsLoaded) {
     return (
