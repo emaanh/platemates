@@ -32,10 +32,38 @@ function EmailPassword({ navigation, route }) {
         const storedEmail = await AsyncStorage.getItem('emailForSignIn');
         const result = await signInWithEmailLink(authentication, storedEmail, url);
         console.log('result:',result);
-        await setDoc(doc(db, 'users', result.user.uid), {
-          email: storedEmail.trim(),
-          tickets: []
-        },{merge:true});
+        const userSnap = await getDoc(doc(db, 'users', result.user.uid));
+        if (userSnap.exists()) {
+          Alert.alert(
+            'Account Already Registered',
+            'This account has already been registered. Please choose an option below.',
+            [
+              {
+                text: 'Try Again',
+                onPress: () => {
+                  // Optional: Reset form fields or perform any other action
+                  console.log('Trying again');
+                },
+                style: 'cancel', // This makes the button bold on iOS
+              },
+              {
+                text: 'Login',
+                onPress: () => {
+                  // Navigate to the Login screen
+                  navigation.navigate('MainScreen'); // Ensure 'Login' is the correct route name
+                },
+              },
+            ],
+            { cancelable: false } // Prevents the alert from being dismissed by tapping outside
+          );
+          return; // Exit the function since the user is already registered
+        }
+    
+
+        // await setDoc(doc(db, 'users', result.user.uid), {
+        //   email: storedEmail.trim(),
+        //   tickets: []
+        // },{merge:true});
 
         await AsyncStorage.removeItem('emailForSignIn');
 

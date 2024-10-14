@@ -31,11 +31,9 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-  console.log('outUser:',user);
   // Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authentication, (user) => {
-      console.log('inUser:',user);
       setUser(user);
       setLoaded(true);
     });
@@ -48,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
-      unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+      unsubscribe = onSnapshot(userDocRef, async(docSnap) => {
         if (docSnap.exists()) {
           setUserData(docSnap.data());
           if (docSnap.get('tickets').length > 0){
@@ -57,8 +55,9 @@ export const AuthProvider = ({ children }) => {
             setHasTicket(false);
           }
         } else {
-          setUser(null);
-          setUserData(null);
+          // setUser(null);
+          // setUserData(null);
+          // await handleSignOut();
         }
       });
     } else {

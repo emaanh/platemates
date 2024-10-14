@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { Alert, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { db } from './firebase/firebase-config';
 import LandingPage from './screens/LandingPage';
 import { AuthProvider } from './AuthProvider';
@@ -120,7 +120,7 @@ function RootNavigator() {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ gestureEnabled: false, swipeEnabled: false, headerShown: false  }}>
+    <Stack.Navigator screenOptions={{ gestureEnabled: false, swipeEnabled: false, headerShown: false, animation: 'fade', cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,  }}>
       {user ? (
         <Stack.Screen name="MainScreen" component={MainPage} />
       ) : (

@@ -43,6 +43,7 @@ function BookingSnap({route}) {
   const [lateMessage, setLateMessage] = useState('');
 
   const [late, setLate] = useState(false);
+  const [dinnerTime, setDinnerTime] = useState('');
 
 
   useEffect(() => {
@@ -55,6 +56,10 @@ function BookingSnap({route}) {
         unsubscribe = onSnapshot(eventRef, (docSnapshot) => {
           if (docSnapshot.exists()) {
             const eventData = docSnapshot.data();
+
+
+            setDinnerTime(eventData.dinnerTime.toDate());
+
 
             setIsGroupRevealed(eventData.isGroupRevealed);
             setIsRestaurantRevealed(eventData.isRestaurantRevealed);
@@ -136,7 +141,15 @@ function BookingSnap({route}) {
           <View style={styles.dateTimeContainer}>
             <Icon name="calendar-today" size={20} color={colors.background} style={styles.icon} />
             <Text style={[styles.dateTimeText, { color: colors.background }]}>
-              Wednesday, October 9, 7:00 PM
+              {dinnerTime
+                ? dinnerTime.toLocaleString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })
+                : 'Loading...'}
             </Text>
           </View>
 

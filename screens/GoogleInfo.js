@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 function GoogleInfo({ navigation, route }) {
 
     const { user } = useContext(AuthContext);
-    if(user==null){
+    if(user === null){
       return;
     }
 

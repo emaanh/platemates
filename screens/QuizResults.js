@@ -6,7 +6,7 @@ import { colors } from '../stylevars';
 import { signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
 import { authentication,db } from '../firebase/firebase-config';
 
-import { setDoc,doc } from 'firebase/firestore';
+import { setDoc,doc, getDoc } from 'firebase/firestore';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { AuthContext } from '../AuthProvider';
@@ -81,10 +81,37 @@ function QuizResults({ navigation, route }) {
         return;
       }
 
-      await setDoc(doc(db, 'users', userCredential.user.uid), {
-        email: userEmail.trim(),
-        tickets: []
-      },{merge:true});
+      const userSnap = await getDoc(doc(db, 'users', userCredential.user.uid));
+      if (userSnap.exists()) {
+        Alert.alert(
+          'Account Already Registered',
+          'This account has already been registered. Please choose an option below.',
+          [
+            {
+              text: 'Try Again',
+              onPress: () => {
+                // Optional: Reset form fields or perform any other action
+                console.log('Trying again');
+              },
+              style: 'cancel', // This makes the button bold on iOS
+            },
+            {
+              text: 'Login',
+              onPress: () => {
+                // Navigate to the Login screen
+                navigation.navigate('MainScreen'); // Ensure 'Login' is the correct route name
+              },
+            },
+          ],
+          { cancelable: false } // Prevents the alert from being dismissed by tapping outside
+        );
+        return; // Exit the function since the user is already registered
+      }
+
+      // await setDoc(doc(db, 'users', userCredential.user.uid), {
+      //   email: userEmail.trim(),
+      //   tickets: []
+      // },{merge:true});
 
 
       await AsyncStorage.setItem('school', JSON.stringify(school));

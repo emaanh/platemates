@@ -62,6 +62,8 @@ function EventHomeScreen({toggleUserInEvent}) {
   const [late, setLate] = useState(false);
 
 
+  const [dinnerTime, setDinnerTime] = useState('');
+
   useEffect(() => {
     let unsubscribe;
   
@@ -72,6 +74,9 @@ function EventHomeScreen({toggleUserInEvent}) {
         unsubscribe = onSnapshot(eventRef, (docSnapshot) => {
           if (docSnapshot.exists()) {
             const eventData = docSnapshot.data();
+
+            console.log('dinner',eventData.dinnerTime.toDate())
+            setDinnerTime(eventData.dinnerTime.toDate());
 
             setIsGroupRevealed(eventData.isGroupRevealed);
             setIsRestaurantRevealed(eventData.isRestaurantRevealed);
@@ -106,6 +111,8 @@ function EventHomeScreen({toggleUserInEvent}) {
             }
           }
         });
+      } else{
+        setDinnerTime(new Date(userData.selectedDinner));
       }
     };
   
@@ -164,11 +171,32 @@ function EventHomeScreen({toggleUserInEvent}) {
     await setDoc(doc(db,'events',userData.eventID),{userList:newList},{merge:true});
   };
 
-  const handleExitEvent = () => {
-    // Logic for exiting the event
-    console.log('Exiting the event...');
+  const handleExitEvent = async () => {
+    Alert.alert(
+      "Confirm Exit", 
+      "Are you sure you want to exit the event? You can review an archive in Bookings", 
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Exit canceled"),
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            // Logic for exiting the event
+            await setDoc(
+              doc(db, 'users', user.uid), 
+              { eventID: null, inEvent: false, selectedDinner: null }, 
+              { merge: true }
+            );
+            toggleUserInEvent(false);
+          }
+        }
+      ],
+      { cancelable: true }
+    );
   };
-
 
   const handleIcebreakerPress = () => {
     navigation.navigate('Icebreaker');
@@ -196,7 +224,15 @@ function EventHomeScreen({toggleUserInEvent}) {
           <View style={styles.dateTimeContainer}>
             <Icon name="calendar-today" size={20} color={colors.background} style={styles.icon} />
             <Text style={[styles.dateTimeText, { color: colors.background }]}>
-              Wednesday, October 9, 7:00 PM
+              {dinnerTime
+                ? dinnerTime.toLocaleString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })
+                : 'Loading...'}
             </Text>
           </View>
 
@@ -211,6 +247,10 @@ function EventHomeScreen({toggleUserInEvent}) {
           <TouchableOpacity
             style={[styles.button, { backgroundColor: colors.primary, borderColor: colors.background, borderWidth: 1 }]}
             onPress={() => {
+              if(userData.eventID === null){
+                Alert.alert('This feature is not available yet');
+                return;
+              }
               if(isLateNotified){
                 Alert.alert('This action cannot be reversed');
                 return;
@@ -302,6 +342,40 @@ function EventHomeScreen({toggleUserInEvent}) {
 
         <View style={styles.bubble}>
           <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>Your Restaurant</Text>
+          </View>
+          {isRestaurantRevealed ? (
+            <View>
+              <Text style={[styles.restaurantAddress, {marginTop: 5}]}>{restaurantInfo[0]}</Text>
+              <Text style={styles.restaurantAddress}>{restaurantInfo[1]}</Text>
+            </View>
+          ) : (
+            <View>
+              <Text style={styles.bubbleHeader}>Your restaurant will be revealed on</Text>
+              <Text style={[styles.bubbleHeader, { fontFamily: 'Poppins_700Bold', marginTop: 0, color: colors.primary }]}>
+                {(() => {
+                  if(dinnerTime === ''){
+                    return;
+                  }
+                  const previousDay = new Date(dinnerTime);
+                  previousDay.setDate(dinnerTime.getDate() - 1); // Subtract one day
+                  previousDay.setHours(12, 0, 0, 0); // Set time to 17:00
+
+                  return previousDay.toLocaleString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  });
+                })()}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.bubble}>
+          <View style={styles.titleContainer}>
             <Text style={styles.titleText}>Your Group</Text>
           </View>
           {isGroupRevealed ? (
@@ -315,37 +389,23 @@ function EventHomeScreen({toggleUserInEvent}) {
           ) : (
             <View>
               <Text style={styles.bubbleHeader}>Find out more about your group on</Text>
-              <Text
-                style={[
-                  styles.bubbleHeader,
-                  { fontFamily: 'Poppins_700Bold', marginTop: 0, color: colors.primary }
-                ]}
-              >
-                Tuesday, October 8 at 5:00 PM
-              </Text>
-            </View>
-          )}
-        </View>
+              <Text style={[styles.bubbleHeader, { fontFamily: 'Poppins_700Bold', marginTop: 0, color: colors.primary }]}>
+                {(() => {
+                  if(dinnerTime === ''){
+                    return;
+                  }
+                  const previousDay = new Date(dinnerTime);
+                  previousDay.setDate(dinnerTime.getDate() - 1); // Subtract one day
+                  previousDay.setHours(17, 0, 0, 0); // Set time to 17:00
 
-        <View style={styles.bubble}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>Your Restaurant</Text>
-          </View>
-          {isRestaurantRevealed ? (
-            <View>
-              <Text style={[styles.restaurantAddress, {marginTop: 5}]}>{restaurantInfo[0]}</Text>
-              <Text style={styles.restaurantAddress}>{restaurantInfo[1]}</Text>
-            </View>
-          ) : (
-            <View>
-              <Text style={styles.bubbleHeader}>Your restaurant will be revealed on</Text>
-              <Text
-                style={[
-                  styles.bubbleHeader,
-                  { fontFamily: 'Poppins_700Bold', marginTop: 0, color: colors.primary }
-                ]}
-              >
-                Tuesday, October 8 at 12:00 PM
+                  return previousDay.toLocaleString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  });
+                })()}
               </Text>
             </View>
           )}
@@ -356,15 +416,17 @@ function EventHomeScreen({toggleUserInEvent}) {
             <Text style={styles.titleText}>Your Dinner</Text>
           </View>
           <Text style={styles.bubbleHeader}>The icebreaker game will be available at</Text>
-          <Text
-            style={[
-              styles.bubbleHeader,
-              { fontFamily: 'Poppins_700Bold', marginTop: 0, color: colors.primary },
-            ]}
-          >
-            Wednesday, October 9 at 7:00 PM
+          <Text style={[styles.bubbleHeader, { fontFamily: 'Poppins_700Bold', marginTop: 0, color: colors.primary }]}>
+            {dinnerTime && new Date(dinnerTime.setHours(19, 0, 0, 0)).toLocaleString('en-US', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+            })}
           </Text>
         </View>}
+        
 
         {isFeedbackRevealed && (
           <View style={styles.bubble}>
@@ -386,7 +448,7 @@ function EventHomeScreen({toggleUserInEvent}) {
             <View style={[styles.shadowContainer,{marginTop: 10}]}>
               <TouchableOpacity
                 style={[styles.button, { backgroundColor: colors.red, borderColor: colors.background }]}
-                onPress={() => console.log('Exiting the event...')}  // Replace with actual function
+                onPress={() => handleExitEvent()}  // Replace with actual function
               >
                 <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.background }]}>
                   Exit Event

@@ -62,7 +62,7 @@ function LandingPage({navigation}) {
         }),
       ]),
     ]).start();
-  }, [opacityAnim1, opacityAnim2, opacityAnim3, translateXAnim1, translateXAnim2, translateXAnim3]);
+  }, [navigation, opacityAnim1, opacityAnim2, opacityAnim3, translateXAnim1, translateXAnim2, translateXAnim3]);
 
   if (!fontsLoaded) {
     return <ActivityIndicator />;
@@ -119,6 +119,11 @@ function LandingPage({navigation}) {
           navigation.navigate('LoginScreen')}}>
           <Text style={styles.outlineButtonText}>I already have an account</Text>
         </TouchableOpacity>
+
+        <Text style={styles.termsText}>
+          By signing up, you agree to the <Text style={styles.linkText}>Terms of Service</Text> and <Text style={styles.linkText}>Privacy Policy</Text>.
+        </Text>
+        
       </View>
     </View>
     );
@@ -173,6 +178,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
+  },
+  termsText: {
+    color: 'grey',
+    fontSize: 13,
+    textAlign: 'center',
+    top: 30,
+    width: '80%',
+  },
+  
+  linkText: {
+    textDecorationLine: 'underline',
   },
 });
 

@@ -116,7 +116,9 @@ function Settings({ navigation }) {
 
             if (user) {
               deleteUser(user)
-                .then(async () => {})
+                .then(async () => {
+
+                })
                 .catch((error) => {
                 });
             } else {

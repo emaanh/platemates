@@ -25,27 +25,34 @@ function HomeScreen({ toggleUserInEvent }) {
     const getNextWednesdays = () => {
       let wednesdays = [];
       let today = moment();
-      
+    
+      // Function to set time to 12:00 PM
+      const setToNoon = (date) => {
+        return date.clone().set({ hour: 12, minute: 0, second: 0, millisecond: 0 });
+      };
+    
       // Check if today is Wednesday
-      if (today.day() === 3) {
-        // If it's Wednesday and before noon, include today
+      if (today.day() === 3) { // In Moment.js, Sunday = 0, Wednesday = 3
+        // If it's Wednesday and before noon, include today at 12:00 PM
         if (today.hour() < 12) {
-          wednesdays.push(today.clone());
+          wednesdays.push(setToNoon(today));
         }
       }
-
-      // Find the next 3 Wednesdays after today
-      let nextWednesday = today.clone().day(3); // Get the next Wednesday
-      if (nextWednesday.isSame(today, 'day')) {
-        // If the next Wednesday is today, move to the next Wednesday
+    
+      // Find the next Wednesday after today
+      let nextWednesday = today.clone().day(3); // Get the current week's Wednesday
+      if (nextWednesday.isSame(today, 'day') && today.hour() >= 12) {
+        // If today is Wednesday at or after noon, move to the next Wednesday
         nextWednesday.add(1, 'week');
       }
-
+    
+      // Loop until we have 3 Wednesdays
       while (wednesdays.length < 3) {
-        wednesdays.push(nextWednesday.clone());
+        // Set the time to 12:00 PM before adding
+        wednesdays.push(setToNoon(nextWednesday));
         nextWednesday.add(1, 'week');
       }
-
+    
       return wednesdays;
     };
 
@@ -109,7 +116,7 @@ function HomeScreen({ toggleUserInEvent }) {
 
   const joinDinnerQueueSubscribe = async() => {
     setIsFindingDinner(true); // Show the modal
-    const formattedOption = selectedOption.format('YYYY-MM-DD HH:mm:ss');
+    const formattedOption = selectedOption.set({ hour: 19, minute: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DD HH:mm:ss');
     await addDoc(collection(db,'queue'),{uid: user.uid, name: userData.fullName, timestamp: serverTimestamp(), selectedDinner: formattedOption });
 
     // Simulate loading time between 8-16 seconds
@@ -117,13 +124,13 @@ function HomeScreen({ toggleUserInEvent }) {
     setTimeout(async() => {
       setIsFindingDinner(false); // Hide the modal
       toggleUserInEvent(true);
-      await setDoc(doc(db,'users',user.uid),{inEvent: true},{merge:true});
+      await setDoc(doc(db,'users',user.uid),{inEvent: true, selectedDinner: formattedOption},{merge:true});
     }, delay);
   };
 
   const joinDinnerQueueTickets = async() => {
     setIsFindingDinner(true); // Show the modal
-    const formattedOption = selectedOption.format('YYYY-MM-DD HH:mm:ss');
+    const formattedOption = selectedOption.clone().add(7, 'hours').set({ hour: 19, minute: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DD HH:mm:ss');
     await addDoc(collection(db,'queue'),{uid: user.uid, name: userData.fullName, timestamp: serverTimestamp(), selectedDinner: formattedOption });
 
     // Simulate loading time between 8-16 seconds
@@ -133,7 +140,7 @@ function HomeScreen({ toggleUserInEvent }) {
       toggleUserInEvent(true);
       const tempArray = userData.tickets;
       tempArray.pop();
-      await setDoc(doc(db,'users',user.uid),{inEvent: true, tickets:tempArray},{merge:true});
+      await setDoc(doc(db,'users',user.uid),{inEvent: true, tickets:tempArray, selectedDinner: formattedOption},{merge:true});
     }, delay);
   };
 

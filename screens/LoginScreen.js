@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { colors } from '../stylevars';
 import { Feather } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import { authentication, db } from '../firebase/firebase-config';
 import { getDoc,doc } from 'firebase/firestore';
 import * as Linking from 'expo-linking';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../AuthProvider';
 
 
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
@@ -14,6 +15,7 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
+    const { signOut } = useContext(AuthContext);
 
     useEffect(() => {
         GoogleSignin.configure({
@@ -37,6 +39,7 @@ function LoginScreen({ navigation }) {
             await AsyncStorage.removeItem('emailForSignIn');
             const userSnap = await getDoc(doc(db,'users',result.user.uid));
             if(!userSnap.exists()){
+                await signOut();
                 Alert.alert('This account is not found. Either register or try another auth provider.');
                 return;
             }
@@ -89,6 +92,7 @@ function LoginScreen({ navigation }) {
             const docSnap = await getDoc(doc(db, 'users', userCredential.user.uid));
 
             if (!docSnap.exists()) {
+              await signOut();
               Alert.alert('This account does not exist. Please go back and register.');
               return;
             }
