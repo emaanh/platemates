@@ -100,7 +100,7 @@ function ProfilePage({navigation}) {
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleFindBookings}>
           <Feather name="book" size={20} color={colors.black} style={styles.buttonIcon} />
-          <Text style={styles.buttonText}>Find My Latest Bookings</Text>
+          <Text style={styles.buttonText}>Find My Past Bookings</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handleSettings}>

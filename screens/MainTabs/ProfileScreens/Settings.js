@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
+  Linking,
   ScrollView,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -23,6 +24,19 @@ function Settings({ navigation }) {
   );
   const [isSMSAlertsEnabled, setIsSMSAlertsEnabled] = useState(userData.receiveSMS);
   const [subscriptionStatus, setSubscriptionStatus] = useState(userData.subscriptionStatus); // Add subscription status
+
+  const openPrivacyPolicy = async () => {
+    const url = 'https://www.platemates.app/privacy';
+    // Check if the link can be opened
+    const supported = await Linking.canOpenURL(url);
+  
+    if (supported) {
+      // Open the link with the default browser
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${url}`);
+    }
+  };
 
   const toggleNotifications = async () => {
     const newValue = !isNotificationsEnabled;
@@ -227,6 +241,17 @@ function Settings({ navigation }) {
           <View style={styles.optionLeft}>
             <Feather name="info" size={24} color={colors.black} />
             <Text style={styles.optionText}>Terms and Conditions</Text>
+          </View>
+          <Feather name="chevron-right" size={24} color="#555" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionContainer}
+          onPress={() => openPrivacyPolicy()}
+        >
+          <View style={styles.optionLeft}>
+            <Feather name="shield" size={24} color={colors.black} />
+            <Text style={styles.optionText}>Privacy Policy</Text>
           </View>
           <Feather name="chevron-right" size={24} color="#555" />
         </TouchableOpacity>

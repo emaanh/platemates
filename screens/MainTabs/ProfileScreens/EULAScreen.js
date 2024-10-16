@@ -51,7 +51,7 @@ function EULAScreen({ navigation }) {
           This Agreement shall be governed by and construed in accordance with the laws of [Your Country/State], without regard to its conflict of law provisions.{"\n\n"}
 
           <Text style={styles.boldText}>10. Contact Information</Text>{"\n\n"}
-          If you have any questions about this Agreement, please contact us at [Contact Email or Address].{"\n\n"}
+          If you have any questions about this Agreement, please contact us at emaan@heidari.co.{"\n\n"}
         </Text>
       </ScrollView>
     </View>

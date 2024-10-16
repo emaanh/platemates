@@ -8,7 +8,8 @@ import {
   Animated, 
   Modal, 
   ScrollView,
-  Image
+  Image,
+  Linking
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
@@ -38,6 +39,19 @@ function LandingPage({ navigation }) {
   const translateXAnim1 = useRef(new Animated.Value(-100)).current;
   const translateXAnim2 = useRef(new Animated.Value(-100)).current;
   const translateXAnim3 = useRef(new Animated.Value(-100)).current;
+
+  const openPrivacyPolicy = async () => {
+    const url = 'https://www.platemates.app/privacy';
+    // Check if the link can be opened
+    const supported = await Linking.canOpenURL(url);
+  
+    if (supported) {
+      // Open the link with the default browser
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${url}`);
+    }
+  };
 
   useEffect(() => {
     // Staggered animation sequence
@@ -109,7 +123,7 @@ function LandingPage({ navigation }) {
           { opacity: opacityAnim1, transform: [{ translateX: translateXAnim1 }] },
         ]}
       >
-        Join Dinner with
+      Wanna Meet
       </Animated.Text>
       <Animated.Text
         style={[
@@ -117,7 +131,7 @@ function LandingPage({ navigation }) {
           { opacity: opacityAnim2, transform: [{ translateX: translateXAnim2 }] },
         ]}
       >
-        3 Random
+      3 Students
       </Animated.Text>
       <Animated.Text
         style={[
@@ -125,7 +139,7 @@ function LandingPage({ navigation }) {
           { opacity: opacityAnim3, transform: [{ translateX: translateXAnim3 }] },
         ]}
       >
-        Students
+      over Dinner?
       </Animated.Text>
 
       <View style={styles.buttonContainer}>
@@ -157,15 +171,15 @@ function LandingPage({ navigation }) {
             style={styles.linkText}
             onPress={() => openModal('Terms of Service')}
           >
-            Terms of Service
+            EULA
           </Text>{' '}
-          {/* and{' '}
+          and{' '}
           <Text
             style={styles.linkText}
-            onPress={() => openModal('Privacy Policy')}
+            onPress={() => openPrivacyPolicy()}
           >
             Privacy Policy
-          </Text> */}
+          </Text>
           .
         </Text>
         <Text style={[styles.termsText, { top: 30 }]}>
@@ -187,38 +201,44 @@ function LandingPage({ navigation }) {
             <Text style={styles.closeButtonText}>✖</Text>
           </TouchableOpacity>
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Terms of Service</Text>
+            <Text style={styles.headerTitle}>EULA</Text>
           </View>
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <Text style={styles.content}>
-              <Text style={styles.boldText}>Last Updated:</Text> [10/11/24]{"\n\n"}
+              <Text style={styles.boldText}>Last Updated:</Text> [10/11/22]{"\n\n"}
 
-              <Text style={styles.boldText}>1. Acceptance of Terms</Text>{"\n\n"}
-              By accessing and using PlateMates ("App"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this App.{"\n\n"}
+              <Text style={styles.boldText}>1. Introduction</Text>{"\n\n"}
+              This End User License Agreement ("Agreement") is a legal agreement between you ("User" or "you") and <Text style={styles.boldText}>PlateMates</Text> ("Company," "we," or "us") concerning your use of the PlateMates mobile application ("App"). By downloading, installing, or using the App, you agree to be bound by the terms of this Agreement.{"\n\n"}
 
-              <Text style={styles.boldText}>2. Use of the App</Text>{"\n\n"}
-              You agree to use the App only for lawful purposes and in a way that does not infringe the rights of others or restrict or inhibit anyone else's use of the App.{"\n\n"}
+              <Text style={styles.boldText}>2. License Grant</Text>{"\n\n"}
+              We grant you a limited, non-exclusive, non-transferable, revocable license to use the App for personal, non-commercial purposes, strictly in accordance with the terms of this Agreement.{"\n\n"}
 
-              <Text style={styles.boldText}>3. User Accounts</Text>{"\n\n"}
-              You may be required to create an account to use certain features of the App. You are responsible for maintaining the confidentiality of your account and password.{"\n\n"}
+              <Text style={styles.boldText}>3. License Restrictions</Text>{"\n\n"}
+              You agree not to:{"\n"}
+              - Modify, reverse engineer, decompile, or disassemble the App.{"\n"}
+              - Rent, lease, loan, sell, sublicense, distribute, or otherwise transfer the App to any third party.{"\n"}
+              - Use the App in any unlawful manner or for any illegal purpose.{"\n\n"}
 
-              <Text style={styles.boldText}>4. Privacy Policy</Text>{"\n\n"}
-              Your use of the App is also subject to our Privacy Policy. Please review our Privacy Policy, which governs the App and informs users of our data collection practices.{"\n\n"}
+              <Text style={styles.boldText}>4. Intellectual Property Rights</Text>{"\n\n"}
+              All rights, title, and interest in and to the App, including but not limited to any content, graphics, user interface, and scripts, are owned by PlateMates. This Agreement does not grant you any rights to our trademarks or service marks.{"\n\n"}
 
-              <Text style={styles.boldText}>5. Intellectual Property Rights</Text>{"\n\n"}
-              All content included in the App, such as text, graphics, logos, images, and software, is the property of PlateMates or its content suppliers and is protected by intellectual property laws.{"\n\n"}
+              <Text style={styles.boldText}>5. Updates and Changes</Text>{"\n\n"}
+              We may provide updates, modifications, or patches to the App. You agree that we have no obligation to provide any updates or to continue to provide or enable any features or functionality of the App.{"\n\n"}
 
-              <Text style={styles.boldText}>6. Limitation of Liability</Text>{"\n\n"}
-              PlateMates shall not be liable for any damages whatsoever arising out of the use of or inability to use the App, even if PlateMates has been advised of the possibility of such damages.{"\n\n"}
+              <Text style={styles.boldText}>6. Termination</Text>{"\n\n"}
+              This Agreement is effective until terminated. Your rights under this Agreement will terminate automatically without notice if you fail to comply with any terms. Upon termination, you must cease all use of the App and delete all copies.{"\n\n"}
 
-              <Text style={styles.boldText}>7. Changes to Terms</Text>{"\n\n"}
-              We reserve the right to modify these terms at any time. Any changes will be effective immediately upon posting on the App. Your continued use of the App after any modification signifies your acceptance of the new terms.{"\n\n"}
+              <Text style={styles.boldText}>7. Disclaimer of Warranties</Text>{"\n\n"}
+              The App is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied. We disclaim all warranties, including but not limited to implied warranties of merchantability and fitness for a particular purpose.{"\n\n"}
 
-              <Text style={styles.boldText}>8. Governing Law</Text>{"\n\n"}
-              These terms shall be governed by and construed in accordance with the laws of [Your Country/State], without regard to its conflict of law provisions.{"\n\n"}
+              <Text style={styles.boldText}>8. Limitation of Liability</Text>{"\n\n"}
+              In no event shall PlateMates be liable for any indirect, incidental, special, consequential, or punitive damages arising out of your use or inability to use the App.{"\n\n"}
 
-              <Text style={styles.boldText}>9. Contact Information</Text>{"\n\n"}
-              If you have any questions about these Terms, please contact us at: emaan@heidari.co.{"\n\n"}
+              <Text style={styles.boldText}>9. Governing Law</Text>{"\n\n"}
+              This Agreement shall be governed by and construed in accordance with the laws of [Your Country/State], without regard to its conflict of law provisions.{"\n\n"}
+
+              <Text style={styles.boldText}>10. Contact Information</Text>{"\n\n"}
+              If you have any questions about this Agreement, please contact us at emaan@heidari.co.{"\n\n"}
             </Text>
           </ScrollView>
         </View>
