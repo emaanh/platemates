@@ -2,12 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { colors } from '../stylevars';
 import { Feather } from '@expo/vector-icons';
-import { isSignInWithEmailLink, signInWithEmailLink, sendSignInLinkToEmail, signInWithCredential, GoogleAuthProvider, signInWithEmailAndPassword} from 'firebase/auth';
+import { isSignInWithEmailLink, signInWithEmailLink, sendSignInLinkToEmail, signInWithCredential, GoogleAuthProvider, signInWithEmailAndPassword, OAuthProvider} from 'firebase/auth';
 import { authentication, db } from '../firebase/firebase-config';
 import { getDoc,doc } from 'firebase/firestore';
 import * as Linking from 'expo-linking';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../AuthProvider';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
+import { FontAwesome } from '@expo/vector-icons';
 
 
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
@@ -16,6 +18,45 @@ function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const { signOut } = useContext(AuthContext);
+
+    const signInWithApple = async () => {
+        try {
+          // Start the sign-in request
+          const appleAuthRequestResponse = await appleAuth.performRequest({
+            requestedOperation: appleAuth.Operation.LOGIN,
+            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+          });
+      
+          // Ensure user is authenticated
+          if (!appleAuthRequestResponse.identityToken) {
+            throw 'Apple Sign-In failed - no identity token returned';
+          }
+      
+          // Create a Firebase credential from the response
+          const { identityToken, nonce } = appleAuthRequestResponse;
+          const provider = new OAuthProvider('apple.com');
+          const credential = provider.credential({
+            idToken: identityToken,
+            rawNonce: nonce,
+          });
+      
+          // Sign in with Firebase
+          const userCredential = await signInWithCredential(authentication, credential);
+          const docSnap = await getDoc(doc(db, 'users', userCredential.user.uid));
+
+          if (!docSnap.exists()) {
+            await signOut();
+            Alert.alert('This account does not exist. Please go back and register.');
+            return;
+          }
+      
+          navigation.navigate('MainScreen');
+        
+        } catch (error) {
+          console.error('Apple Sign-In Error:', error);
+        }
+    };
+    
 
     useEffect(() => {
         GoogleSignin.configure({
@@ -169,7 +210,14 @@ function LoginScreen({ navigation }) {
                             <Text style={styles.GoogleText}>Continue with Google</Text>
                         </View>
                     </TouchableOpacity>
+                    <TouchableOpacity style={styles.GoogleButton} onPress={() => signInWithApple()}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <FontAwesome name="apple" size={24} color="#333333" style={styles.appleIcon} />
+                            <Text style={styles.GoogleText}>Sign up with Apple</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
+                <Text style={{fontFamily: 'Poppins_400Regular', color: 'grey',fontSize: 13,textAlign: 'center',top: 0,width: '80%',}}>Please use your university email to sign in.</Text>
             </View>
         </View>
     );
@@ -222,9 +270,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     GoogleButton: {
+        marginBottom: 15,
         borderWidth: 1,
         borderColor: colors.black,
-        backgroundColor: 'transparent',
+        backgroundColor: colors.background,
         borderRadius: 8,
         marginVerical: 10,
         alignItems: 'center',
@@ -268,6 +317,27 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
     
         elevation: 5,
+      },
+      appleButton: {
+        backgroundColor: '#ffffff', // White background
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        marginVertical: 10,
+        width: '90%',
+      },
+      appleButtonText: {
+        color: '#333333', // Dark grey text
+        fontSize: 20,
+        fontWeight: 'bold',
+        fontFamily: 'Poppins_700Bold',
+        marginLeft: 10, // Space between the icon and the text
+      },
+      appleIcon: {
+        marginRight: 2.5, // Space between icon and text
       },
 });
 
