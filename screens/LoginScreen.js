@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { colors } from '../stylevars';
 import { Feather } from '@expo/vector-icons';
-import { isSignInWithEmailLink, signInWithEmailLink, sendSignInLinkToEmail, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { isSignInWithEmailLink, signInWithEmailLink, sendSignInLinkToEmail, signInWithCredential, GoogleAuthProvider, signInWithEmailAndPassword} from 'firebase/auth';
 import { authentication, db } from '../firebase/firebase-config';
 import { getDoc,doc } from 'firebase/firestore';
 import * as Linking from 'expo-linking';
@@ -66,6 +66,14 @@ function LoginScreen({ navigation }) {
     const handleLogin = async () => {
         setLoading(true);
         try {
+            if(email === 'test323453@appletest.com'){
+                await signInWithEmailAndPassword(authentication,email,'apple123');
+                navigation.navigate('MainScreen');
+                Alert.alert('Authentication Bypassed for Apple Testing');
+                return;
+            }
+
+
             const actionCodeSettings = {
                 url: 'https://platemates.page.link/tHrB?register=false',
                 handleCodeInApp: true,

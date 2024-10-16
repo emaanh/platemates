@@ -155,11 +155,11 @@ function HomeScreen({ toggleUserInEvent }) {
   return (
     <View style={styles.screenContainer}>
       {/* Description */}
-      <Image 
+      {/* <Image 
         source={require('../../assets/logo_plates.png')} 
         style={styles.logoImage} 
         resizeMode="contain"
-      />
+      /> */}
       {/* Date Buttons */}
       <View style={[styles.optionsContainer,{width: '90%',position: 'absolute', bottom: '2%'}]}>
         <Text style={[styles.title]}>UC Berkeley</Text>
@@ -364,8 +364,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
   },
   logoImage: {
-    width: '100%',
-    height: '100%',
+    width: '65%',
+    height: '65%',
+    position: 'absolute',
+    flex: 1,
+    top:-175,
   },
   // New styles for the loading modal
   modalOverlay: {

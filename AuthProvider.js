@@ -203,6 +203,11 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
+  const clearUser = () => {
+    setUser(null);
+    setUserData(null);
+  };
+
   return (
     <AuthContext.Provider value={{ 
       userData, 
@@ -218,6 +223,7 @@ export const AuthProvider = ({ children }) => {
       hasTicket,
       subscriptionType,
       setUser,
+      clearUser
     }}>
       {children}
     </AuthContext.Provider>

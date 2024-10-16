@@ -17,7 +17,7 @@ import { db } from '../../../firebase/firebase-config';
 import { colors } from '../../../stylevars';
 
 function Settings({ navigation }) {
-  const { userData, user, signOut, subscriptionType, subscribed } = useContext(AuthContext);
+  const { userData, user, signOut, subscriptionType, subscribed, clearUser } = useContext(AuthContext);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(
     userData.receiveNotifications
   );
@@ -117,9 +117,10 @@ function Settings({ navigation }) {
             if (user) {
               deleteUser(user)
                 .then(async () => {
-
+                  clearUser();
                 })
                 .catch((error) => {
+                  clearUser();
                 });
             } else {
               console.log('No user is signed in');
