@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Platform, Modal, Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Platform, Modal, Text, View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Linking } from 'react-native';
 import { colors } from '../../stylevars'; // Import colors from stylevars.js
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getAvailablePurchases, initConnection, getProducts, requestPurchase } from 'react-native-iap';
+import { getAvailablePurchases, initConnection, getProducts, getSubscriptions, requestPurchase, finishTransaction, currentPurchase } from 'react-native-iap';
 import { AuthContext } from '../../AuthProvider';
-import { addDoc, doc, collection, setDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, doc, collection, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
 
 const productSkus = ['1time', 'month1', 'month3', 'month6'];
 
-const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
+const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTicket}) => {
   const [selectedOption, setSelectedOption] = useState('1 Month'); // Default to "1 Month"
   const { setCaller, caller, user, userData } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     handleGetProducts();
@@ -21,7 +22,6 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
     try {
       await initConnection();
       const productResults = await getProducts({ skus: productSkus });
-      console.log(productResults);
     } catch (error) {
       console.log({ message: 'handleGetProducts', error });
     }
@@ -35,6 +35,8 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
   };
 
   const handleBuyProduct = async () => {
+    setLoading(true); // Start showing the activity indicator
+  
     let sku;
     switch (selectedOption) {
       case '1 Month':
@@ -53,29 +55,53 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
         sku = '1time';
         break;
     }
+  
+    try {
+      const purchaseResult = await requestPurchase({ sku });
+  
+      if (purchaseResult.transactionReceipt && purchaseResult.transactionId) {
+        // const isValid = await validateReceiptWithServer(purchaseResult.transactionReceipt);
+        const isValid = true;
+        const isTicket = selectedOption == 'Single Ticket';
+  
+        if (isValid) {
+          closeModal();
+          await addDoc(collection(db, 'users', user.uid, 'purchases'), {
+            isTicket,
+            purchase: selectedOption,
+            serverTimestamp: serverTimestamp(),
+            IAPTimestamp: Timestamp.fromMillis(parseInt(purchaseResult.transactionDate)),
+            receipt: purchaseResult.transactionReceipt,
+            transactionID: purchaseResult.transactionId,
+          });
 
-    const purchaseResult = await requestPurchase({ sku });
-
-
-    if (purchaseResult.transactionReceipt) {
-      closeModal();
-      await addDoc(collection(db, 'users', user.uid, 'purchases'), {
-        purchase: selectedOption,
-        timestamp: serverTimestamp(),
-      });
-      if(selectedOption == 'Single Ticket'){
-        const tempArray = userData.tickets;
-        tempArray.push(new Date());
-        await setDoc(doc(db,'users',user.uid),{tickets:tempArray},{merge:true});
+          if (isTicket) {
+            await finishTransaction({purchase: purchaseResult, isConsumable: true});
+            const tempArray = userData.tickets;
+            tempArray.push(new Date());
+            await setDoc(doc(db, 'users', user.uid), { tickets: tempArray }, { merge: true });
+            setCaller(!caller);
+          } else{
+            await finishTransaction({purchase: purchaseResult});
+            setCaller(!caller);
+          }
+          // Alert.alert(`${selectedOption} purchased!`);
+  
+          if (selectedOption == 'Single Ticket') {
+            PromptTicket();
+          } else {
+            PromptSubscribe();
+          }
+        }
+      } else {
+        throw new Error('Purchase failed');
       }
-      setCaller(!caller);
-      Alert.alert(`${selectedOption} purchased!`);
-
-
-    } else {
-      console.error('Purchase failed');
+    } catch (error) {
+      console.log()
+      Alert.alert('Purchase Error', error.message);
+    } finally {
+      setLoading(false); // Stop showing the activity indicator
     }
-
   };
 
   return (
@@ -99,9 +125,9 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
         {/* Subscription Options */}
         <View style={styles.optionsContainer}>
           {[
-            { title: '1 Month', perMonth: '$1.99', total: '$7.99' },
-            { title: '3 Months', perMonth: '$1.25', originalPerMonth: '$9.99', total: '$14.99', discount: '38% OFF' },
-            { title: '6 Months', perMonth: '$0.83', originalPerMonth: '$9.99', total: '$19.99', discount: '58% OFF' },
+            { title: '1 Month', perMonth: '$1.99', total: '$7.99', discount: 'Perfect for first-timers' },
+            { title: '3 Months', perMonth: '$1.25', originalPerMonth: '$9.99', total: '$14.99', discount: 'Popular for regular attendees' },
+            { title: '6 Months', perMonth: '$0.83', originalPerMonth: '$9.99', total: '$19.99', discount: 'Maximum savings' },
           ].map((option, index) => (
             <TouchableOpacity
               key={index}
@@ -147,6 +173,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
           </View>
         </TouchableOpacity>
 
+
         {/* Buy Button */}
         <TouchableOpacity
           style={[
@@ -156,11 +183,35 @@ const PriceModal = ({ closeModal, isVisible, onClose, setUserInEvent }) => {
           onPress={handleBuyProduct}
           disabled={!selectedOption}
         >
-          <Text style={styles.buyButtonText}>{getBuyButtonText()}</Text>
-          {selectedOption !== 'Single Ticket' && (
-            <Text style={styles.cancelText}>Cancel Anytime</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color={colors.background} />
+          ) : (
+            <>
+              <Text style={styles.buyButtonText}>{getBuyButtonText()}</Text>
+              {selectedOption !== 'Single Ticket' && (
+                <Text style={styles.cancelText}>Cancel Anytime</Text>
+              )}
+            </>
           )}
         </TouchableOpacity>
+        <View style={styles.autoRenewContainer}>
+        <Text style={styles.autoRenewText}>
+          Subscriptions auto-renew at unless canceled 24h before the end of the purchased duration and can be managed in iTunes settings. {"\n"}
+          <Text
+            style={styles.link}
+            onPress={() => Linking.openURL('https://www.platemates.app/privacy')}
+          >
+            Privacy Policy
+          </Text>{" "}
+          &{" "}
+          <Text
+            style={styles.link}
+            onPress={() => Linking.openURL('https://www.platemates.app/eula')}
+          >
+            Terms of Use
+          </Text>
+        </Text>
+      </View>
       </SafeAreaView>
     </Modal>
   );
@@ -190,16 +241,17 @@ const styles = StyleSheet.create({
   },
   descriptionTitle: {
     color: colors.black,
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
   },
   descriptionText: {
-    color: colors.grey,
-    fontSize: 14,
+    color: colors.dark_grey,
+    fontSize: 16,
     textAlign: 'center',
     marginTop: 5,
+    marginBottom: 20,
     fontFamily: 'Poppins_400Regular',
   },
   optionsContainer: {
@@ -221,7 +273,7 @@ const styles = StyleSheet.create({
   optionButton: {
     backgroundColor: colors.background,
     padding: 15,
-    marginVertical: 8,
+    marginVertical: 10,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -296,7 +348,7 @@ const styles = StyleSheet.create({
   },
   buyButtonText: {
     color: colors.background,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
@@ -316,6 +368,21 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: colors.black,
     fontSize: 30,
+  },
+  autoRenewContainer: {
+    marginTop: 20,
+    marginBottom:-20,
+    paddingHorizontal: 10,
+  },
+  autoRenewText: {
+    color: colors.grey,
+    fontSize: 10,
+    textAlign: 'center',
+    fontFamily: 'Poppins_400Regular',
+  },
+  link: {
+    color: colors.ice, // or any color you prefer for the links
+    textDecorationLine: 'underline',
   },
 });
 

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Modal,
-  TextInput
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Ensure this is installed and linked
 import IcebreakerScreen from './IcebreakerScreen';
@@ -143,7 +143,7 @@ function EventHomeScreen({toggleUserInEvent}) {
   const handleCancelPress = () => {
     Alert.alert(
       "Cancel Event",
-      "Are you sure you want to cancel? This action cannot be undone.",
+      "Are you sure you want to cancel? This action cannot be undone and tickets won't be refunded.",
       [
         {
           text: "No",

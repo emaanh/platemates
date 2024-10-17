@@ -24,35 +24,27 @@ function HomeScreen({ toggleUserInEvent }) {
     // Function to get the next 3 Wednesdays
     const getNextWednesdays = () => {
       let wednesdays = [];
-      let today = moment();
-    
+      let now = moment(); // Current time
+  
       // Function to set time to 12:00 PM
       const setToNoon = (date) => {
         return date.clone().set({ hour: 12, minute: 0, second: 0, millisecond: 0 });
       };
-    
-      // Check if today is Wednesday
-      if (today.day() === 3) { // In Moment.js, Sunday = 0, Wednesday = 3
-        // If it's Wednesday and before noon, include today at 12:00 PM
-        if (today.hour() < 12) {
-          wednesdays.push(setToNoon(today));
-        }
+  
+      // Find the next Wednesday after the current time
+      let nextWednesday = now.clone().day(3); // Wednesday is day 3 (Sunday = 0)
+  
+      // If today is after Wednesday or it's Wednesday and past 12:00 PM, move to next week's Wednesday
+      if (now.day() > 3 || (now.day() === 3 && now.hour() >= 12)) {
+        nextWednesday.add(1, 'week').day(3);
       }
-    
-      // Find the next Wednesday after today
-      let nextWednesday = today.clone().day(3); // Get the current week's Wednesday
-      if (nextWednesday.isSame(today, 'day') && today.hour() >= 12) {
-        // If today is Wednesday at or after noon, move to the next Wednesday
-        nextWednesday.add(1, 'week');
+  
+      // Now, get the next 3 Wednesdays
+      for (let i = 0; i < 3; i++) {
+        let wednesday = nextWednesday.clone().add(i, 'weeks');
+        wednesdays.push(setToNoon(wednesday));
       }
-    
-      // Loop until we have 3 Wednesdays
-      while (wednesdays.length < 3) {
-        // Set the time to 12:00 PM before adding
-        wednesdays.push(setToNoon(nextWednesday));
-        nextWednesday.add(1, 'week');
-      }
-    
+  
       return wednesdays;
     };
 
@@ -66,53 +58,61 @@ function HomeScreen({ toggleUserInEvent }) {
     }
 
     if(subscribed){
-      Alert.alert(
-        "Confirm Booking",
-        "Are you sure you want to book this date?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => {
-              console.log("Booking cancelled");
-              // Optional: Any additional cancellation logic
-            },
-            style: "cancel",
-          },
-          {
-            text: "Yes",
-            onPress: () => {
-              joinDinnerQueueSubscribe();
-            },
-          },
-        ],
-        { cancelable: false } // Prevents dismissal by tapping outside
-      );
+      PromptSubscribe();
     }
 
     if(hasTicket){
-      Alert.alert(
-        "Confirm Booking",
-        "Are you sure you want to book this date? Once booked, your ticket will be used.",
-        [
-          {
-            text: "Cancel",
-            onPress: () => {
-              console.log("Booking cancelled");
-              // Optional: Any additional cancellation logic
-            },
-            style: "cancel",
-          },
-          {
-            text: "Yes",
-            onPress: () => {
-              joinDinnerQueueTickets();
-            },
-          },
-        ],
-        { cancelable: false } // Prevents dismissal by tapping outside
-      );
+      PromptTicket();
     }
   };
+
+  const PromptSubscribe = async() => {
+    Alert.alert(
+      "Confirm Booking",
+      "Are you sure you want to book this date?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {
+            console.log("Booking cancelled");
+            // Optional: Any additional cancellation logic
+          },
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => {
+            joinDinnerQueueSubscribe();
+          },
+        },
+      ],
+      { cancelable: false } // Prevents dismissal by tapping outside
+    );
+  }
+
+  const PromptTicket = async() => {
+    Alert.alert(
+      "Confirm Booking",
+      "Are you sure you want to book this date? Once booked, your ticket will be used.",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {
+            console.log("Booking cancelled");
+            // Optional: Any additional cancellation logic
+          },
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => {
+            joinDinnerQueueTickets();
+          },
+        },
+      ],
+      { cancelable: false } // Prevents dismissal by tapping outside
+    );
+  }
 
   const joinDinnerQueueSubscribe = async() => {
     setIsFindingDinner(true); // Show the modal
@@ -120,7 +120,7 @@ function HomeScreen({ toggleUserInEvent }) {
     await addDoc(collection(db,'queue'),{uid: user.uid, name: userData.fullName, timestamp: serverTimestamp(), selectedDinner: formattedOption });
 
     // Simulate loading time between 8-16 seconds
-    const delay = Math.floor(Math.random() * (8 - 4 + 1) + 4) * 1000; // Random between 8 and 16 seconds
+    const delay = Math.floor(Math.random() * (4 - 2 + 1) + 2) * 300;
     setTimeout(async() => {
       setIsFindingDinner(false); // Hide the modal
       toggleUserInEvent(true);
@@ -162,7 +162,7 @@ function HomeScreen({ toggleUserInEvent }) {
       /> */}
       {/* Date Buttons */}
       <View style={[styles.optionsContainer,{width: '90%',position: 'absolute', bottom: '2%'}]}>
-        <Text style={[styles.title]}>UC Berkeley</Text>
+        <Text style={[styles.title]}>{userData.shortSchool}</Text>
         <Text style={[styles.description]}>Select the date for a dinner with 3 students selected by our algorithm</Text>
 
 
@@ -234,6 +234,8 @@ function HomeScreen({ toggleUserInEvent }) {
         onClose={closeModal} 
         selectedOption={selectedOption} 
         setSelectedOption={setSelectedOption} 
+        PromptSubscribe={PromptSubscribe}
+        PromptTicket={PromptTicket}
       />
     </View>
   );

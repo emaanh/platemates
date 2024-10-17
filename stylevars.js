@@ -4,7 +4,7 @@ export const colors = {
   white: '#ffffff',
   black: '#2f2621', 
   grey: '#aaaaaa',
-  dark_grey: '#333333',
+  dark_grey: '#555555',
   progress_bar: '#7BC8CA',//'#f17511',
   red: '#C41E3A',
   ice: '#7BC8CA',

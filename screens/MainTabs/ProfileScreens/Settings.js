@@ -25,6 +25,7 @@ function Settings({ navigation }) {
   const [isSMSAlertsEnabled, setIsSMSAlertsEnabled] = useState(userData.receiveSMS);
   const [subscriptionStatus, setSubscriptionStatus] = useState(userData.subscriptionStatus); // Add subscription status
 
+  console.log(subscriptionType);
   const openPrivacyPolicy = async () => {
     const url = 'https://www.platemates.app/privacy';
     // Check if the link can be opened
@@ -159,7 +160,7 @@ function Settings({ navigation }) {
       const ticketText = ticketCount === 1 ? '1 ticket' : `${ticketCount} tickets`;
       return ticketText;
     } else if (subscribed) {
-      const subscriptionDisplay = subscriptionMap[subscriptionType] || 'Unknown Subscription';
+      const subscriptionDisplay = subscriptionType || 'Unknown Subscription';
       return `${subscriptionDisplay} subscription`;
     }
     return 'No active subscription';

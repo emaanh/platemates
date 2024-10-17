@@ -24,7 +24,7 @@
     "_applicationInternalID" : "6736578410",
     "_developerTeamID" : "YWHUZEHAGY",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 750128140.77205503,
+    "_lastSynchronizedDate" : 750837131.99201703,
     "_locale" : "en_GB",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -140,7 +140,7 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "14.99",
+          "displayPrice" : "19.99",
           "familyShareable" : false,
           "groupNumber" : 3,
           "internalID" : "6736594342",

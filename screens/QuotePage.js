@@ -12,13 +12,19 @@ import { AuthContext } from '../AuthProvider';
 function QuotePage({ navigation }) {
   const { user, userData } = useContext(AuthContext);
   if(userData === null){
-    return;
+    return (
+      <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
+        <ActivityIndicator size="large" color="black" />
+        <Text style={{fontFamily: 'Poppins_400Regular', fontSize: 20, color: colors.black, marginTop: 10}}>{"Contact: 650-282-0663 if Stuck."}</Text>
+      </View>
+    );
   }
 
   const messages = [
     'Hello ' + userData.fullName,
-    '“Life is 10% what happens to us and 90% how we react to it.” – Charles R. Swindoll',
-    '“Your time is limited, so don’t waste it living someone else’s life.” – Steve Jobs'
+    'New experiences can be daunting, but the best stories start with a little courage.',
+    'Words should be weighed, not counted.',
+    'Find your people at\n'+ userData.shortSchool
   ];
 
   const [currentStep, setCurrentStep] = useState(0);

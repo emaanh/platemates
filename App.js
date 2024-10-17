@@ -31,7 +31,6 @@ const Stack = createStackNavigator();
 
 
 function App() {
-  const [fcmToken, setFcmToken] = useState('');
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -42,6 +41,37 @@ function App() {
     return unsubscribe;
   }, []);
 
+
+  let [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+    LibreBaskerville_400Regular,
+    LibreBaskerville_700Bold,
+  });
+
+
+  if (!fontsLoaded) {
+    return (
+      <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
+        <ActivityIndicator size="large" color="black" />
+        <Text style={{fontFamily: 'Poppins_400Regular', fontSize: 20, color: colors.black, marginTop: 10}}>{"Contact: 650-282-0663 if Stuck."}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <AuthProvider>
+      <NavigationContainer>
+        <RootNavigator />
+      </NavigationContainer>
+    </AuthProvider>
+  );
+}
+
+function RootNavigator() {
+  const [fcmToken, setFcmToken] = useState('');
+  const { user, authLoaded } = useContext(AuthContext);
+
   useEffect(() => {
     // Function to request permission and get the token
     const requestPermissionAndGetToken = async () => {
@@ -51,14 +81,15 @@ function App() {
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
       if (enabled) {
-        console.log('Authorization status:', authStatus);
+        // console.log('Authorization status:', authStatus);
         // Get the FCM token
         const token = await messaging().getToken();
-        console.log('FCM Token:', token);
+        // console.log('FCM Token:', token);
+
         setFcmToken(token);
-  
-        // Optionally, send the token to your server for later use
-        // await sendTokenToServer(token);
+        if(user && token){
+          await setDoc(doc(db,'users',user.uid),{FCMToken:token},{merge:true});
+        }
       } else {
         Alert.alert('Permission denied', 'Unable to get notification permissions.');
       }
@@ -68,7 +99,7 @@ function App() {
   
     // Listen for token refresh
     const unsubscribeTokenRefresh = messaging().onTokenRefresh(token => {
-      console.log('FCM Token refreshed:', token);
+      // console.log('FCM Token refreshed:', token);
       setFcmToken(token);
       // Optionally, update the token on your server
       // sendTokenToServer(token);
@@ -85,36 +116,11 @@ function App() {
     };
   }, []);
 
-  let [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_700Bold,
-    LibreBaskerville_400Regular,
-    LibreBaskerville_700Bold,
-  });
-
-
-  if (!fontsLoaded) {
-    return (
-      <ActivityIndicator size="large" color={colors.background} />
-    );
-  }
-
-  return (
-    <AuthProvider>
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </AuthProvider>
-  );
-}
-
-function RootNavigator() {
-  const { user, authLoaded } = useContext(AuthContext);
-
   if (!authLoaded) {
     return (
       <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
         <ActivityIndicator size="large" color="black" />
+        <Text style={{fontFamily: 'Poppins_400Regular', fontSize: 20, color: colors.black, marginTop: 10}}>{"Contact: 650-282-0663 if Stuck."}</Text>
       </View>
     );
   }

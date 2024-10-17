@@ -34,7 +34,7 @@ function QuizResults({ navigation, route }) {
     });
 
 
-    const randomStudents = Math.floor(Math.random() * 46) + 5;
+    const randomStudents = Math.floor(Math.random() * 23) + 8;
     setCompatibleStudents(randomStudents);
 
     const timer = setTimeout(() => {

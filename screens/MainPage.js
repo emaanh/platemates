@@ -33,6 +33,7 @@ function MainPage() {
     return (
       <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
         <ActivityIndicator size="large" color="black" />
+        <Text style={{fontFamily: 'Poppins_400Regular', fontSize: 20, color: colors.black, marginTop: 10}}>{"Contact: 650-282-0663 if Stuck."}</Text>
       </View>
     );
   }
@@ -51,7 +52,6 @@ function MainPage() {
     setIsUserInEvent(bool);
   }
 
-  console.log(subscribed);
 
   return (
     <Tab.Navigator

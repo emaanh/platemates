@@ -3,13 +3,11 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-nati
 import { Feather } from '@expo/vector-icons';
 import { colors } from '../stylevars';
 import * as Haptics from 'expo-haptics';
+import { AuthContext } from '../AuthProvider';
 
 
 function SelectSchool({ navigation }) {
-  const schools = [
-    ["University of Southern California",'USC','usc.edu'],
-    ["University of California, Berkeley", 'UC Berkeley','berkeley.edu'],
-  ];
+  const { schools } = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
