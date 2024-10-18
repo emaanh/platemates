@@ -133,7 +133,6 @@ export const AuthProvider = ({ children }) => {
               const filteredTransactions = transactionHistory.filter(
                 (transaction) => transaction.productId !== '1time'
               );
-              console.log(filteredTransactions);
 
               if (filteredTransactions.length > 0) {
                 const sortedTransactions = filteredTransactions.sort(
@@ -216,6 +215,7 @@ export const AuthProvider = ({ children }) => {
       const productResults = await getProducts({ skus: productSkus });
       const history = await getPurchaseHistory();
       setTransactionHistory(history);
+      console.log(history);
     } catch (error) {
       console.log({ message: 'handleGetProducts', error });
     }
