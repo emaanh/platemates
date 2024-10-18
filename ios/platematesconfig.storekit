@@ -27,7 +27,7 @@
     },
     "_developerTeamID" : "YWHUZEHAGY",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 750906500.09173799,
+    "_lastSynchronizedDate" : 750910615.66707098,
     "_locale" : "en_GB",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -101,7 +101,7 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Access dinners every Wednesday for a month.",
+              "description" : "Access dinners every Wednesday for a month. ",
               "displayName" : "One Month Subscription",
               "locale" : "en_GB"
             }

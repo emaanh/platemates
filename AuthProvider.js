@@ -215,7 +215,6 @@ export const AuthProvider = ({ children }) => {
       const productResults = await getProducts({ skus: productSkus });
       const history = await getPurchaseHistory();
       setTransactionHistory(history);
-      console.log(history);
     } catch (error) {
       console.log({ message: 'handleGetProducts', error });
     }

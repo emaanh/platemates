@@ -76,7 +76,11 @@ function MainPage() {
               iconName = 'circle';
           }
 
-          return <Feather name={iconName} size={30} color={icon_color} />;
+          return(
+            <View style={{width: 70, marginLeft: 35}}>
+              <Feather name={iconName} size={35} color={icon_color} />
+            </View>
+          ) ;
         },
         tabBarStyle: {
           backgroundColor: colors.background, // Set tab bar background to black
