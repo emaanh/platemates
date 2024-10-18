@@ -22,9 +22,12 @@
   ],
   "settings" : {
     "_applicationInternalID" : "6736578410",
+    "_compatibilityTimeRate" : {
+      "3" : 6
+    },
     "_developerTeamID" : "YWHUZEHAGY",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 750837131.99201703,
+    "_lastSynchronizedDate" : 750906500.09173799,
     "_locale" : "en_GB",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -73,7 +76,8 @@
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }
-    ]
+    ],
+    "_timeRate" : 1003
   },
   "subscriptionGroups" : [
     {
@@ -122,7 +126,7 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Access dinners every Wednesday for 3 months.",
+              "description" : "Access dinners every Wednesday for 3 months. ",
               "displayName" : "3 Month Subscription",
               "locale" : "en_GB"
             }
@@ -147,7 +151,7 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Access dinners every Wednesday for 6 months.",
+              "description" : "Access dinners every Wednesday for 6 months. ",
               "displayName" : "Six Month Subscription",
               "locale" : "en_GB"
             }

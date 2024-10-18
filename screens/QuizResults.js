@@ -6,7 +6,7 @@ import { colors } from '../stylevars';
 import { signInWithCredential, GoogleAuthProvider, OAuthProvider } from 'firebase/auth';
 import { authentication,db } from '../firebase/firebase-config';
 
-import { setDoc,doc, getDoc } from 'firebase/firestore';
+import { setDoc, doc, getDoc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { AuthContext } from '../AuthProvider';
@@ -85,6 +85,7 @@ function QuizResults({ navigation, route }) {
   
       // Sign in with Firebase
       const userCredential = await signInWithCredential(authentication, credential);
+      console.log(userCredential.user);
   
       // Additional logic (e.g., checking email domain)
       const userEmail = userCredential.user.email;
@@ -121,10 +122,37 @@ function QuizResults({ navigation, route }) {
         );
         return;
       }
+
+      const answersMap = new Map(Object.entries(answers));
+      const answersObject = Object.fromEntries(answersMap);
+
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        fullName: userCredential.user.displayName ? userCredential.user.displayName : 'Anonymous',
+        email: userCredential.user.email.trim(),
+        phone: userCredential.user.phoneNumber ? userCredential.user.phoneNumber : 'Hidden',
+        answers: answersObject,
+        shortSchool: school[1],
+        longSchool: school[0],
+        receiveSMS: true,
+        receiveNotifications: true,
+        tickets: [],
+        inEvent: false,
+        eventID: null
+      },{merge:true});
+
+      await addDoc(collection(db, 'users', userCredential.user.uid, 'notifications'), {
+        timestamp: serverTimestamp(),
+        message: 'Important Notification',
+        description: 'Check this screen for valuable info.'
+      });
+
+      await addDoc(collection(db, 'users', userCredential.user.uid, 'events'), {
+        timestamp: serverTimestamp(),
+        title: 'Dinners Shown Here',
+        eventID: 'hZt2oxXbroIJqLOVAlJy'
+      });
   
-      await AsyncStorage.setItem('school', JSON.stringify(school));
-      await AsyncStorage.setItem('answers', JSON.stringify(answers));
-      navigation.navigate('GoogleInfoScreen', {});
+      navigation.navigate('QuoteScreen');
     } catch (error) {
       console.error('Apple Sign-In Error:', error);
     }

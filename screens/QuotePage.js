@@ -4,7 +4,8 @@ import {
   Text, 
   View, 
   TouchableOpacity, 
-  Animated 
+  Animated,
+  ActivityIndicator
 } from 'react-native';
 import { colors } from '../stylevars'; // Ensure this contains the necessary color definitions
 import { AuthContext } from '../AuthProvider';

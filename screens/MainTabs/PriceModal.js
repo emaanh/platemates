@@ -2,30 +2,16 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Platform, Modal, Text, View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Linking } from 'react-native';
 import { colors } from '../../stylevars'; // Import colors from stylevars.js
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getAvailablePurchases, initConnection, getProducts, getSubscriptions, requestPurchase, finishTransaction, currentPurchase } from 'react-native-iap';
+import { getAvailablePurchases, initConnection, getProducts, getSubscriptions, requestPurchase, finishTransaction, currentPurchase, getPurchaseHistory } from 'react-native-iap';
 import { AuthContext } from '../../AuthProvider';
 import { addDoc, doc, collection, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
 
-const productSkus = ['1time', 'month1', 'month3', 'month6'];
 
 const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTicket}) => {
   const [selectedOption, setSelectedOption] = useState('1 Month'); // Default to "1 Month"
   const { setCaller, caller, user, userData } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    handleGetProducts();
-  }, []);
-
-  const handleGetProducts = async () => {
-    try {
-      await initConnection();
-      const productResults = await getProducts({ skus: productSkus });
-    } catch (error) {
-      console.log({ message: 'handleGetProducts', error });
-    }
-  };
 
   const getBuyButtonText = () => {
     if (selectedOption === 'Single Ticket') {
@@ -196,7 +182,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
         </TouchableOpacity>
         <View style={styles.autoRenewContainer}>
         <Text style={styles.autoRenewText}>
-          Subscriptions auto-renew at unless canceled 24h before the end of the purchased duration and can be managed in iTunes settings. {"\n"}
+        Subscriptions auto-renew unless canceled 24 hours before expiration via iTunes settings. Purchases provide a software service matching four individuals to meet at a designated restaurant; meals are not included. Platemates does not sell any physical goods or services. Dinners with fewer than three participants will be refunded upon request. {"\n"}
           <Text
             style={styles.link}
             onPress={() => Linking.openURL('https://www.platemates.app/privacy')}
@@ -371,7 +357,7 @@ const styles = StyleSheet.create({
   },
   autoRenewContainer: {
     marginTop: 20,
-    marginBottom:-20,
+    marginBottom:-50,
     paddingHorizontal: 10,
   },
   autoRenewText: {

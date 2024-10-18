@@ -42,6 +42,7 @@ function LoginScreen({ navigation }) {
       
           // Sign in with Firebase
           const userCredential = await signInWithCredential(authentication, credential);
+
           const docSnap = await getDoc(doc(db, 'users', userCredential.user.uid));
 
           if (!docSnap.exists()) {

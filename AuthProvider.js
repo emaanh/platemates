@@ -1,10 +1,10 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { authentication } from './firebase/firebase-config'; // Adjust the import path to your firebase config
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { getDocs, doc, onSnapshot, query, orderBy, collection, where, limit, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { getDocs, doc, onSnapshot, query, orderBy, collection, where, limit, serverTimestamp, Timestamp, addDoc } from 'firebase/firestore';
 import { db } from './firebase/firebase-config';
 import { Alert } from 'react-native';
-import {initConnection, getAvailablePurchases, endConnection,} from 'react-native-iap';
+import {initConnection, getProducts, getAvailablePurchases, endConnection, getPurchaseHistory} from 'react-native-iap';
 import { sendSignInLinkToEmail, signInWithEmailLink } from 'firebase/auth';
 
 export const AuthContext = createContext(null);
@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
   const [caller, setCaller] = useState(false);
   const [subscriptionType, setSubscriptionType] = useState(null);
   const [schools, setSchools] = useState([]);
+  const [transactionHistory, setTransactionHistory] = useState([]);
 
   
   useEffect(() => {
@@ -128,13 +129,65 @@ export const AuthProvider = ({ children }) => {
             expirationDate.setMonth(expirationDate.getMonth() + months);
   
             const currentDate = Timestamp.now().toDate();
-            console.log(currentDate);
             if (currentDate > expirationDate) {
-              Alert.alert('Subscription Expired');
-              setSubscribed(false);
-              setSubscriptionType('');
-              // const purchases = await getUserPurchases();
-              // console.log(purchases);
+              const filteredTransactions = transactionHistory.filter(
+                (transaction) => transaction.productId !== '1time'
+              );
+              console.log(filteredTransactions);
+
+              if (filteredTransactions.length > 0) {
+                const sortedTransactions = filteredTransactions.sort(
+                  (a, b) => new Date(b.transactionDate) - new Date(a.transactionDate)
+                );
+
+                const mostRecentTransaction = sortedTransactions[0];
+            
+                let thresholdMonths;
+                let subName;
+                switch (mostRecentTransaction.productId) {
+                  case 'month1':
+                    thresholdMonths = 1;
+                    subName = '1 Month';
+                    break;
+                  case 'month3':
+                    thresholdMonths = 3;
+                    subName = '3 Months';
+                    break;
+                  case 'month6':
+                    thresholdMonths = 6;
+                    subName = '6 Months';
+                    break;
+                  default:
+                    subName = '0 Months';
+                    thresholdMonths = 0; // Handle unexpected productIds
+                }
+                const transactionDate = new Date(mostRecentTransaction.transactionDate);
+
+                const renewalDate = new Date(transactionDate);
+                renewalDate.setMonth(renewalDate.getMonth() + thresholdMonths);
+            
+                if (currentDate < renewalDate) {
+                  await addDoc(collection(db, 'users', user.uid, 'purchases'), {
+                    isTicket: false,
+                    purchase: subName,
+                    serverTimestamp: serverTimestamp(),
+                    IAPTimestamp: Timestamp.fromMillis(parseInt(mostRecentTransaction.transactionDate)),
+                    receipt: mostRecentTransaction.transactionReceipt,
+                    transactionID: mostRecentTransaction.transactionId,
+                  });
+                } else {
+                  setSubscribed(false);
+                  setSubscriptionType('');
+                  // Alert.alert('Need to renew subscription.');
+                }
+
+              } else {
+                setSubscribed(false);
+                setSubscriptionType('');
+                console.log('No eligible transactions found for renewal.');
+              }
+            
+
             } else {
               setSubscribed(true);
               setSubscriptionType(purchaseType);
@@ -144,25 +197,30 @@ export const AuthProvider = ({ children }) => {
       );
     }
 
-    const getUserPurchases = async () => {
-      try {
-        await initConnection();
-    
-        const purchases = await getAvailablePurchases();
-        return purchases;
-      } catch (error) {
-        console.error('Error fetching purchases:', error);
-        Alert.alert('Error', 'Failed to retrieve purchases');
-      }
-    };  
-  
     return () => {
       if (unsubscribe) {
         unsubscribe();
       }
     };
-  }, [user]);
+  }, [user, transactionHistory]);
 
+
+  const productSkus = ['1time', 'month1', 'month3', 'month6'];
+  useEffect(() => {
+    handleGetProducts();
+  }, []);
+
+  const handleGetProducts = async () => {
+    try {
+      await initConnection();
+      const productResults = await getProducts({ skus: productSkus });
+      const history = await getPurchaseHistory();
+      setTransactionHistory(history);
+    } catch (error) {
+      console.log({ message: 'handleGetProducts', error });
+    }
+  };
+  
   useEffect(() => {
     let unsubscribe;
 
@@ -254,8 +312,6 @@ export const AuthProvider = ({ children }) => {
       }
     };
   }, [user]);
-
-
 
   const handleSignOut = () => {
     signOut(authentication)
