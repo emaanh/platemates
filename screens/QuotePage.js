@@ -24,7 +24,6 @@ function QuotePage({ navigation }) {
   const messages = [
     'Hello ' + userData.fullName,
     'New experiences can be daunting, but the best stories start with a little courage.',
-    'Words should be weighed, not counted.',
     'Find your people at\n'+ userData.shortSchool
   ];
 

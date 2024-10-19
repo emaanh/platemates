@@ -81,10 +81,10 @@ function RootNavigator() {
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
       if (enabled) {
-        // console.log('Authorization status:', authStatus);
-        // Get the FCM token
+        console.log(enabled);
+
         const token = await messaging().getToken();
-        // console.log('FCM Token:', token);
+        console.log('FCM Token:', token);
 
         setFcmToken(token);
         if(user && token){
@@ -99,10 +99,8 @@ function RootNavigator() {
   
     // Listen for token refresh
     const unsubscribeTokenRefresh = messaging().onTokenRefresh(token => {
-      // console.log('FCM Token refreshed:', token);
+      console.log('FCM Token refreshed:', token);
       setFcmToken(token);
-      // Optionally, update the token on your server
-      // sendTokenToServer(token);
     });
   
     // Listen for foreground messages

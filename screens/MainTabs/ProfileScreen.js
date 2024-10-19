@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    top: 110,
+    top: 90,
     flexDirection: 'row', // Align icon and text horizontally
     backgroundColor: 'transparent',
     paddingVertical: 25,

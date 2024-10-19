@@ -240,7 +240,7 @@ function EventHomeScreen({toggleUserInEvent}) {
 
           <View style={styles.locationContainer}>
             <Icon name="location-on" size={20} color={colors.background} style={styles.icon} />
-            <Text style={[styles.locationText, { color: colors.background }]}>UC Berkeley</Text>
+            <Text style={[styles.locationText, { color: colors.background }]}>{userData.shortSchool}</Text>
           </View>
 
           <View style={styles.buttonContainer}>

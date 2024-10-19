@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Platform, Modal, Text, View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Linking } from 'react-native';
+import { Dimensions, Platform, Modal, Text, View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Linking } from 'react-native';
 import { colors } from '../../stylevars'; // Import colors from stylevars.js
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAvailablePurchases, initConnection, getProducts, getSubscriptions, requestPurchase, finishTransaction, currentPurchase, getPurchaseHistory } from 'react-native-iap';
 import { AuthContext } from '../../AuthProvider';
 import { addDoc, doc, collection, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
-
 
 const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTicket}) => {
   const [selectedOption, setSelectedOption] = useState('1 Month'); // Default to "1 Month"

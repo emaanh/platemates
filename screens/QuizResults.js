@@ -241,12 +241,12 @@ function QuizResults({ navigation, route }) {
         </>
       ) : (
         <>
-          <Feather name="check-circle" size={100} color={colors.background} />
+          <Feather name="check-circle" style={{marginTop: -40}} size={100} color={colors.background} />
           <Text style={styles.resultsText}>
             We have found {compatibleStudents} compatible students at {school[1]}
           </Text>
           <View style={styles.buttonContainer}>
-            <Text style={{fontFamily: 'Poppins_400Regular', marginBottom: 35, color: colors.light_grey,fontSize: 18,textAlign: 'center',top: 20,width: '80%'}}>Use your university email to sign in.</Text>
+            <Text style={{fontFamily: 'Poppins_400Regular', marginBottom: 35, color: colors.light_grey,fontSize: 18,textAlign: 'center',top: 20,width: '100%'}}>Use your university email to sign in.</Text>
             <TouchableOpacity style={styles.googleButton} onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               signInWithGoogle()}}>

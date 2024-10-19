@@ -36,7 +36,7 @@ function PersonalityQuizScreen({ navigation, route }) {
     { type: 'multiple', question: "What grade are you in?", options: ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Grad'] },
     { type: 'multiple', question: "How do you define yourself", options: ['Woman', 'Man', 'Non-binary'] },
     { type: 'multiple', question: "What is your relationship status?", options: ['Single', 'In a relationship', 'It’s complicated', 'Skip'] },
-    { type: 'multiple', question: "What are you most excited to get out of joining PlateMates?", options: ['Meeting like-minded students', 'Exploring fun, new social experiences', 'Stepping out of my comfort zone', 'Building meaningful connections', 'Enjoying good laughs over food'] },
+    { type: 'multiple', question: "What are you most excited to get out of joining PlateMates?", options: ['Meeting like-minded students', 'Exploring fun, new social experiences', 'Stepping out of my comfort zone', 'Building meaningful connections', 'Good laughs over food'] },
   ];
 
 
@@ -56,7 +56,7 @@ function PersonalityQuizScreen({ navigation, route }) {
   const fadeOut = (callback) => {
     Animated.timing(fadeAnim, {
       toValue: 0,
-      duration: 300,
+      duration: 200,
       useNativeDriver: true,
       easing: Easing.out(Easing.ease),
     }).start(() => {
@@ -67,7 +67,7 @@ function PersonalityQuizScreen({ navigation, route }) {
   const fadeIn = () => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 300,
+      duration: 200,
       useNativeDriver: true,
       easing: Easing.in(Easing.ease),
     }).start();
@@ -100,7 +100,7 @@ function PersonalityQuizScreen({ navigation, route }) {
       setTimeout(() => {
         setButtonBorderColors({ ...buttonBorderColors, [currentQuestionIndex]: index });
         handleAnswer(answer);
-      }, 300);
+      }, 150);
     } else if (type === 'rating') {
       const answer = index + 1;
       setAnswers({ ...answers, [currentQuestionIndex]: answer });
@@ -108,7 +108,7 @@ function PersonalityQuizScreen({ navigation, route }) {
       setTimeout(() => {
         setButtonBorderColors({ ...buttonBorderColors, [currentQuestionIndex]: index });
         handleAnswer(answer);
-      }, 300);
+      }, 150);
     }
   };
 

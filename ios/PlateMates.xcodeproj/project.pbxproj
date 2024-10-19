@@ -13,8 +13,9 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		43106FEBDA33706963369E51 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D0E9F770FB9FA3267CDED547 /* PrivacyInfo.xcprivacy */; };
 		488031A2C333F8764D7624B5 /* Pods_PlateMates.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632E156289C48A5688A6FDE7 /* Pods_PlateMates.framework */; };
+		4A3C542F2CC3704900B60387 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4A3C542E2CC3704900B60387 /* GoogleService-Info.plist */; };
+		4A72247B2CC3B9D900196A60 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A72247A2CC3B9D900196A60 /* Launch Screen.storyboard */; };
 		4AAB49F52CB2026D00EF17E6 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AAB49F42CB2026D00EF17E6 /* StoreKit.framework */; };
-		4AC550F42CBA08A80055FDFC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4AC550F32CBA08A80055FDFC /* GoogleService-Info.plist */; };
 		4ADB663F2CB60C090072C1D8 /* platematesconfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 4ADB663E2CB60C090072C1D8 /* platematesconfig.storekit */; };
 		4ADB66412CB60DAB0072C1D8 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4ADB66402CB60DAB0072C1D8 /* StoreKitTestCertificate.cer */; };
 		AFAA7A7F3AC945649A45713A /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD956ACB5ECE4330AE1F13CD /* noop-file.swift */; };
@@ -29,8 +30,9 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = PlateMates/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PlateMates/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = PlateMates/main.m; sourceTree = "<group>"; };
+		4A3C542E2CC3704900B60387 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4A72247A2CC3B9D900196A60 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		4AAB49F42CB2026D00EF17E6 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		4AC550F32CBA08A80055FDFC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4ADB663E2CB60C090072C1D8 /* platematesconfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = platematesconfig.storekit; sourceTree = "<group>"; };
 		4ADB66402CB60DAB0072C1D8 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		632E156289C48A5688A6FDE7 /* Pods_PlateMates.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PlateMates.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,7 +62,7 @@
 		13B07FAE1A68108700A75B9A /* PlateMates */ = {
 			isa = PBXGroup;
 			children = (
-				4AC550F32CBA08A80055FDFC /* GoogleService-Info.plist */,
+				4A3C542E2CC3704900B60387 /* GoogleService-Info.plist */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -70,6 +72,7 @@
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				FD956ACB5ECE4330AE1F13CD /* noop-file.swift */,
 				D0E9F770FB9FA3267CDED547 /* PrivacyInfo.xcprivacy */,
+				4A72247A2CC3B9D900196A60 /* Launch Screen.storyboard */,
 			);
 			name = PlateMates;
 			sourceTree = "<group>";
@@ -213,11 +216,12 @@
 			files = (
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				4A72247B2CC3B9D900196A60 /* Launch Screen.storyboard in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				4ADB663F2CB60C090072C1D8 /* platematesconfig.storekit in Resources */,
 				43106FEBDA33706963369E51 /* PrivacyInfo.xcprivacy in Resources */,
 				4ADB66412CB60DAB0072C1D8 /* StoreKitTestCertificate.cer in Resources */,
-				4AC550F42CBA08A80055FDFC /* GoogleService-Info.plist in Resources */,
+				4A3C542F2CC3704900B60387 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
