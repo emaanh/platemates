@@ -81,7 +81,6 @@ function RootNavigator() {
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
       if (enabled) {
-        console.log(enabled);
 
         const token = await messaging().getToken();
         console.log('FCM Token:', token);

@@ -47,6 +47,8 @@ function EventHomeScreen({toggleUserInEvent}) {
   const [isFeedbackRevealed, setIsFeedbackRevealed] = useState(false);
   const [isSeatConfirmedHidden, setIsSeatConfirmedHidden] = useState(false);
 
+  const [lateShown, setLateShown] = useState(false);
+
   const navigation = useNavigation();
   const { userData, user } = useContext(AuthContext);
 
@@ -73,6 +75,7 @@ function EventHomeScreen({toggleUserInEvent}) {
         
         unsubscribe = onSnapshot(eventRef, (docSnapshot) => {
           if (docSnapshot.exists()) {
+            setLateShown(true);
             const eventData = docSnapshot.data();
 
             console.log('dinner',eventData.dinnerTime.toDate())
@@ -244,6 +247,7 @@ function EventHomeScreen({toggleUserInEvent}) {
           </View>
 
           <View style={styles.buttonContainer}>
+          {lateShown &&
           <TouchableOpacity
             style={[styles.button, { backgroundColor: colors.primary, borderColor: colors.background, borderWidth: 1 }]}
             onPress={() => {
@@ -261,7 +265,7 @@ function EventHomeScreen({toggleUserInEvent}) {
             <Text style={[styles.buttonText, { fontFamily: 'Poppins_700Bold', color: colors.background }]}>
               {isLateNotified ? 'Dinner members notified' : 'I will be late'}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
             {/* <View style={styles.shadowContainer}>
               <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary, borderColor: colors.background, borderWidth: 1 }]}>

@@ -13,21 +13,25 @@ import { colors } from '../../../stylevars';
 function Help({ navigation }) {
   const [faqs, setFaqs] = useState([
     {
-      question: 'How do I make a booking?',
+      question: 'How does Platemates work?',
       answer:
-        'To make a booking, navigate to the Bookings section and select "Book my Seat". Follow the on-screen instructions to complete your reservation.',
+        'You take a quick personality quiz, and we’ll match you with three other students from your school. Once matched, you’ll receive an invitation to join a group dinner.',
     },
     {
-      question: 'Can I cancel my booking?',
+      question: 'How are matches made?',
       answer:
-        'Yes, you can cancel your booking up to 24 hours before the scheduled time. Please contact our support team for assistance.',
+        'We use a mix of personality traits and preferences from our quiz to create matches that are likely to click. Our goal is to match you with people you’ll enjoy spending time with.',
     },
     {
-      question: 'What payment methods are accepted?',
+      question: 'Is Platemates a dating app?',
       answer:
-        'We accept various payment methods including credit/debit cards, PayPal, and Apple Pay.',
+        'No, Platemates is focused on creating opportunities for genuine social interactions. It’s all about meeting new people and building friendships, not finding romantic connections.',
     },
-    // Add more FAQs as needed
+    {
+      question: "What if I can't make a dinner I signed up for?",
+      answer:
+        'Life happens, and we get it! If you used a ticket, contact us for a refund!',
+    },
   ]);
 
   const openEmail = () => {

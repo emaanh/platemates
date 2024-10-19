@@ -7,6 +7,15 @@ import { AuthContext } from '../../AuthProvider';
 import { addDoc, doc, collection, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
 
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+const isSmallDevice = SCREEN_WIDTH < 400;
+const scaleFont = (size) => {
+  const scale = SCREEN_WIDTH / 375; // 375 is a common base width (e.g., iPhone 8)
+  const newSize = size * scale;
+  return Math.round(newSize);
+};
+
 const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTicket}) => {
   const [selectedOption, setSelectedOption] = useState('1 Month'); // Default to "1 Month"
   const { setCaller, caller, user, userData } = useContext(AuthContext);
@@ -213,7 +222,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
   },
   modalTitle: {
-    fontSize: 30,
+    fontSize: isSmallDevice ? 24 : 30, // Reduced font size for small devices
     color: colors.black,
     textAlign: 'center',
     fontWeight: 'bold',
@@ -221,19 +230,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_700Bold',
   },
   descriptionContainer: {
-    marginTop: -20,
-    marginBottom: 20,
+    marginTop: isSmallDevice ? 0 : -20,
+    marginBottom: isSmallDevice ? 0 : 20,
   },
   descriptionTitle: {
     color: colors.black,
-    fontSize: 24,
+    fontSize: isSmallDevice ? 20 : 24,
     fontWeight: 'bold',
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
   },
   descriptionText: {
     color: colors.dark_grey,
-    fontSize: 16,
+    fontSize: isSmallDevice ? 14 : 16, // Adjusted font size
     textAlign: 'center',
     marginTop: 5,
     marginBottom: 20,
@@ -286,25 +295,25 @@ const styles = StyleSheet.create({
   },
   optionText: {
     color: colors.black,
-    fontSize: 16,
+    fontSize: isSmallDevice ? 14 : 16, // Adjusted font size
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   optionTotal: {
     color: colors.dark_grey,
-    fontSize: 12,
+    fontSize: isSmallDevice ? 10 : 12, // Adjusted font size
     marginTop: 5,
     fontFamily: 'Poppins_400Regular',
   },
   discountTag: {
     color: colors.dark_grey,
-    fontSize: 12,
+    fontSize: isSmallDevice ? 10 : 12, // Adjusted font size
     fontWeight: 'bold',
     marginTop: 5,
   },
   pricePerMonth: {
     color: colors.black,
-    fontSize: 16,
+    fontSize: isSmallDevice ? 14 : 16, // Adjusted font size
     fontWeight: 'bold',
     textAlign: 'right',
     fontFamily: 'Poppins_700Bold',
@@ -333,13 +342,13 @@ const styles = StyleSheet.create({
   },
   buyButtonText: {
     color: colors.background,
-    fontSize: 18,
+    fontSize: isSmallDevice ? 16 : 18, // Adjusted font size
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
   },
   cancelText: {
     color: colors.background,
-    fontSize: 12,
+    fontSize: isSmallDevice ? 10 : 12, // Adjusted font size
     marginTop: 5,
     fontFamily: 'Poppins_400Regular',
   },
@@ -361,7 +370,7 @@ const styles = StyleSheet.create({
   },
   autoRenewText: {
     color: colors.grey,
-    fontSize: 10,
+    fontSize: isSmallDevice ? 8 : 10, // Adjusted font size
     textAlign: 'center',
     fontFamily: 'Poppins_400Regular',
   },

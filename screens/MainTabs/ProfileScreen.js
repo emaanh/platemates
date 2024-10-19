@@ -14,6 +14,9 @@ import { AuthContext } from '../../AuthProvider';
 import EULAScreen from './ProfileScreens/EULAScreen';
 import TermsAndConditionsScreen from './ProfileScreens/TermsAndConditionsScreen';
 
+import { onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp, addDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase-config';
+
 
 
 const Stack = createStackNavigator();
@@ -70,7 +73,7 @@ function ProfilePage({navigation}) {
     navigation.navigate('Bookings');
   };
 
-  const handleSettings = () => {
+  const handleSettings = async() => {
     navigation.navigate('Settings');
   };
 

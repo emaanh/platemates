@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 
 function MainPage() {
   const navigation = useNavigation();
-  const { user, userData, subscribed} = useContext(AuthContext);
+  const { user, userData, subscribed, clearUser} = useContext(AuthContext);
   const [isUserInEvent, setIsUserInEvent] = useState(userData ? userData.inEvent : false);
   const [loading, setLoading] = useState(true);
 
@@ -34,6 +34,12 @@ function MainPage() {
       <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
         <ActivityIndicator size="large" color="black" />
         <Text style={{fontFamily: 'Poppins_400Regular', fontSize: 20, color: colors.black, marginTop: 10}}>{"Contact: 650-282-0663 if Stuck."}</Text>
+        <TouchableOpacity onPress={() => {
+          clearUser();
+          navigation.navigate('LandingScreen')
+        }} style={{marginTop: 10, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: '#000', borderRadius: 5}}>
+          <Text style={{color: '#fff', fontSize: 16}}>Return to Home Page</Text>
+        </TouchableOpacity>
       </View>
     );
   }

@@ -79,14 +79,14 @@ function Bookings({ navigation }) {
         <View style={styles.emptyContainer}>
           <Feather name="calendar" size={100} color="#555" />
           <Text style={styles.emptyText}>No Dinner Yet</Text>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.bookButton}
             onPress={() => {
-              
+              navigation.navigate('')
             }}
           >
             <Text style={styles.bookButtonText}>Book my Seat</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
     </View>

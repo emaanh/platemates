@@ -17,6 +17,9 @@ function QuotePage({ navigation }) {
       <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
         <ActivityIndicator size="large" color="black" />
         <Text style={{fontFamily: 'Poppins_400Regular', fontSize: 20, color: colors.black, marginTop: 10}}>{"Contact: 650-282-0663 if Stuck."}</Text>
+        <TouchableOpacity onPress={() => {navigation.navigate('LandingScreen')}} style={{marginTop: 10, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: '#000', borderRadius: 5}}>
+          <Text style={{color: '#fff', fontSize: 16}}>Return to Home Page</Text>
+        </TouchableOpacity>
       </View>
     );
   }

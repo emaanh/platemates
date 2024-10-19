@@ -13,7 +13,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../../../AuthProvider';
 import { deleteUser } from 'firebase/auth';
-import { doc, collection, updateDoc,getDocs, writeBatch, deleteDoc } from 'firebase/firestore';
+import { doc, collection, updateDoc,getDocs, writeBatch, deleteDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
 import { colors } from '../../../stylevars';
 
@@ -124,22 +124,23 @@ function Settings({ navigation }) {
         {
           text: 'Delete',
           onPress: async () => {
-            const userDocRef = doc(db, 'users', user.uid);
-            await deleteSubCollection(userDocRef, 'events');
-            await deleteSubCollection(userDocRef, 'notifications');
-            await deleteDoc(userDocRef);
-
             if (user) {
               deleteUser(user)
                 .then(async () => {
                   clearUser();
                 })
                 .catch((error) => {
-                  clearUser();
+                  Alert.alert('Account deletion requires recent authentication! Please log out, login, and try again.')
                 });
             } else {
               console.log('No user is signed in');
             }
+
+            const userDocRef = doc(db, 'users', user.uid);
+            await setDoc(doc(db,'deleteAccount', user.uid),{uid:user.uid, email: userData.email, timestamp:serverTimestamp()})
+            await deleteSubCollection(userDocRef, 'events');
+            await deleteSubCollection(userDocRef, 'notifications');
+            await deleteDoc(userDocRef);
           },
           style: 'destructive',
         },

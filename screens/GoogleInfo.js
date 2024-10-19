@@ -12,7 +12,15 @@ function GoogleInfo({ navigation, route }) {
 
     const { user } = useContext(AuthContext);
     if(user === null){
-      return;
+      return (
+        <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
+          <ActivityIndicator size="large" color="black" />
+          <Text style={{textAlign: 'center', fontFamily: 'Poppins_400Regular', fontSize: 20, color: colors.black, marginTop: 10}}>{"Your previous account deletion failed. Contact: 650-282-0663"}</Text>
+          <TouchableOpacity onPress={() => {navigation.navigate('LandingScreen')}} style={{marginTop: 10, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: '#000', borderRadius: 5}}>
+            <Text style={{color: '#fff', fontSize: 16}}>Return to Home Page</Text>
+          </TouchableOpacity>
+        </View>
+      );
     }
 
     const uid = user.uid;
