@@ -20,6 +20,7 @@ export const colors = {
   green: '#00ab66',
   disabled: '#666666', 
   dark_tan: '#DFCDB9',
+  disabled_toggle: '#767577',
 }
 
 export const questions = [

@@ -24,7 +24,7 @@ import * as Linking from 'expo-linking';
 import { isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth';
 import { authentication } from './firebase/firebase-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 
 const Stack = createStackNavigator();
@@ -87,7 +87,10 @@ function RootNavigator() {
 
         setFcmToken(token);
         if(user && token){
-          await setDoc(doc(db,'users',user.uid),{FCMToken:token},{merge:true});
+          const userSnap = await getDoc(doc(db,'users',user.uid));
+          if(userSnap.exists()){
+            await setDoc(doc(db,'users',user.uid),{FCMToken:token},{merge:true});
+          }
         }
       } else {
         Alert.alert('Permission denied', 'Unable to get notification permissions.');
@@ -104,14 +107,14 @@ function RootNavigator() {
   
     // Listen for foreground messages
     const unsubscribeMessage = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
   
     return () => {
       unsubscribeTokenRefresh();
       unsubscribeMessage();
     };
-  }, []);
+  }, [user]);
 
   if (!authLoaded) {
     return (

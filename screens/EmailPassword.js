@@ -68,7 +68,7 @@ function EmailPassword({ navigation, route }) {
         await AsyncStorage.removeItem('emailForSignIn');
 
         console.log('navigated');
-        navigation.navigate('GoogleInfoScreen');
+        navigation.navigate('GoogleInfoScreen',{apple: false});
       }
 
     };
@@ -106,7 +106,8 @@ function EmailPassword({ navigation, route }) {
         await AsyncStorage.setItem('emailForSignIn', email);
         await AsyncStorage.setItem('school', JSON.stringify(school));
         await AsyncStorage.setItem('answers', JSON.stringify(answers));
-        Alert.alert('Email Sent', 'A sign-in link has been sent to your email. Please check your inbox.');
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        Alert.alert('Select "Default browser app" when opening the email link', 'A sign-in link has been sent to your email');
       } catch (error) {
         Alert.alert('Error', error.message);
       } finally {

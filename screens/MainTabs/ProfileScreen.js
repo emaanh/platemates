@@ -16,7 +16,7 @@ import TermsAndConditionsScreen from './ProfileScreens/TermsAndConditionsScreen'
 
 import { onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
-
+import * as Haptics from 'expo-haptics';
 
 
 const Stack = createStackNavigator();
@@ -70,18 +70,22 @@ function ProfilePage({navigation}) {
   const { userData } = useContext(AuthContext);
 
   const handleFindBookings = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('Bookings');
   };
 
   const handleSettings = async() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('Settings');
   };
 
   const handleLogout = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('Help');
   };
 
   const handleEditProfile = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('EditProfile');
   };
 
@@ -95,23 +99,29 @@ function ProfilePage({navigation}) {
 
       {/* Profile Name */}
       <Text style={styles.profileName}>{userData.fullName}</Text>
-      <TouchableOpacity style={{marginTop: -15,paddingVertical: 7.5, paddingHorizontal: 10, backgroundColor: 'transparent', borderRadius: 5, borderWidth: 1, borderColor: colors.black}} onPress={handleEditProfile}>
+      <TouchableOpacity style={{marginTop: -15,paddingVertical: 7.5, paddingHorizontal: 10, backgroundColor: 'transparent', borderRadius: 5, borderWidth: 1, borderColor: colors.black}} onPress={()=>{
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); 
+        handleEditProfile();
+        }}>
         <Text style={{fontFamily: 'Poppins_400Regular', color: 'black', fontSize: 18}}>Edit Profile</Text>
       </TouchableOpacity>
 
       {/* Buttons */}
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleFindBookings}>
+        <TouchableOpacity style={styles.button} onPress={()=>{
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); 
+          handleFindBookings();
+          }}>
           <Feather name="book" size={20} color={colors.black} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Find My Past Bookings</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={handleSettings}>
+        <TouchableOpacity style={styles.button} onPress={()=>{Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); handleSettings()}}>
           <Feather name="settings" size={20} color={colors.black} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Settings</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.button]} onPress={handleLogout}>
+        <TouchableOpacity style={[styles.button]} onPress={()=>{Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); handleLogout()}}>
           <Feather name="user" size={20} color={colors.black} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Help Center</Text>
         </TouchableOpacity>

@@ -1,11 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { authentication } from './firebase/firebase-config'; // Adjust the import path to your firebase config
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { getDocs, doc, onSnapshot, query, orderBy, collection, where, limit, serverTimestamp, Timestamp, addDoc } from 'firebase/firestore';
+import { getDocs, doc, setDoc, onSnapshot, query, orderBy, collection, where, limit, serverTimestamp, Timestamp, addDoc, getDoc } from 'firebase/firestore';
 import { db } from './firebase/firebase-config';
 import { Alert } from 'react-native';
 import {initConnection, getProducts, getAvailablePurchases, endConnection, getPurchaseHistory} from 'react-native-iap';
 import { sendSignInLinkToEmail, signInWithEmailLink } from 'firebase/auth';
+import * as Application from 'expo-application';
 
 export const AuthContext = createContext(null);
 
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }) => {
   const [subscriptionType, setSubscriptionType] = useState(null);
   const [schools, setSchools] = useState([]);
   const [transactionHistory, setTransactionHistory] = useState([]);
+  const [deviceID, setDeviceID] = useState('');
 
   
   useEffect(() => {
@@ -221,6 +223,19 @@ export const AuthProvider = ({ children }) => {
   };
   
   useEffect(() => {
+    const fetchData = async () => {
+      const uniqueId = await Application.getIosIdForVendorAsync();
+      setDeviceID(uniqueId);
+      const docSnap = await getDoc(doc(db, 'analytics', uniqueId));
+      if(!docSnap.exists()){
+        await setDoc(doc(db,'analytics',uniqueId),{installed: true},{merge:true})
+      }
+    };
+    fetchData();
+  }, [user]);
+
+  
+  useEffect(() => {
     let unsubscribe;
 
     if (user) {
@@ -343,7 +358,8 @@ export const AuthProvider = ({ children }) => {
       subscriptionType,
       setUser,
       clearUser,
-      schools
+      schools,
+      deviceID
     }}>
       {children}
     </AuthContext.Provider>

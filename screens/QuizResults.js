@@ -22,7 +22,7 @@ function QuizResults({ navigation, route }) {
   const { school, answers } = route.params;
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
-  const { signOut, setUser } = useContext(AuthContext);
+  const { signOut, setUser, deviceID } = useContext(AuthContext);
 
 
 
@@ -36,6 +36,7 @@ function QuizResults({ navigation, route }) {
 
     const randomStudents = Math.floor(Math.random() * 23) + 8;
     setCompatibleStudents(randomStudents);
+
 
     const timer = setTimeout(() => {
       setIsMatching(false);
@@ -91,6 +92,8 @@ function QuizResults({ navigation, route }) {
       const userEmail = userCredential.user.email;
       console.log(userCredential.user);
       const emailDomain = userEmail.split('@')[1];
+
+      await setDoc(doc(db,'analytics',deviceID),{ appleSignIn: true },{merge:true});
   
       // if (emailDomain !== school[2]) {
       //   Alert.alert('Email domain does not match the required school domain.');
@@ -123,36 +126,9 @@ function QuizResults({ navigation, route }) {
         return;
       }
 
-      const answersMap = new Map(Object.entries(answers));
-      const answersObject = Object.fromEntries(answersMap);
-
-      await setDoc(doc(db, 'users', userCredential.user.uid), {
-        fullName: userCredential.user.displayName ? userCredential.user.displayName : 'Anonymous',
-        email: userCredential.user.email.trim(),
-        phone: userCredential.user.phoneNumber ? userCredential.user.phoneNumber : 'Hidden',
-        answers: answersObject,
-        shortSchool: school[1],
-        longSchool: school[0],
-        receiveSMS: true,
-        receiveNotifications: true,
-        tickets: [],
-        inEvent: false,
-        eventID: null
-      },{merge:true});
-
-      await addDoc(collection(db, 'users', userCredential.user.uid, 'notifications'), {
-        timestamp: serverTimestamp(),
-        message: 'Important Notification',
-        description: 'Check this screen for valuable info.'
-      });
-
-      await addDoc(collection(db, 'users', userCredential.user.uid, 'events'), {
-        timestamp: serverTimestamp(),
-        title: 'Dinners Shown Here',
-        eventID: 'hZt2oxXbroIJqLOVAlJy'
-      });
-  
-      navigation.navigate('QuoteScreen');
+      await AsyncStorage.setItem('school', JSON.stringify(school));
+      await AsyncStorage.setItem('answers', JSON.stringify(answers));
+      navigation.navigate('GoogleInfoScreen', { apple: true });
     } catch (error) {
       console.error('Apple Sign-In Error:', error);
     }
@@ -169,6 +145,8 @@ function QuizResults({ navigation, route }) {
       const userCredential = await signInWithCredential(authentication, googleCredential);
       const userEmail = userCredential.user.email;
       const emailDomain = userEmail.split('@')[1];
+
+      await setDoc(doc(db,'analytics',deviceID),{ googleSignIn: true },{merge:true});
 
 
       if (emailDomain !== school[2]) {
@@ -213,7 +191,7 @@ function QuizResults({ navigation, route }) {
 
       await AsyncStorage.setItem('school', JSON.stringify(school));
       await AsyncStorage.setItem('answers', JSON.stringify(answers));
-      navigation.navigate('GoogleInfoScreen', {});
+      navigation.navigate('GoogleInfoScreen', { apple: false });
     } catch (error) {
       console.error('Google Sign-In Error:', error);
     }
@@ -261,9 +239,11 @@ function QuizResults({ navigation, route }) {
             
             <TouchableOpacity
               style={styles.emailButton}
-              onPress={() => {
+              onPress={async() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); 
-                navigation.navigate('EmailPasswordScreen', { school, answers })}}>
+                navigation.navigate('EmailPasswordScreen', { school, answers });
+                await setDoc(doc(db,'analytics',deviceID),{ emailSignIn: true },{merge:true});
+              }}>
               <Text style={styles.emailButtonText}>Sign up with email</Text>
             </TouchableOpacity>
           </View>

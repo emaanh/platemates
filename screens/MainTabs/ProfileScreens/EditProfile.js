@@ -5,6 +5,7 @@ import { AuthContext } from '../../../AuthProvider';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../../../stylevars';
+import * as Haptics from 'expo-haptics';
 
 function EditProfile({ navigation }) {
   const { userData } = useContext(AuthContext);
@@ -46,6 +47,7 @@ function EditProfile({ navigation }) {
   };
 
   const handleEditField = (field, index, isPersonalityQuestion = false) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (isPersonalityQuestion) {
       const question = questions[index];
       navigation.navigate('EditPersonalityQuestion', { question, index });
@@ -59,7 +61,7 @@ function EditProfile({ navigation }) {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.goBack();}}
         >
           <Feather name="arrow-left" size={30} color={colors.black} />
         </TouchableOpacity>

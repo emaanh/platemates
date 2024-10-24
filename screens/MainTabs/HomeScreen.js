@@ -8,6 +8,8 @@ import { AuthContext } from '../../AuthProvider';
 import moment from 'moment';
 import { MaterialIndicator } from 'react-native-indicators';
 import * as Progress from 'react-native-progress';
+import * as Haptics from 'expo-haptics';
+
 
 function HomeScreen({ toggleUserInEvent }) {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -182,7 +184,9 @@ function HomeScreen({ toggleUserInEvent }) {
                   styles.radialButton,
                   selectedOption === option && styles.selectedRadial,
                 ]}
-                onPress={() => setSelectedOption(option)}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); 
+                  setSelectedOption(option)}}
               />
             </View>
           </TouchableOpacity>
@@ -190,10 +194,13 @@ function HomeScreen({ toggleUserInEvent }) {
 
         <TouchableOpacity
           style={[styles.bottomButton, !selectedOption && styles.disabledButton]}
-          onPress={() => bookPressed()}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            bookPressed()
+          }}
           disabled={!selectedOption}
         >
-          <Text style={styles.bottomButtonText}>Book my seat</Text>
+          <Text style={styles.bottomButtonText}>Reserve my seat</Text>
         </TouchableOpacity>
       </View>
 

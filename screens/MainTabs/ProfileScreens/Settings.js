@@ -16,6 +16,7 @@ import { deleteUser } from 'firebase/auth';
 import { doc, collection, updateDoc,getDocs, writeBatch, deleteDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
 import { colors } from '../../../stylevars';
+import * as Haptics from 'expo-haptics';
 
 function Settings({ navigation }) {
   const { userData, user, signOut, subscriptionType, subscribed, clearUser } = useContext(AuthContext);
@@ -25,7 +26,6 @@ function Settings({ navigation }) {
   const [isSMSAlertsEnabled, setIsSMSAlertsEnabled] = useState(userData.receiveSMS);
   const [subscriptionStatus, setSubscriptionStatus] = useState(userData.subscriptionStatus); // Add subscription status
 
-  console.log(subscriptionType);
   const openPrivacyPolicy = async () => {
     const url = 'https://www.platemates.app/privacy';
     // Check if the link can be opened
@@ -40,6 +40,7 @@ function Settings({ navigation }) {
   };
 
   const toggleNotifications = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const newValue = !isNotificationsEnabled;
     setIsNotificationsEnabled(newValue);
     try {
@@ -55,6 +56,7 @@ function Settings({ navigation }) {
   };
 
   const toggleSMSAlerts = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const newValue = !isSMSAlertsEnabled;
     setIsSMSAlertsEnabled(newValue);
     try {
@@ -128,19 +130,18 @@ function Settings({ navigation }) {
               deleteUser(user)
                 .then(async () => {
                   clearUser();
+                  const userDocRef = doc(db, 'users', user.uid);
+                  await setDoc(doc(db,'deleteAccount', user.uid),{uid:user.uid, email: userData.email, timestamp:serverTimestamp()})
+                  await deleteSubCollection(userDocRef, 'events');
+                  await deleteSubCollection(userDocRef, 'notifications');
+                  await deleteDoc(userDocRef);
                 })
                 .catch((error) => {
-                  Alert.alert('Account deletion requires recent authentication! Please log out, login, and try again.')
+                  Alert.alert('Account deletion requires recent authentication! Please log out, login, and try again.');
                 });
             } else {
               console.log('No user is signed in');
             }
-
-            const userDocRef = doc(db, 'users', user.uid);
-            await setDoc(doc(db,'deleteAccount', user.uid),{uid:user.uid, email: userData.email, timestamp:serverTimestamp()})
-            await deleteSubCollection(userDocRef, 'events');
-            await deleteSubCollection(userDocRef, 'notifications');
-            await deleteDoc(userDocRef);
           },
           style: 'destructive',
         },
@@ -173,7 +174,10 @@ function Settings({ navigation }) {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            navigation.goBack();
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
         >
           <Feather name="arrow-left" size={30} color={colors.black} />
         </TouchableOpacity>
@@ -200,9 +204,9 @@ function Settings({ navigation }) {
             <Text style={styles.optionText}>Notifications</Text>
           </View>
           <Switch
-            trackColor={{ false: '#767577', true: colors.primary }}
-            thumbColor={isNotificationsEnabled ? '#ffffff' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
+            trackColor={{ false: colors.disabled_toggle, true: colors.primary }}
+            thumbColor={isNotificationsEnabled ? colors.white : colors.white}
+            ios_backgroundColor={colors.ios_backgroundColor}
             onValueChange={toggleNotifications}
             value={isNotificationsEnabled}
           />
@@ -215,9 +219,9 @@ function Settings({ navigation }) {
             <Text style={styles.optionText}>Receive SMS Alerts</Text>
           </View>
           <Switch
-            trackColor={{ false: '#767577', true: colors.primary }}
-            thumbColor={isSMSAlertsEnabled ? '#ffffff' : colors.primary}
-            ios_backgroundColor="#3e3e3e"
+            trackColor={{ false: colors.disabled_toggle, true: colors.primary }}
+            thumbColor={isSMSAlertsEnabled ? colors.white : colors.primary}
+            ios_backgroundColor={colors.ios_backgroundColor}
             onValueChange={toggleSMSAlerts}
             value={isSMSAlertsEnabled}
           />
@@ -226,7 +230,7 @@ function Settings({ navigation }) {
         {/* EULA Option */}
         <TouchableOpacity
           style={styles.optionContainer}
-          onPress={() => navigation.navigate('EULA')}
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);navigation.navigate('EULA');}}
         >
           <View style={styles.optionLeft}>
             <Feather name="file-text" size={24} color={colors.black} />
@@ -238,7 +242,7 @@ function Settings({ navigation }) {
         {/* Terms and Conditions Option */}
         <TouchableOpacity
           style={styles.optionContainer}
-          onPress={() => navigation.navigate('TermsAndConditions')}
+          onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);navigation.navigate('TermsAndConditions')}}
         >
           <View style={styles.optionLeft}>
             <Feather name="info" size={24} color={colors.black} />
@@ -249,7 +253,7 @@ function Settings({ navigation }) {
 
         <TouchableOpacity
           style={styles.optionContainer}
-          onPress={() => openPrivacyPolicy()}
+          onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);openPrivacyPolicy()}}
         >
           <View style={styles.optionLeft}>
             <Feather name="shield" size={24} color={colors.black} />
@@ -261,7 +265,7 @@ function Settings({ navigation }) {
         {/* Logout Button */}
         <TouchableOpacity
           style={[styles.optionContainer, styles.logoutButton]}
-          onPress={handleLogout}
+          onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);handleLogout()}}
         >
           <View style={styles.optionLeft}>
             <Feather name="log-out" size={24} color="#FF3B30" />

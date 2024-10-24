@@ -19,6 +19,7 @@ import {
 } from 'firebase/firestore';
 import { colors } from '../../../stylevars';
 import BookingSnap from './BookingSnap';
+import * as Haptics from 'expo-haptics';
 
 const Stack = createStackNavigator();
 
@@ -60,7 +61,7 @@ function Bookings({ navigation }) {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.goBack()}}
         >
           <Feather name="arrow-left" size={30} color={colors.black} />
         </TouchableOpacity>

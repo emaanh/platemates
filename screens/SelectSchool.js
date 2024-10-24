@@ -4,10 +4,12 @@ import { Feather } from '@expo/vector-icons';
 import { colors } from '../stylevars';
 import * as Haptics from 'expo-haptics';
 import { AuthContext } from '../AuthProvider';
+import { onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp, addDoc } from 'firebase/firestore';
+import { db } from '../firebase/firebase-config';
 
 
 function SelectSchool({ navigation }) {
-  const { schools } = useContext(AuthContext);
+  const { schools, deviceID } = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
@@ -23,9 +25,11 @@ function SelectSchool({ navigation }) {
             <TouchableOpacity
               key={index}
               style={styles.schoolButton}
-              onPress={() => {
+              onPress={async() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                navigation.navigate('PersonalityQuizScreen', { school })}}>
+                navigation.navigate('PersonalityQuizScreen', { school });
+                await setDoc(doc(db,'analytics',deviceID),{ school },{merge:true});
+              }}>
               <Text style={styles.schoolButtonText}>{school[0]}</Text>
             </TouchableOpacity>
           </View>

@@ -9,6 +9,8 @@ import { AuthContext } from '../AuthProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function GoogleInfo({ navigation, route }) {
+    const { apple } = route.params;
+    console.log(apple);
 
     const { user } = useContext(AuthContext);
     if(user === null){
@@ -55,16 +57,20 @@ function GoogleInfo({ navigation, route }) {
     };
 
     const handleSubmit = async () => {
-        // 4. Update validation to include full name
-        if (fullName.trim() === '') {
-            Alert.alert('Validation Error', 'Please enter your full name.');
-            return;
+        if (!apple) {
+          if (fullName.trim() === '') {
+              Alert.alert('Validation Error', 'Please enter your full name.');
+              return;
+          }
+        
+          if (phoneNumber.trim() === '') {
+              Alert.alert('Validation Error', 'Please enter your phone number.');
+              return;
+          }
         }
-      
-        if (phoneNumber.trim() === '') {
-            Alert.alert('Validation Error', 'Please enter your phone number.');
-            return;
-        }
+
+        const nameToStore = fullName.trim() === '' ? 'Anonymous' : fullName.trim();
+        const phoneToStore = phoneNumber.trim() === '' ? 'Anonymous' : phoneNumber.trim();
 
         if (email) {
           setLoading(true); // Show loading indicator
@@ -76,11 +82,11 @@ function GoogleInfo({ navigation, route }) {
             await AsyncStorage.removeItem('school');
             await AsyncStorage.removeItem('answers');
 
-    
+
             await setDoc(doc(db, 'users', uid), {
-              fullName: fullName.trim(), // 3. Include full name in Firestore
+              fullName: nameToStore, // 3. Include full name in Firestore
               email: email.trim(),
-              phone: phoneNumber,
+              phone: phoneToStore,
               answers: answersObject,
               shortSchool: school[1],
               longSchool: school[0],
@@ -90,12 +96,13 @@ function GoogleInfo({ navigation, route }) {
               inEvent: false,
               eventID: null
             },{merge:true});
+
+            // await addDoc(collection(db, 'users', userCredential.user.uid, 'notifications'), {
+            //   timestamp: serverTimestamp(),
+            //   message: 'Important Notification',
+            //   description: 'Check this screen for valuable info.'
+            // });
     
-            await addDoc(collection(db, 'users', uid, 'notifications'), {
-              timestamp: serverTimestamp(),
-              message: 'Important Notification',
-              description: 'Check this screen for valuable info.'
-            });
     
             await addDoc(collection(db, 'users', uid, 'events'), {
               timestamp: serverTimestamp(),
@@ -133,7 +140,7 @@ function GoogleInfo({ navigation, route }) {
   
         <TextInput
           style={styles.textInput}
-          placeholder="Enter your full name"
+          placeholder={apple ? "Enter your full name (optional)" : "Enter your full name"}
           placeholderTextColor={colors.grey}
           value={fullName}
           onChangeText={setFullName}
@@ -143,7 +150,7 @@ function GoogleInfo({ navigation, route }) {
   
         <TextInput
           style={styles.textInput}
-          placeholder="Enter your phone number"
+          placeholder={apple ? "Enter your phone number (optional)" : "Enter your phone number"}
           placeholderTextColor={colors.grey}
           keyboardType="phone-pad"
           value={phoneNumber}

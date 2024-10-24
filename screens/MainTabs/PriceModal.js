@@ -6,6 +6,7 @@ import { getAvailablePurchases, initConnection, getProducts, getSubscriptions, r
 import { AuthContext } from '../../AuthProvider';
 import { addDoc, doc, collection, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-config';
+import * as Haptics from 'expo-haptics';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -23,9 +24,9 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
 
   const getBuyButtonText = () => {
     if (selectedOption === 'Single Ticket') {
-      return 'Buy Single Ticket';
+      return 'Reserve Single Ticket';
     }
-    return `Buy ${selectedOption}`;
+    return `Reserve ${selectedOption} Access`;
   };
 
   const handleBuyProduct = async () => {
@@ -106,7 +107,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
       onRequestClose={onClose}
     >
       <SafeAreaView style={styles.modalContainer}>
-        <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+        <TouchableOpacity style={styles.closeButton} onPress={()=>{Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); closeModal();}}>
           <Text style={styles.closeButtonText}>✖</Text>
         </TouchableOpacity>
 
@@ -120,7 +121,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
         <View style={styles.optionsContainer}>
           {[
             { title: '1 Month', perMonth: '$1.99', total: '$7.99', discount: 'Perfect for first-timers' },
-            { title: '3 Months', perMonth: '$1.25', originalPerMonth: '$9.99', total: '$14.99', discount: 'Popular for regular attendees' },
+            { title: '3 Months', perMonth: '$1.25', originalPerMonth: '$9.99', total: '$14.99', discount: 'Popular for regulars' },
             { title: '6 Months', perMonth: '$0.83', originalPerMonth: '$9.99', total: '$19.99', discount: 'Maximum savings' },
           ].map((option, index) => (
             <TouchableOpacity
@@ -129,7 +130,9 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
                 styles.optionButton,
                 selectedOption === option.title && styles.selectedOption,
               ]}
-              onPress={() => setSelectedOption(option.title)}
+              onPress={() =>{
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); 
+                setSelectedOption(option.title)}}
             >
               <View style={styles.optionContent}>
                 <View style={styles.textContainer}>
@@ -161,7 +164,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
           <View style={styles.optionContent}>
             <View style={styles.textContainer}>
               <Text style={styles.optionText}>Single Ticket</Text>
-              <Text style={styles.optionTotal}>For one dinner</Text>
+              <Text style={styles.optionTotal}>One dinner</Text>
             </View>
             <Text style={styles.pricePerMonth}>$4.99</Text>
           </View>
@@ -174,7 +177,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
             styles.buyButton,
             !selectedOption && styles.disabledButton,
           ]}
-          onPress={handleBuyProduct}
+          onPress={()=>{Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); handleBuyProduct();}}
           disabled={!selectedOption}
         >
           {loading ? (
@@ -184,6 +187,9 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
               <Text style={styles.buyButtonText}>{getBuyButtonText()}</Text>
               {selectedOption !== 'Single Ticket' && (
                 <Text style={styles.cancelText}>Cancel Anytime</Text>
+              )}
+              {selectedOption == 'Single Ticket' && (
+                <Text style={styles.cancelText}>Redeem Anytime</Text>
               )}
             </>
           )}
@@ -308,7 +314,7 @@ const styles = StyleSheet.create({
   discountTag: {
     color: colors.dark_grey,
     fontSize: isSmallDevice ? 10 : 12, // Adjusted font size
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     marginTop: 5,
   },
   pricePerMonth: {
@@ -326,13 +332,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light_grey,
   },
   buyButton: {
-    backgroundColor: colors.green,
+    backgroundColor: colors.red,
     padding: 15,
     borderRadius: 12,
     alignItems: 'center',
     width: '100%',
-    borderWidth: 1,
-    borderColor: colors.green,
+    // borderWidth: 0,
+    // borderColor: colors.ice,
     marginTop: 20,
     justifyContent: 'center',
     textAlign: 'center'
@@ -361,7 +367,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: colors.black,
-    fontSize: 30,
+    fontSize: isSmallDevice ? 20 : 30,
   },
   autoRenewContainer: {
     marginTop: 20,

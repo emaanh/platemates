@@ -5,6 +5,7 @@ import { colors } from '../../../stylevars';
 import { AuthContext } from '../../../AuthProvider';
 import { setDoc, doc } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase-config';
+import * as Haptics from 'expo-haptics';
 
 function EditField({ navigation, route }) {
   const { field, index } = route.params;
@@ -53,6 +54,7 @@ function EditField({ navigation, route }) {
   };
 
   const handleSubmit = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (field === 'email') {
       const emailRegex = /\S+@\S+\.\S+/;
       if (!emailRegex.test(value)) {
@@ -83,7 +85,7 @@ function EditField({ navigation, route }) {
   return (
     <View style={styles.container}>
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.goBack();}}>
         <Feather name="arrow-left" size={30} color={colors.primary} />
       </TouchableOpacity>
 

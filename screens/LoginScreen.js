@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../AuthProvider';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { FontAwesome } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 
 
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
@@ -165,7 +166,7 @@ function LoginScreen({ navigation }) {
         <View style={styles.container}>
             <TouchableOpacity
                 style={{ position: 'absolute', top: 80, left: 20, zIndex: 1 }}
-                onPress={() => navigation.navigate('LandingScreen')}
+                onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('LandingScreen')}}
             >
                 <Feather name="arrow-left" size={30} color={colors.black} />
             </TouchableOpacity>
@@ -182,7 +183,7 @@ function LoginScreen({ navigation }) {
                 />
 
                 <View style={styles.shadowContainer}>
-                    <TouchableOpacity style={styles.LogInButton} onPress={handleLogin} disabled={loading}>
+                    <TouchableOpacity style={styles.LogInButton} onPress={()=> {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); handleLogin();}} disabled={loading}>
                         {loading ? (
                             <ActivityIndicator size="large" color={colors.black} />
                         ) : (
@@ -203,7 +204,7 @@ function LoginScreen({ navigation }) {
                 <View style={styles.shadowContainer}>
                     <TouchableOpacity
                         style={styles.GoogleButton}
-                        onPress={handleGoogleSignIn}
+                        onPress={()=>{Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); handleGoogleSignIn()}}
                         disabled={loading}
                     >
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -211,7 +212,7 @@ function LoginScreen({ navigation }) {
                             <Text style={styles.GoogleText}>Continue with Google</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.GoogleButton} onPress={() => signInWithApple()}>
+                    <TouchableOpacity style={styles.GoogleButton} onPress={()=>{Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); signInWithApple()}}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <FontAwesome name="apple" size={24} color="#333333" style={styles.appleIcon} />
                             <Text style={styles.GoogleText}>Sign up with Apple</Text>

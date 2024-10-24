@@ -1,11 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Animated, Easing } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { colors } from '../stylevars';
 import { AuthContext } from '../AuthProvider';
 import * as Haptics from 'expo-haptics';
+import { setDoc,doc } from 'firebase/firestore';
+import { db } from '../firebase/firebase-config';
 
 function PersonalityQuizScreen({ navigation, route }) {
+  const { deviceID } = useContext(AuthContext);
   const { school } = route.params;
 
   const questions = [
@@ -73,7 +76,7 @@ function PersonalityQuizScreen({ navigation, route }) {
     }).start();
   };
 
-  const handleAnswer = (answer) => {
+  const handleAnswer = async(answer) => {
     const newAnswers = { ...answers, [currentQuestionIndex]: answer };
     setAnswers(newAnswers);
 
@@ -86,6 +89,9 @@ function PersonalityQuizScreen({ navigation, route }) {
     } else {
       console.log('Quiz completed!', newAnswers);
       navigation.navigate('QuizResultsScreen', { answers: newAnswers, school });
+      const answersMap = new Map(Object.entries(newAnswers));
+      const answersObject = Object.fromEntries(answersMap);
+      await setDoc(doc(db,'analytics',deviceID),{ answers: answersObject },{merge:true});
     }
   };
 

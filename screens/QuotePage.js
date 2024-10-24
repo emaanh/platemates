@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { colors } from '../stylevars'; // Ensure this contains the necessary color definitions
 import { AuthContext } from '../AuthProvider';
+import * as Haptics from 'expo-haptics';
+
 
 function QuotePage({ navigation }) {
   const { user, userData } = useContext(AuthContext);
@@ -96,7 +98,10 @@ function QuotePage({ navigation }) {
       <Animated.View style={[styles.nextButtonContainer, { opacity: buttonFadeAnim }]}>
         <TouchableOpacity 
           style={styles.nextButton} 
-          onPress={handleNext}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            handleNext();
+          }}
           accessible={true}
           accessibilityLabel="Next Quote"
         >

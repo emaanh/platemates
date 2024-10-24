@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { colors } from '../../../stylevars';
+import * as Haptics from 'expo-haptics';
 
 function Help({ navigation }) {
   const [faqs, setFaqs] = useState([
@@ -48,7 +49,10 @@ function Help({ navigation }) {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            navigation.goBack();
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
         >
           <Feather name="arrow-left" size={30} color={colors.black} />
         </TouchableOpacity>
@@ -56,17 +60,7 @@ function Help({ navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        {/* FAQ Section */}
-        {faqs.map((faq, index) => (
-          <View key={index} style={styles.faqItem}>
-            <Text style={styles.question}>{faq.question}</Text>
-            <Text style={styles.answer}>{faq.answer}</Text>
-          </View>
-        ))}
-
-        {/* Contact Information */}
-        {/* <Text style={styles.sectionTitle}>Contact Us</Text> */}
-        <View style={[styles.contactItem,{marginTop: 10}]}>
+        <View style={[styles.contactItem,{marginBottom: 10}]}>
           <Feather name="mail" size={24} color={colors.primary} />
           <TouchableOpacity onPress={openEmail}>
             <Text style={styles.contactText}>emaan@heidari.co</Text>
@@ -78,6 +72,16 @@ function Help({ navigation }) {
             <Text style={styles.contactText}>650-450-6083</Text>
           </TouchableOpacity>
         </View>
+        {/* FAQ Section */}
+        {faqs.map((faq, index) => (
+          <View key={index} style={styles.faqItem}>
+            <Text style={styles.question}>{faq.question}</Text>
+            <Text style={styles.answer}>{faq.answer}</Text>
+          </View>
+        ))}
+
+        {/* Contact Information */}
+        {/* <Text style={styles.sectionTitle}>Contact Us</Text> */}
       </ScrollView>
     </View>
   );

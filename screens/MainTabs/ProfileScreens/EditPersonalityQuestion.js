@@ -7,6 +7,8 @@ import { Feather } from '@expo/vector-icons';
 import { setDoc, doc } from 'firebase/firestore';  
 import { db } from '../../../firebase/firebase-config';
 import { colors } from '../../../stylevars';
+import * as Haptics from 'expo-haptics';
+
 
 function EditPersonalityQuestion({ navigation, route }) {
   const { question, index } = route.params;
@@ -16,6 +18,7 @@ function EditPersonalityQuestion({ navigation, route }) {
   const [selectedOption, setSelectedOption] = useState(currentAnswer);
 
   const handleOptionPress = async(option) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedOption(option);
 
     // Update userData.answers
@@ -28,6 +31,7 @@ function EditPersonalityQuestion({ navigation, route }) {
   };
 
   const handleBack = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.goBack();
   };
 
@@ -130,6 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',
+    textAlign: 'center'
   },
   ratingContainer: {
     width: '90%',

@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { AuthContext } from './path_to_your_AuthProvider';
 import { Linking, Alert } from 'react-native';
 
+
 const SignInHandler = () => {
   const { sendSignInLink } = useContext(AuthContext);
 

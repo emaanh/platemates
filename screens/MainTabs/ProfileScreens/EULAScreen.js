@@ -3,13 +3,17 @@ import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { colors } from '../../../stylevars';
+import * as Haptics from 'expo-haptics';
 
 function EULAScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={styles.backButton} onPress={() => {
+            navigation.goBack();
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}>
           <Feather name="arrow-left" size={30} color={colors.black} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>EULA</Text>
