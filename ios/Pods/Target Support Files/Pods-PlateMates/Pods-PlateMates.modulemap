@@ -1,0 +1,6 @@
+module Pods_PlateMates {
+  umbrella header "Pods-PlateMates-umbrella.h"
+
+  export *
+  module * { export * }
+}
