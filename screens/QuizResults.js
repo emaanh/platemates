@@ -40,6 +40,7 @@ function QuizResults({ navigation, route }) {
 
     const timer = setTimeout(() => {
       setIsMatching(false);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     }, 3000);
 
     const startRotation = () => {
@@ -232,7 +233,10 @@ function QuizResults({ navigation, route }) {
               <Text style={styles.googleButtonText}>Sign up with Google</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.appleButton} onPress={() => signInWithApple()}>
+            <TouchableOpacity style={styles.appleButton} onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              signInWithApple();
+              }}>
               <FontAwesome name="apple" size={24} color="#333333" style={styles.appleIcon} />
               <Text style={styles.appleButtonText}>Sign up with Apple</Text>
             </TouchableOpacity>

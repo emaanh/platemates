@@ -21,6 +21,7 @@ export const colors = {
   disabled: '#666666', 
   dark_tan: '#DFCDB9',
   disabled_toggle: '#767577',
+  ios_backgroundColor: '#3e3e3e'
 }
 
 export const questions = [

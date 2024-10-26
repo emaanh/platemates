@@ -220,7 +220,7 @@ function Settings({ navigation }) {
           </View>
           <Switch
             trackColor={{ false: colors.disabled_toggle, true: colors.primary }}
-            thumbColor={isSMSAlertsEnabled ? colors.white : colors.primary}
+            thumbColor={isSMSAlertsEnabled ? colors.white : colors.white}
             ios_backgroundColor={colors.ios_backgroundColor}
             onValueChange={toggleSMSAlerts}
             value={isSMSAlertsEnabled}

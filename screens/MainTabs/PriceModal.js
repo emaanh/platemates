@@ -107,7 +107,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
       onRequestClose={onClose}
     >
       <SafeAreaView style={styles.modalContainer}>
-        <TouchableOpacity style={styles.closeButton} onPress={()=>{Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); closeModal();}}>
+        <TouchableOpacity style={styles.closeButton} onPress={()=>{Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); closeModal();}}>
           <Text style={styles.closeButtonText}>✖</Text>
         </TouchableOpacity>
 
@@ -159,7 +159,10 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
             styles.optionButton,
             selectedOption === 'Single Ticket' && styles.selectedOption,
           ]}
-          onPress={() => setSelectedOption('Single Ticket')}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); 
+            setSelectedOption('Single Ticket')
+          }}
         >
           <View style={styles.optionContent}>
             <View style={styles.textContainer}>
@@ -307,7 +310,7 @@ const styles = StyleSheet.create({
   },
   optionTotal: {
     color: colors.dark_grey,
-    fontSize: isSmallDevice ? 10 : 12, // Adjusted font size
+    fontSize: isSmallDevice ? 12 : 14, // Adjusted font size
     marginTop: 5,
     fontFamily: 'Poppins_400Regular',
   },
@@ -360,7 +363,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 55,
+    top: 45,
     right: 20,
     zIndex: 1,
     padding: 10,
