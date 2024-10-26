@@ -24,7 +24,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
 
   const getBuyButtonText = () => {
     if (selectedOption === 'Single Ticket') {
-      return 'Reserve Single Ticket';
+      return 'Buy Single Ticket';
     }
     return `Reserve ${selectedOption} Access`;
   };
@@ -44,7 +44,7 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
         sku = 'month6';
         break;
       case 'Single Ticket':
-        sku = '1time';
+        sku = !userData.firstTimeUsed ? 'singleticketpromo' : '1time';
         break;
       default:
         sku = '1time';
@@ -69,6 +69,11 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
             receipt: purchaseResult.transactionReceipt,
             transactionID: purchaseResult.transactionId,
           });
+          if(!userData.firstTimeUsed){
+            await setDoc(doc(db, 'users', user.uid), {
+              firstTimeUsed: true
+            }, {merge: true});
+          }
 
           if (isTicket) {
             await finishTransaction({purchase: purchaseResult, isConsumable: true});
@@ -120,9 +125,9 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
         {/* Subscription Options */}
         <View style={styles.optionsContainer}>
           {[
-            { title: '1 Month', perMonth: '$1.99', total: '$7.99', discount: 'Perfect for first-timers' },
-            { title: '3 Months', perMonth: '$1.25', originalPerMonth: '$9.99', total: '$14.99', discount: 'Popular for regulars' },
-            { title: '6 Months', perMonth: '$0.83', originalPerMonth: '$9.99', total: '$19.99', discount: 'Maximum savings' },
+            { title: '1 Month', perMonth: '$1.99', total: '$7.99', discount: 'Popular for regulars' },
+            { title: '3 Months', perMonth: '$1.25', originalPerMonth: '$9.99', total: '$14.99', discount: 'Maximum Savings' },
+
           ].map((option, index) => (
             <TouchableOpacity
               key={index}
@@ -153,7 +158,6 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
         {/* Separator and Single Ticket Section */}
         <View style={styles.separator} />
 
-        {/* Single Ticket Option */}
         <TouchableOpacity
           style={[
             styles.optionButton,
@@ -161,15 +165,34 @@ const PriceModal = ({ closeModal, isVisible, onClose, PromptSubscribe, PromptTic
           ]}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); 
-            setSelectedOption('Single Ticket')
+            setSelectedOption('Single Ticket');
           }}
         >
           <View style={styles.optionContent}>
             <View style={styles.textContainer}>
-              <Text style={styles.optionText}>Single Ticket</Text>
-              <Text style={styles.optionTotal}>One dinner</Text>
+              <Text style={styles.optionText}>Single Dinner</Text>
+              <Text style={styles.discountTag}>Perfect for first-timers</Text>
             </View>
-            <Text style={styles.pricePerMonth}>$4.99</Text>
+            {userData.firstTimeUsed === undefined &&
+            <View style={styles.badgeContainer}>
+              <Text style={styles.badgeText}>First-time Discount!</Text>
+            </View>
+            }
+
+            {userData.firstTimeUsed === undefined &&
+            <View style={[styles.textContainer2, {flexDirection: 'row', flex: 1, justifyContent: 'flex-end', }]}>
+              <View style={{ position: 'relative', flexDirection: 'row' }}>
+                <Text style={[styles.strikethrough, { marginRight: -5 }]}>$4.99</Text>
+                <View style={styles.thickStrikethrough} />
+              </View>
+              <Text style={styles.promotionalPrice}>$1.99</Text>
+            </View>
+            }
+            {!(userData.firstTimeUsed === undefined) &&
+            <View style={[styles.textContainer2, {flexDirection: 'row', flex: 1, justifyContent: 'flex-end', }]}>
+              <Text style={styles.promotionalPrice}>$4.99</Text>
+            </View>
+            }
           </View>
         </TouchableOpacity>
 
@@ -328,8 +351,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_700Bold',
   },
   strikethrough: {
-    textDecorationLine: 'line-through',
     color: colors.grey,
+    fontSize: isSmallDevice ? 14 : 16,
+    fontFamily: 'Poppins_700Bold',
+  },
+  thickStrikethrough: {
+    position: 'absolute',
+    top: '25%', // This centers the line vertically over the text
+    left: 0,
+    right: 0,
+    width: '115%',
+    height: 2, // This controls the thickness of the strikethrough
+    backgroundColor: colors.grey, // Or any color you prefer for the strikethrough
   },
   selectedOption: {
     backgroundColor: colors.light_grey,
@@ -386,6 +419,30 @@ const styles = StyleSheet.create({
   link: {
     color: colors.ice, // or any color you prefer for the links
     textDecorationLine: 'underline',
+  },
+  promotionalPrice: {
+    color: colors.black,
+    fontSize: isSmallDevice ? 14 : 16, // Adjusted font size
+    fontWeight: 'bold',
+    fontFamily: 'Poppins_700Bold',
+    marginLeft: 10, // Add some space between the old and new price
+  },
+  badgeContainer: {
+    position: 'absolute',
+    top: -25,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center', // Center the text horizontally
+    backgroundColor: colors.green,
+    borderRadius: 6,
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    zIndex: 2, // Ensure the badge is on top of other elements
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 11,
+    fontFamily: 'Poppins_700Bold',
   },
 });
 

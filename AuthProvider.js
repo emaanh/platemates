@@ -206,7 +206,7 @@ export const AuthProvider = ({ children }) => {
   }, [user, transactionHistory]);
 
 
-  const productSkus = ['1time', 'month1', 'month3', 'month6'];
+  const productSkus = ['1time', 'month1', 'month3', 'month6', 'singleticketpromo'];
   useEffect(() => {
     handleGetProducts();
   }, []);
