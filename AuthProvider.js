@@ -228,11 +228,12 @@ export const AuthProvider = ({ children }) => {
       setDeviceID(uniqueId);
       const docSnap = await getDoc(doc(db, 'analytics', uniqueId));
       if(!docSnap.exists()){
-        await setDoc(doc(db,'analytics',uniqueId),{installed: true},{merge:true});
+        await setDoc(doc(db,'analytics',uniqueId),{installed: true, timestamp: serverTimestamp()},{merge:true});
       }
     };
     fetchData();
   }, [user]);
+
 
   
   useEffect(() => {
