@@ -1,55 +1,130 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { db, authentication } from '../firebase/firebase-config';
-import { setDoc, doc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc, serverTimestamp, addDoc, collection, getDoc } from 'firebase/firestore';
+import { sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { colors } from '../stylevars';
+import * as Haptics from 'expo-haptics';
+import * as Linking from 'expo-linking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function EmailPassword({ navigation, route }) {
 
-  const { phoneNumber, school, answers } = route.params;
+  const { school, answers } = route.params;
+  
+
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false); // Loading state
   const progress = 0.90;
 
+  useEffect(() => {
+    const handleDeepLink = async (event) => {
+      const url = event.url;
+      const { queryParams } = Linking.parse(url);
+      const isRegister = queryParams.register === 'false';
+
+      if(isRegister){
+        return;
+      }
+
+      if (isSignInWithEmailLink(authentication, url)) {
+        const storedEmail = await AsyncStorage.getItem('emailForSignIn');
+        const result = await signInWithEmailLink(authentication, storedEmail, url);
+        console.log('result:',result);
+        const userSnap = await getDoc(doc(db, 'users', result.user.uid));
+        if (userSnap.exists()) {
+          Alert.alert(
+            'Account Already Registered',
+            'This account has already been registered. Please choose an option below.',
+            [
+              {
+                text: 'Try Again',
+                onPress: () => {
+                  // Optional: Reset form fields or perform any other action
+                  console.log('Trying again');
+                },
+                style: 'cancel', // This makes the button bold on iOS
+              },
+              {
+                text: 'Login',
+                onPress: () => {
+                  // Navigate to the Login screen
+                  navigation.navigate('MainScreen'); // Ensure 'Login' is the correct route name
+                },
+              },
+            ],
+            { cancelable: false } // Prevents the alert from being dismissed by tapping outside
+          );
+          return; // Exit the function since the user is already registered
+        }
+    
+
+        // await setDoc(doc(db, 'users', result.user.uid), {
+        //   email: storedEmail.trim(),
+        //   tickets: []
+        // },{merge:true});
+
+        await AsyncStorage.removeItem('emailForSignIn');
+
+        console.log('navigated');
+        navigation.navigate('GoogleInfoScreen',{apple: false});
+      }
+
+    };
+
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+
+    (async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        handleDeepLink({ url: initialUrl });
+      }
+    })();
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   const handleSubmit = async () => {
-    if (email && password && confirmPassword && password === confirmPassword) {
+    const emailDomain = email.trim().split('@')[1];
+    if (emailDomain !== school[2]) {
+      Alert.alert('Validation Error', 'Your email needs to be the domain: ' + school[2]);
+      return;
+    }
+
+    if (email) {
       setLoading(true); // Show loading indicator
       try {
-        const answersMap = new Map(Object.entries(answers));
-        const answersObject = Object.fromEntries(answersMap);
+        const actionCodeSettings = {
+          url: 'https://platemates.page.link/tHrB?register=true',
+          handleCodeInApp: true,
+        };
 
-        const userCredential = await createUserWithEmailAndPassword(authentication, email, password);
-        const uid = userCredential.user.uid;
-
-        await setDoc(doc(db, 'users', uid), {
-          email: email,
-          phone: phoneNumber,
-          school: school,
-          answers: answersObject,
-        });
-
-        navigation.navigate('MainScreen');
-
+        await sendSignInLinkToEmail(authentication, email, actionCodeSettings);
+        await AsyncStorage.setItem('emailForSignIn', email);
+        await AsyncStorage.setItem('school', JSON.stringify(school));
+        await AsyncStorage.setItem('answers', JSON.stringify(answers));
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        Alert.alert('Select "Default browser app" when opening the email link', 'A sign-in link has been sent to your email');
       } catch (error) {
-        alert(`Error: ${error.message}`);
+        Alert.alert('Error', error.message);
       } finally {
-        setLoading(false); // Hide loading indicator
+        setLoading(false);
       }
     } else {
-      alert('Please make sure all fields are filled and passwords match');
+      Alert.alert('Validation Error', 'Please enter your email.');
     }
   };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Feather name="arrow-left" size={30} color="#E83F10" />
+        <Feather name="arrow-left" size={30} color={colors.primary} />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Email and Password</Text>
+      <Text style={styles.title}>Sign In with Email Link</Text>
 
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBar}>
@@ -57,41 +132,23 @@ function EmailPassword({ navigation, route }) {
         </View>
       </View>
 
+      {/* Email TextInput */}
       <TextInput
         style={styles.textInput}
         placeholder="Enter your email"
-        placeholderTextColor="#AAAAAA"
+        placeholderTextColor={colors.grey}
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
-      />
-
-      <TextInput
-        style={styles.textInput}
-        placeholder="Enter your password"
-        placeholderTextColor="#AAAAAA"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize="none"
-      />
-
-      <TextInput
-        style={styles.textInput}
-        placeholder="Confirm your password"
-        placeholderTextColor="#AAAAAA"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        autoCapitalize="none"
+        returnKeyType="done"
       />
 
       <TouchableOpacity style={styles.nextButton} onPress={handleSubmit} disabled={loading}>
         {loading ? (
-          <ActivityIndicator size="large" color="#FFFFFF" />
+          <ActivityIndicator size="large" color={colors.black} />
         ) : (
-          <Text style={styles.nextButtonText}>Submit</Text>
+          <Text style={styles.nextButtonText}>Send Sign-In Link</Text>
         )}
       </TouchableOpacity>
     </View>
@@ -101,7 +158,7 @@ function EmailPassword({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
     paddingTop: 55,
   },
@@ -112,12 +169,13 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   title: {
-    color: '#FFFFFF',
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'LibreBaskerville_700Bold',
+    top: 10,
   },
   progressBarContainer: {
     marginBottom: 20,
@@ -127,16 +185,16 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#333333',
+    backgroundColor: colors.dark_grey,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#a37b73',
+    backgroundColor: colors.progress_bar,
   },
   textInput: {
-    backgroundColor: '#333333',
-    color: '#FFFFFF',
+    backgroundColor: colors.background,
+    color: colors.black,
     padding: 15,
     borderRadius: 8,
     marginVertical: 10,
@@ -144,9 +202,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     width: '90%',
     alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: colors.black
   },
   nextButton: {
-    backgroundColor: '#E83F10',
+    backgroundColor: colors.primary,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -156,7 +216,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   nextButtonText: {
-    color: '#FFFFFF',
+    color: colors.black,
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Poppins_700Bold',

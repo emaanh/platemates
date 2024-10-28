@@ -1,36 +1,64 @@
-import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, {useEffect, useContext, useState} from 'react';
+import { ActivityIndicator, Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather'; // Updated import
+import { TouchableOpacity } from 'react-native';
+import HomeScreen from './MainTabs/HomeScreen';
+import EventHub from './MainTabs/EventHomeScreen';
+import ProfileScreen from './MainTabs/ProfileScreen';
+import NotificationsScreen from './MainTabs/NotificationsScreen';
+import { colors } from '../stylevars';
+import { AuthContext } from '../AuthProvider';
 
 const Tab = createBottomTabNavigator();
 
-function HomeScreen() {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenText}>Home Screen</Text>
-    </View>
-  );
-}
-
-function ProfileScreen() {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenText}>Profile Screen</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenText}>Settings Screen</Text>
-    </View>
-  );
-}
+import { useNavigation } from '@react-navigation/native';
 
 function MainPage() {
+  const navigation = useNavigation();
+  const { user, userData, subscribed, clearUser} = useContext(AuthContext);
+  const [isUserInEvent, setIsUserInEvent] = useState(userData ? userData.inEvent : false);
+  const [loading, setLoading] = useState(true);
+
+  
+  useEffect(() => {
+    if (userData) {
+      setIsUserInEvent(userData.inEvent);
+      setLoading(false);
+    }
+  }, [userData]);
+
+  if(loading){
+    return (
+      <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
+        <ActivityIndicator size="large" color="black" />
+        <Text style={{fontFamily: 'Poppins_400Regular', fontSize: 20, color: colors.black, marginTop: 10}}>{"Contact: 650-282-0663 if Stuck."}</Text>
+        <TouchableOpacity onPress={() => {
+          clearUser();
+          navigation.navigate('LandingScreen')
+        }} style={{marginTop: 10, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: '#000', borderRadius: 5}}>
+          <Text style={{color: '#fff', fontSize: 16}}>Return to Home Page</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if(user === null){
+    navigation.navigate('LandingScreen');
+    return (
+      <View style={{flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: colors.background,}}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
+  }
+
+
+  const toggleUserInEvent = (bool) => {
+    setIsUserInEvent(bool);
+  }
+
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -38,7 +66,7 @@ function MainPage() {
         headerShown: false, // Remove the header
         tabBarIcon: ({ focused }) => {
           let iconName;
-          const color = focused ? '#E83F10' : 'white';
+          const icon_color = focused ? colors.primary : colors.black;
 
           switch (route.name) {
             case 'Home':
@@ -47,44 +75,67 @@ function MainPage() {
             case 'Profile':
               iconName = 'user';
               break;
-            case 'Settings':
-              iconName = 'settings';
+            case 'Notifications':
+              iconName = 'bell';
               break;
             default:
               iconName = 'circle';
           }
 
-          return <Feather name={iconName} size={30} color={color} />;
+          return(
+            <View style={{width: 70, marginLeft: 35}}>
+              <Feather name={iconName} size={35} color={icon_color} />
+            </View>
+          ) ;
         },
         tabBarStyle: {
-          backgroundColor: '#000000', // Set tab bar background to black
+          backgroundColor: colors.background, // Set tab bar background to black
           borderTopWidth: 0,
         },
-        tabBarActiveTintColor: '#E83F10',
-        tabBarInactiveTintColor: '#AAAAAA',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.grey,
         tabBarShowLabel: false, // Hide labels
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home">
+        {(props) =>
+          isUserInEvent ? (
+            <EventHub {...props} toggleUserInEvent={toggleUserInEvent} />
+          ) : (
+            <HomeScreen {...props} toggleUserInEvent={toggleUserInEvent} />
+          )
+        }
+      </Tab.Screen>
+      <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
 }
 
-// Styles for Screens
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1, // Ensure the screen takes up the full space
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000000', // Set screen background to black
+    backgroundColor: colors.background, // Set screen background to black
   },
   screenText: {
-    color: 'white',
+    color: colors.black,
     fontSize: 24,
     fontWeight: 'bold',
   },
+  button: {
+    backgroundColor: 'transparent',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginVertical: 10,
+    alignItems: 'left',
+    borderWidth: 1,
+    borderColor: colors.black, // Default color, can be dynamically changed
+    width: '90%',
+    alignSelf: 'center',
+  }
 });
 
 export default MainPage;

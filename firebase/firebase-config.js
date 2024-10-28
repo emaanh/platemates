@@ -29,4 +29,5 @@ if (Platform.OS === 'web') {
 export const db = getFirestore(app);
 export const storage = getStorage(app, 'gs://consentapp-11721.appspot.com');
 
+
 export { authentication };
