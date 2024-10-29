@@ -62,6 +62,7 @@ function EventHomeScreen({toggleUserInEvent}) {
   const [lateMessage, setLateMessage] = useState('');
 
   const [late, setLate] = useState(false);
+  const [eventData, setEventData] = useState(false);
 
 
   const [dinnerTime, setDinnerTime] = useState('');
@@ -78,7 +79,8 @@ function EventHomeScreen({toggleUserInEvent}) {
             setLateShown(true);
             const eventData = docSnapshot.data();
 
-            console.log('dinner',eventData.dinnerTime.toDate())
+            setEventData(eventData);
+
             setDinnerTime(eventData.dinnerTime.toDate());
 
             setIsGroupRevealed(eventData.isGroupRevealed);
@@ -188,12 +190,16 @@ function EventHomeScreen({toggleUserInEvent}) {
           text: "Yes",
           onPress: async () => {
             // Logic for exiting the event
+            await addDoc(collection(db, 'users', user.uid, 'events'), { title: eventData.restaurantInfo[0], timestamp: eventData.dinnerTime, eventID: userData.eventID }, { merge: true });
+
             await setDoc(
               doc(db, 'users', user.uid), 
               { eventID: null, inEvent: false, selectedDinner: null }, 
               { merge: true }
             );
+
             toggleUserInEvent(false);
+            Alert.alert('Dinner Closed', 'See an archive of this dinner on the "Find My Bookings" screen on the Profile Tab')
           }
         }
       ],

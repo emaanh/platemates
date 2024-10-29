@@ -1,27 +1,64 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import { Feather } from '@expo/vector-icons';
-import { colors, questions } from '../../stylevars';
+import { colors } from '../../stylevars';
+import { db } from '../../firebase/firebase-config';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 const { width, height } = Dimensions.get('window');
 
 function IcebreakerScreen({ navigation }) {
   const [cardIndex, setCardIndex] = useState(0);
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const questionsRef = collection(db, 'questions');
+        const questionsQuery = query(questionsRef, orderBy('index'));
+        const querySnapshot = await getDocs(questionsQuery);
+
+        const questionsList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setQuestions(questionsList);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        setLoading(false); // Stop loading whether successful or error
+      }
+    };
+
+    fetchQuestions();
+  }, []);
 
   const renderCard = (card) => {
+    if (!card || !card.question) {
+      return (
+        <View style={styles.card}>
+          <Text style={styles.cardText}>No question available</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.card}>
-        <Text style={styles.cardText}>{card.text}</Text>
+        <Text style={styles.cardText}>{card.question}</Text>
       </View>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.black} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -34,14 +71,12 @@ function IcebreakerScreen({ navigation }) {
 
       <Text style={styles.title}>Icebreakers</Text>
 
-      <View style={[styles.swiperContainer, {backgroundColor: 'transparent'}]}>
+      <View style={[styles.swiperContainer, { backgroundColor: 'transparent' }]}>
         <Swiper
-          cards={questions}
+          cards={questions.length > 0 ? questions : [{ question: "No questions available" }]}
           renderCard={renderCard}
           onSwiped={(index) => setCardIndex(index)}
-          onSwipedAll={() => {
-            console.log('All cards swiped');
-          }}
+          onSwipedAll={() => console.log('All cards swiped')}
           cardIndex={cardIndex}
           backgroundColor="transparent"
           stackSize={3}
@@ -51,7 +86,6 @@ function IcebreakerScreen({ navigation }) {
               title: 'Skip!',
               style: {
                 label: {
-                  // backgroundColor: colors.white,
                   color: colors.red,
                   fontSize: 30,
                 },
@@ -68,7 +102,6 @@ function IcebreakerScreen({ navigation }) {
               title: 'Answered!',
               style: {
                 label: {
-                  // borderColor: colors.black,
                   color: colors.green,
                   fontSize: 30,
                 },
@@ -85,8 +118,8 @@ function IcebreakerScreen({ navigation }) {
           animateOverlayLabelsOpacity
           animateCardOpacity
           swipeBackCard
-          overlayOpacityVerticalThreshold={height/10000}
-          overlayOpacityHorizontalThreshold={width/10000}
+          overlayOpacityVerticalThreshold={height / 10000}
+          overlayOpacityHorizontalThreshold={width / 10000}
         />
       </View>
     </View>
@@ -101,6 +134,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+  },
   backButton: {
     position: 'absolute',
     top: 55,
@@ -111,7 +150,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     color: colors.black,
-    fontSize: 24, // Changed from string to number
+    fontSize: 24,
     fontFamily: 'LibreBaskerville_700Bold',
     top: 65,
   },
@@ -122,7 +161,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black'
+    backgroundColor: 'black',
   },
   card: {
     flex: 0.75,
